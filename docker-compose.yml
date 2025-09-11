@@ -1,0 +1,112 @@
+services:
+  # Cấu hình Frontend
+  frontend:
+    build:
+      context: ./frontend/my-app
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/my-app:/app
+      - /app/node_modules
+    container_name: nextjs-frontend
+    restart: unless-stopped
+    depends_on:
+      - auth-service
+      - tour-service
+      - redis
+
+  # Cấu hình các Microservices Backend
+  auth-service:
+    build:
+      context: ./backend/AuthService
+      dockerfile: Dockerfile
+    container_name: auth-service
+    ports:
+      - "5001:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:DefaultConnection=Host=db;Port=5432;Database=tourdb;Username=touruser;Password=tourpass
+    depends_on:
+      - db
+      - redis
+
+  user-service:
+    build:
+      context: ./backend/UserService
+      dockerfile: Dockerfile
+    container_name: user-service
+    ports:
+      - "5002:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:DefaultConnection=Host=db;Port=5432;Database=tourdb;Username=touruser;Password=tourpass
+    depends_on:
+      - db
+
+  tour-service:
+    build:
+      context: ./backend/TourService
+      dockerfile: Dockerfile
+    container_name: tour-service
+    ports:
+      - "5003:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:DefaultConnection=Host=db;Port=5432;Database=tourdb;Username=touruser;Password=tourpass
+    depends_on:
+      - db
+      - redis
+
+  booking-service:
+    build:
+      context: ./backend/BookingService
+      dockerfile: Dockerfile
+    container_name: booking-service
+    ports:
+      - "5004:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:DefaultConnection=Host=db;Port=5432;Database=tourdb;Username=touruser;Password=tourpass
+    depends_on:
+      - db
+
+  payment-service:
+    build:
+      context: ./backend/PaymentService
+      dockerfile: Dockerfile
+    container_name: payment-service
+    ports:
+      - "5005:80"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings:DefaultConnection=Host=db;Port=5432;Database=tourdb;Username=touruser;Password=tourpass
+    depends_on:
+      - db
+
+  # Cấu hình Database và Cache
+  db:
+    image: postgres:13
+    container_name: postgres-db
+    environment:
+      POSTGRES_DB: tourdb
+      POSTGRES_USER: touruser
+      POSTGRES_PASSWORD: tourpass
+    ports:
+      - "5431:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:6-alpine
+    container_name: redis-cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  redisdata:

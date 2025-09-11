@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "D/yfDWm2p+c=",
+  "success": true,
+  "projectFilePath": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\TourService.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Dell 5430\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.4\\microsoft.aspnetcore.openapi.9.0.4.nupkg.sha512",
+    "C:\\Users\\Dell 5430\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}

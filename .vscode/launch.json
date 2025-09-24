@@ -1,0 +1,38 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach to AuthService (Hot Reload, Docker)",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}",
+      // "processName": "dotnet",
+      "pipeTransport": {
+        "pipeProgram": "docker",
+        "pipeArgs": ["exec", "-i", "auth-service"],
+        "debuggerPath": "/root/vsdbg/vsdbg",
+        "pipeCwd": "${workspaceFolder}",
+        "quoteArgs": false
+      },
+      "sourceFileMap": {
+        "/app": "${workspaceFolder}/backend/AuthService"
+      }
+    },
+    {
+      "name": "Attach to UserService (Hot Reload, Docker)",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}",
+      "pipeTransport": {
+        "pipeProgram": "docker",
+        "pipeArgs": ["exec", "-i", "user-service"],
+        "debuggerPath": "/root/vsdbg/vsdbg",
+        "pipeCwd": "${workspaceFolder}",
+        "quoteArgs": false
+      },
+      "sourceFileMap": {
+        "/src": "${workspaceFolder}/backend/UserService"
+      }
+    }
+  ]
+}

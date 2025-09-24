@@ -1,0 +1,69 @@
+# docker-compose.override.yml
+version: "3.9"
+services:
+  frontend:
+    build:
+      context: ./frontend/my-app
+      dockerfile: Dockerfile
+      target: dev # dùng dev stage
+    volumes:
+      - ./frontend/my-app:/app # mount source code
+      - node_modules_cache:/app/node_modules
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    command: sh -c "npm install && npm run dev"
+
+  auth-service:
+    build:
+      context: ./backend/AuthService
+      dockerfile: Dockerfile
+      target: dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./backend/AuthService:/app
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+      - /app/bin
+      - /app/obj
+    command: dotnet watch run --project AuthService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
+
+  user-service:
+    build:
+      context: ./backend/UserService
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/UserService:/src
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+      - /src/bin
+      - /src/obj
+    command: dotnet watch run --project UserService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
+
+  # tour-service:
+  #   build:
+  #     context: ./backend/TourService
+  #     dockerfile: Dockerfile
+  #     target: dev
+  #   volumes:
+  #     - ./backend/TourService:/src
+  #     - ~/.nuget/packages:/root/.nuget/packages:ro
+
+  # booking-service:
+  #   build:
+  #     context: ./backend/BookingService
+  #     dockerfile: Dockerfile
+  #     target: dev
+  #   volumes:
+  #     - ./backend/BookingService:/src
+  #     - ~/.nuget/packages:/root/.nuget/packages:ro
+
+  # payment-service:
+  #   build:
+  #     context: ./backend/PaymentService
+  #     dockerfile: Dockerfile
+  #     target: dev
+  #   volumes:
+  #     - ./backend/PaymentService:/src
+  #     - ~/.nuget/packages:/root/.nuget/packages:ro

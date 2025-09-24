@@ -54,7 +54,7 @@ namespace AuthService.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("AuthService.Entities.UserRefreshTokenEntity", b =>
@@ -79,7 +79,7 @@ namespace AuthService.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRefreshTokens");
+                    b.ToTable("UserRefreshTokens", (string)null);
                 });
 
             modelBuilder.Entity("AuthService.Entities.UserRefreshTokenEntity", b =>

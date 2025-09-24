@@ -10,6 +10,7 @@ namespace AuthService.Entities
     public Guid Id { get; set; }
     [Required]
     [MaxLength(256)]
+    [EmailAddress]
     public string? Email { get; set; }
     [Required]
     public string? PasswordHash { get; set; }

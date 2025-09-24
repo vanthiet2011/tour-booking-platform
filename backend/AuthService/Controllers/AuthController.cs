@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using AuthService.Dtos;
 using AuthService.Entities;
 using AuthService.Enums;
@@ -77,17 +78,14 @@ namespace AuthService.Controllers
     [HttpGet("{id}")]
     public async Task<ActionResult<UserDto>> GetUserById(Guid id)
     {
-      var userIdFromToken = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-      var userRoleFromToken = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
-      if (userRoleFromToken != UserRole.Admin.ToString() && userIdFromToken != id.ToString())
-      {
-        return Forbid("You are not authorized to access this resource.");
-      }
+      var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      var role = User.FindFirst(ClaimTypes.Role)?.Value;
+      if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(role))
+        return Unauthorized("Invalid token");
+      if (role != UserRole.Admin.ToString() && userId != id.ToString())
+        return Forbid();
       var user = await _userRepository.GetUserByIdAsync(id);
-      if (user == null)
-      {
-        return NotFound("User not found");
-      }
+      if (user == null) return NotFound("User not found");
       return new UserDto
       {
         Id = user.Id,

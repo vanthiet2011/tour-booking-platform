@@ -2,6 +2,22 @@ services:
   #---------------------------------
   # INFRASTRUCTURE SERVICES
   #---------------------------------
+  gateway:
+    build:
+      context: ./backend/ApiGateway
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - auth-service
+      - user-service
+      - tour-service
+      - booking-service
+      - payment-service
+
   auth_db:
     image: postgres:14-alpine
     container_name: auth_db

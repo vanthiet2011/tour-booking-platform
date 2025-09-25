@@ -9,15 +9,10 @@ namespace UserService.Data
         public UserDbContext(DbContextOptions<UserDbContext> options) : base(options)
         {
         }
-
-        public DbSet<UserEntity> Users { get; set; }
+        public DbSet<UserProfileEntity> UserProfiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<UserEntity>()
-                .HasIndex(u => u.Email)
-                .IsUnique();
         }
     }
 }

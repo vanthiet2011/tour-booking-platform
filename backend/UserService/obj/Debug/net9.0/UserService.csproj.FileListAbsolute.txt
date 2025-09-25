@@ -400,3 +400,4 @@ D:\Projects\tour-booking-platform\backend\UserService\obj\Debug\net9.0\refint\Us
 D:\Projects\tour-booking-platform\backend\UserService\obj\Debug\net9.0\UserService.pdb
 D:\Projects\tour-booking-platform\backend\UserService\obj\Debug\net9.0\UserService.genruntimeconfig.cache
 D:\Projects\tour-booking-platform\backend\UserService\obj\Debug\net9.0\ref\UserService.dll
+D:\Projects\tour-booking-platform\backend\UserService\bin\Debug\net9.0\BCrypt.Net-Next.dll

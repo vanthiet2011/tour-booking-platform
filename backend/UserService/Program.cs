@@ -19,7 +19,7 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 // Đăng ký Repository
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 
 var app = builder.Build();
 

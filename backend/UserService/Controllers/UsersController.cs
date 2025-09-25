@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Security.Claims;
 using UserService.Dtos;
 using UserService.Entities;
 using UserService.Enums;
@@ -11,94 +13,35 @@ namespace UserService.Controllers
   [Route("api/[controller]")]
   public class UsersController : ControllerBase
   {
-    private readonly IUserRepository _userRepository;
-    public UsersController(IUserRepository userRepository)
+    private readonly IUserProfileRepository _userProfileRepository;
+    public UsersController(IUserProfileRepository userProfileRepository)
     {
-      _userRepository = userRepository;
-    }
-    // POST: api/users
-    [HttpPost]
-    public async Task<ActionResult> CreateUser([FromBody] CreateUserDto createUserDto)
-    {
-      if (await _userRepository.GetUserByEmailAsync(createUserDto.Email!) != null)
-      {
-        return Conflict("Email already exists");
-      }
-      var user = new UserEntity
-      {
-        Id = Guid.NewGuid(),
-        Email = createUserDto.Email,
-        PasswordHash = createUserDto.PasswordHash,
-        Name = createUserDto.Name,
-        Role = Enum.Parse<UserRole>(createUserDto.Role!),
-        CreatedAt = DateTime.UtcNow
-      };
-      await _userRepository.CreateUserAsync(user);
-      var userToReturn = new
-      {
-        user.Id,
-        user.Email,
-        user.Name,
-        user.Role,
-      };
-      return CreatedAtAction(nameof(GetUserById), new { id = user.Id }, userToReturn);
+      _userProfileRepository = userProfileRepository;
     }
 
-    // GET: api/Users/{id}
-    [HttpGet("{id}")]
-    public async Task<ActionResult<UserDto>> GetUserById(Guid id)
+    // PUT /api/users/me
+    [HttpPut("me")]
+    [Authorize]
+    public async Task<IActionResult> UpdateMyProfile([FromBody] UpdateProfileDto updateDto)
     {
-      var user = await _userRepository.GetUserByIdAsync(id);
-      if (user == null)
+      var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      if (string.IsNullOrEmpty(userIdString))
       {
-        return NotFound("User not found");
+          return Unauthorized("Invalid token.");
       }
-      var userDto = new UserDto
+      var userId = Guid.Parse(userIdString);
+      var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+      if (userProfile == null)
       {
-        Id = user.Id,
-        Email = user.Email,
-        Name = user.Name,
-        Role = user.Role
-      };
-      return userDto;
-    }
-
-    // GET: api/Users/byemail/{email}
-    [HttpGet("byemail/{email}")]
-    public async Task<ActionResult<UserDto>> GetUserByEmail(string email)
-    {
-      var user = await _userRepository.GetUserByEmailAsync(email);
-      if (user == null)
-      {
-        return NotFound("User not found");
+          return NotFound("User profile not found.");
       }
-      var userDto = new UserDto
-      {
-        Id = user.Id,
-        Email = user.Email,
-        Name = user.Name,
-        Role = user.Role
-      };
-      return userDto;
-    }
-
-    // POST: api/Users/login
-    [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login([FromBody] LoginDto loginDto)
-    {
-      var user = await _userRepository.GetUserByEmailAsync(loginDto.Email!);
-      if (user == null || !BCrypt.Net.BCrypt.Verify(loginDto.Password, user.PasswordHash!))
-      {
-        return Unauthorized("Invalid credentials");
-      }
-      var userDto = new UserDto
-      {
-        Id = user.Id,
-        Email = user.Email,
-        Name = user.Name,
-        Role = user.Role
-      };
-      return userDto;
+      userProfile.FullName = updateDto.FullName;
+      userProfile.PhoneNumber = updateDto.PhoneNumber;
+      userProfile.Address = updateDto.Address;
+      userProfile.AvatarUrl = updateDto.AvatarUrl;
+      userProfile.Gender = updateDto.Gender;
+      await _userProfileRepository.UpdateUserProfileAsync(userProfile);
+      return Ok("Profile updated successfully.");
     }
   }
 }

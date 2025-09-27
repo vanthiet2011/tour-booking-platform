@@ -27,13 +27,13 @@ namespace UserService.Controllers
       var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
       if (string.IsNullOrEmpty(userIdString))
       {
-          return Unauthorized("Invalid token.");
+        return Unauthorized("Invalid token.");
       }
       var userId = Guid.Parse(userIdString);
       var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
       if (userProfile == null)
       {
-          return NotFound("User profile not found.");
+        return NotFound("User profile not found.");
       }
       userProfile.FullName = updateDto.FullName;
       userProfile.PhoneNumber = updateDto.PhoneNumber;
@@ -42,6 +42,22 @@ namespace UserService.Controllers
       userProfile.Gender = updateDto.Gender;
       await _userProfileRepository.UpdateUserProfileAsync(userProfile);
       return Ok("Profile updated successfully.");
+    }
+    
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> GetMyProfile()
+    {
+      var userIdString = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      if (string.IsNullOrEmpty(userIdString))
+          return Unauthorized("Invalid token.");
+
+      var userId = Guid.Parse(userIdString);
+      var userProfile = await _userProfileRepository.GetUserProfileByIdAsync(userId);
+      if (userProfile == null)
+          return NotFound("User profile not found.");
+
+      return Ok(userProfile);
     }
   }
 }

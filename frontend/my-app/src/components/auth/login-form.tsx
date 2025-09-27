@@ -1,41 +1,45 @@
 "use client";
 
-import type React from "react";
-
-import { useState } from "react";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export function LoginForm() {
+  const router = useRouter();
+  const { login } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+
     try {
       const response = await fetch("http://localhost:5001/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-      if (!response.ok) {
-        throw new Error("Invalid email or password");
-      }
+
+      if (!response.ok) throw new Error("Invalid email or password");
+
       const data = await response.json();
+
+      // Lưu token
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
       console.log("Login success:", data);
 
-      // Lưu token để dùng cho các request sau
-      localStorage.setItem("token", data.token);
+      // ✅ Cập nhật user trong context
+      login(data.user, data.accessToken);
 
-      // Ví dụ: chuyển hướng sang dashboard
-      window.location.href = "/dashboard";
+      router.push("/");
     } catch (error: any) {
       console.error("Login failed:", error);
       alert("Login failed: " + error.message);
@@ -45,14 +49,12 @@ export function LoginForm() {
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email" className="text-sm font-medium text-foreground">
           Email Address
@@ -72,6 +74,7 @@ export function LoginForm() {
         </div>
       </div>
 
+      {/* Password */}
       <div className="space-y-2">
         <Label
           htmlFor="password"
@@ -105,6 +108,7 @@ export function LoginForm() {
         </div>
       </div>
 
+      {/* Remember + Forgot */}
       <div className="flex items-center justify-between text-sm">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" className="rounded border-border" />
@@ -118,6 +122,7 @@ export function LoginForm() {
         </a>
       </div>
 
+      {/* Submit */}
       <Button
         type="submit"
         disabled={isLoading}
@@ -126,6 +131,7 @@ export function LoginForm() {
         {isLoading ? "Signing In..." : "Sign In"}
       </Button>
 
+      {/* Divider */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-border" />
@@ -137,8 +143,10 @@ export function LoginForm() {
         </div>
       </div>
 
+      {/* Social login */}
       <div className="grid grid-cols-2 gap-3">
         <Button variant="outline" type="button" className="h-12 bg-transparent">
+          {/* Google */}
           <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
             <path
               fill="currentColor"
@@ -159,7 +167,9 @@ export function LoginForm() {
           </svg>
           Google
         </Button>
+
         <Button variant="outline" type="button" className="h-12 bg-transparent">
+          {/* Facebook */}
           <svg className="h-4 w-4 mr-2" fill="currentColor" viewBox="0 0 24 24">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
           </svg>

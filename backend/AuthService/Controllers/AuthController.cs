@@ -23,18 +23,18 @@ namespace AuthService.Controllers
 
     // POST: api/auth/register
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterDto registerDto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto regisDto)
     {
-      var existingUser = await _userRepository.GetUserByEmailAsync(registerDto.Email!);
+      var existingUser = await _userRepository.GetUserByEmailAsync(regisDto.Email!);
       if (existingUser != null)
       {
         return Conflict("Email already exists");
       }
-      var hashedPassword = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
+      var hashedPassword = BCrypt.Net.BCrypt.HashPassword(regisDto.Password);
       var user = new UserEntity
       {
         Id = Guid.NewGuid(),
-        Email = registerDto.Email,
+        Email = regisDto.Email,
         PasswordHash = hashedPassword,
         Role = UserRole.Customer,
         CreatedAt = DateTime.UtcNow
@@ -51,7 +51,7 @@ namespace AuthService.Controllers
 
     // POST: api/auth/login
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginDto loginDto)
+    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
       var user = await _userRepository.GetUserByEmailAsync(loginDto.Email!);
       if (user == null)
@@ -92,6 +92,28 @@ namespace AuthService.Controllers
         Email = user.Email,
         Role = user.Role
       };
+    }
+    
+    // GET: api/auth/me
+    [Authorize]
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDto>> GetCurrentUser()
+    {
+        // Lấy userId từ claim trong JWT
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return Unauthorized("Invalid token");
+
+        var user = await _userRepository.GetUserByIdAsync(Guid.Parse(userId));
+        if (user == null)
+            return NotFound("User not found");
+
+        return new UserDto
+        {
+            Id = user.Id,
+            Email = user.Email,
+            Role = user.Role
+        };
     }
   }
 

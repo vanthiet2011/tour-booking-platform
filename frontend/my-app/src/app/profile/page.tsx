@@ -26,6 +26,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { User, Camera } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext"; // Import useAuth để xử lý logout
 
 const profileSchema = z.object({
   fullName: z.string().min(1, "Họ tên không được để trống"),
@@ -48,7 +49,7 @@ interface Profile {
 export default function ProfilePage() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [user, setUser] = useState<Profile | null>(null);
+  const { user, logout } = useAuth(); // Lấy user và hàm logout từ context
   const router = useRouter();
   const { toast } = useToast();
 
@@ -74,15 +75,18 @@ export default function ProfilePage() {
       }
 
       try {
-        const res = await fetch("http://localhost:5002/api/users/me", {
+        const res = await fetch("http://localhost:8000/users/me", {
+          method: "GET",
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        if (!res.ok) throw new Error("Không thể tải hồ sơ");
+        if (!res.ok) {
+          const errorData = await res.text();
+          throw new Error(errorData || "Không thể tải hồ sơ");
+        }
 
         const data: Profile = await res.json();
         setProfile(data);
-        setUser(data);
         form.reset({
           fullName: data.fullName || "",
           phoneNumber: data.phoneNumber || "",
@@ -96,11 +100,19 @@ export default function ProfilePage() {
           description: err.message || "Không thể tải hồ sơ",
           variant: "destructive",
         });
+        // Nếu token hết hạn hoặc không hợp lệ, đăng xuất người dùng
+        if (
+          err.message.includes("401") ||
+          err.message.includes("Unauthorized")
+        ) {
+          logout();
+          router.push("/login");
+        }
       }
     };
 
     loadProfile();
-  }, [token, router, form, toast]);
+  }, [token, router, form, toast, logout]);
 
   // Submit form
   const handleSubmit = async (data: ProfileForm) => {
@@ -108,7 +120,7 @@ export default function ProfilePage() {
 
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:5002/api/users/me", {
+      const res = await fetch("http://localhost:8000/users/me", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -141,13 +153,13 @@ export default function ProfilePage() {
     }
   };
 
+  // Sử dụng hàm logout từ AuthContext để đồng bộ trạng thái
   const handleLogout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+    logout();
     router.push("/login");
   };
 
-  if (!user) {
+  if (!profile && !user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <h2 className="text-xl font-semibold">Đang tải...</h2>
@@ -156,7 +168,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-4 pt-24">
       <div className="max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold text-primary">Hồ sơ cá nhân</h1>

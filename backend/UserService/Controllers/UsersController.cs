@@ -18,7 +18,27 @@ namespace UserService.Controllers
     {
       _userProfileRepository = userProfileRepository;
     }
-
+    [HttpPost]
+    public async Task<IActionResult> CreateEmptyProfile([FromBody] CreateEmptyProfileDto createDto)
+    {
+      var existingProfile = await _userProfileRepository.GetUserProfileByIdAsync(createDto.Id);
+      if (existingProfile != null)
+      {
+        return Conflict("User profile already exists.");
+      }
+      var newProfile = new UserProfileEntity
+      {
+        Id = createDto.Id,
+        FullName = string.Empty,
+        PhoneNumber = string.Empty,
+        Address = string.Empty,
+        AvatarUrl = string.Empty,
+        Gender = Gender.Male,
+        CreateAt = DateTime.UtcNow
+      };
+      await _userProfileRepository.CreateUserProfileAsync(newProfile);
+      return CreatedAtAction(nameof(GetMyProfile), new { id = newProfile.Id }, newProfile);
+    }
     // PUT /api/users/me
     [HttpPut("me")]
     [Authorize]
@@ -40,6 +60,7 @@ namespace UserService.Controllers
       userProfile.Address = updateDto.Address;
       userProfile.AvatarUrl = updateDto.AvatarUrl;
       userProfile.Gender = updateDto.Gender;
+      userProfile.UpdateAt = DateTime.UtcNow;
       await _userProfileRepository.UpdateUserProfileAsync(userProfile);
       return Ok("Profile updated successfully.");
     }

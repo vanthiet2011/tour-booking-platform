@@ -1,5 +1,9 @@
+// src/components/Categories.tsx - NỘI DUNG ĐÃ SỬA LỖI
+
+"use client"; // Thêm dòng này để biến component thành Client Component
+
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -44,11 +48,13 @@ interface Profile {
   avatarUrl: string | null;
 }
 
+// Đổi tên component để phù hợp với chức năng (ví dụ: ProfileForm)
+// Lưu ý: Tên file là Categories.tsx nhưng nội dung lại là trang Profile, bạn nên đổi tên file thành `ProfilePage.tsx` hoặc tương tự cho dễ quản lý
 const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [user, setUser] = useState<any>(null);
-  const navigate = useNavigate();
+  const router = useRouter(); // ✅ Khởi tạo router
   const { toast } = useToast();
 
   const form = useForm<ProfileForm>({
@@ -61,13 +67,14 @@ const ProfilePage = () => {
     },
   });
 
-  const token = localStorage.getItem("token");
+  const token =
+    typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
   // Lấy thông tin user + profile
   useEffect(() => {
     const checkUserAndLoadProfile = async () => {
       if (!token) {
-        navigate("/auth");
+        router.push("/auth"); // ✅ Dùng router.push để điều hướng
         return;
       }
 
@@ -80,7 +87,7 @@ const ProfilePage = () => {
         });
 
         if (!resUser.ok) {
-          navigate("/auth");
+          router.push("/auth"); // ✅ Dùng router.push
           return;
         }
 
@@ -118,7 +125,7 @@ const ProfilePage = () => {
     };
 
     checkUserAndLoadProfile();
-  }, [navigate, token, form, toast]);
+  }, [router, token, form, toast]);
 
   // Submit cập nhật
   const handleSubmit = async (data: ProfileForm) => {
@@ -147,7 +154,7 @@ const ProfilePage = () => {
         description: "Cập nhật hồ sơ thành công",
       });
 
-      navigate("/");
+      router.push("/"); // ✅ Dùng router.push
     } catch (err) {
       console.error("Error updating profile:", err);
       toast({
@@ -173,7 +180,7 @@ const ProfilePage = () => {
       console.error("Logout error:", err);
     } finally {
       localStorage.removeItem("token");
-      navigate("/");
+      router.push("/"); // ✅ Dùng router.push
     }
   };
 
@@ -284,7 +291,7 @@ const ProfilePage = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate("/")}
+                  onClick={() => router.push("/")} // ✅ Dùng router.push
                   className="flex-1"
                 >
                   Quay lại trang chủ

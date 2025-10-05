@@ -34,6 +34,8 @@ services:
       context: ./backend/UserService
       dockerfile: Dockerfile
       target: dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
     volumes:
       - ./backend/UserService:/src
       - ~/.nuget/packages:/root/.nuget/packages:ro
@@ -41,14 +43,17 @@ services:
       - /src/obj
     command: dotnet watch run --project UserService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
 
-  # tour-service:
-  #   build:
-  #     context: ./backend/TourService
-  #     dockerfile: Dockerfile
-  #     target: dev
-  #   volumes:
-  #     - ./backend/TourService:/src
-  #     - ~/.nuget/packages:/root/.nuget/packages:ro
+  tour-service:
+    build:
+      context: ./backend/TourService
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/TourService:/src
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+      - /src/bin
+      - /src/obj
+    command: dotnet watch run --project TourService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
 
   # booking-service:
   #   build:

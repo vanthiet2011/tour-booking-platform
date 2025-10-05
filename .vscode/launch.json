@@ -33,6 +33,22 @@
       "sourceFileMap": {
         "/src": "${workspaceFolder}/backend/UserService"
       }
+    },
+    {
+      "name": "Attach to TourService (Hot Reload, Docker)",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}",
+      "pipeTransport": {
+        "pipeProgram": "docker",
+        "pipeArgs": ["exec", "-i", "tour-service"],
+        "debuggerPath": "/root/vsdbg/vsdbg",
+        "pipeCwd": "${workspaceFolder}",
+        "quoteArgs": false
+      },
+      "sourceFileMap": {
+        "/src": "${workspaceFolder}/backend/TourService"
+      }
     }
   ]
 }

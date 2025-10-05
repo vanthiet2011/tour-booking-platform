@@ -3,15 +3,23 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load ocelot.json
+// Đọc file ocelot.json
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-// Add Ocelot
+// Thêm dịch vụ CORS
+builder.Services.AddCors(); 
+
+// Thêm Ocelot
 builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
 
-// Middleware Ocelot
+app.UseCors(policy => policy
+    .WithOrigins("http://localhost:3000") // Chỉ định nguồn gốc được phép
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials());
+
 await app.UseOcelot();
 
 app.Run();

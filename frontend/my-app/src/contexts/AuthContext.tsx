@@ -1,6 +1,5 @@
-// src/contexts/AuthContext.tsx
 "use client";
-
+import Cookies from "js-cookie";
 import React, {
   createContext,
   useContext,
@@ -13,13 +12,14 @@ export interface ApiUser {
   id: string;
   name: string;
   email: string;
+  role: number;
 }
 
 interface AuthContextType {
   user: ApiUser | null;
   token: string | null;
-  login: (user: ApiUser, token: string) => void; // ✅ Thêm login
-  logout: () => void; // ✅ Thêm logout
+  login: (user: ApiUser, token: string) => void;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -27,42 +27,50 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ApiUser | null>(null);
   const [token, setToken] = useState<string | null>(
-    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null
+    () => Cookies.get("accessToken") || null
   );
 
-  // Nếu muốn load user từ token lúc đầu
   useEffect(() => {
-    const fetchUser = async () => {
-      if (!token) return;
+    const fetchUserOnLoad = async () => {
+      if (!token) {
+        setUser(null);
+        return;
+      }
       try {
-        const res = await fetch("http://localhost:5001/api/auth/me", {
+        const res = await fetch("http://localhost:8000/auth/me", {
           headers: { Authorization: `Bearer ${token}` },
         });
+
         if (res.ok) {
           const data = await res.json();
           setUser(data);
         } else {
+          console.error("Token is invalid or expired.");
           setUser(null);
-          localStorage.removeItem("accessToken");
+          Cookies.remove("accessToken");
         }
       } catch (err) {
-        console.error(err);
+        console.error("Failed to fetch user on load:", err);
         setUser(null);
+        Cookies.remove("accessToken");
       }
     };
-    fetchUser();
+
+    fetchUserOnLoad();
   }, [token]);
 
   const login = (user: ApiUser, token: string) => {
     setUser(user);
     setToken(token);
     localStorage.setItem("accessToken", token);
+    Cookies.set("accessToken", token, { expires: 7, path: "/" });
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("accessToken");
+    Cookies.remove("accessToken", { path: "/" });
   };
 
   return (

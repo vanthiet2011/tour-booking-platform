@@ -12,8 +12,8 @@ using TourService.Data;
 namespace TourService.Migrations
 {
     [DbContext(typeof(TourDbContext))]
-    [Migration("20250912152833_AddCorrectColumnAndConfiguration")]
-    partial class AddCorrectColumnAndConfiguration
+    [Migration("20250927172732_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,9 +25,42 @@ namespace TourService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TourService.Entities.DestinationEntity", b =>
+                {
+                    b.Property<Guid>("DestinationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ImageUrl")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<bool>("IsPopular")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Region")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("DestinationId");
+
+                    b.ToTable("Destinations");
+                });
+
             modelBuilder.Entity("TourService.Entities.ReviewEntity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ReviewId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
@@ -46,18 +79,36 @@ namespace TourService.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("ReviewId");
 
                     b.HasIndex("TourId");
 
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("TourService.Entities.TourDestinationEntity", b =>
+                {
+                    b.Property<Guid>("TourId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("DestinationId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("TourId", "DestinationId");
+
+                    b.HasIndex("DestinationId");
+
+                    b.ToTable("TourDestinations");
+                });
+
             modelBuilder.Entity("TourService.Entities.TourEntity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("TourId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -65,9 +116,8 @@ namespace TourService.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
-                    b.Property<string>("Location")
-                        .HasMaxLength(150)
-                        .HasColumnType("character varying(150)");
+                    b.Property<int>("Duration")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
@@ -77,25 +127,22 @@ namespace TourService.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.HasKey("Id");
+                    b.HasKey("TourId");
 
                     b.ToTable("Tours");
                 });
 
             modelBuilder.Entity("TourService.Entities.TourScheduleEntity", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<Guid>("ScheduleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("AvailableSeats")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("SeatsAvailable")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -103,7 +150,7 @@ namespace TourService.Migrations
                     b.Property<Guid>("TourId")
                         .HasColumnType("uuid");
 
-                    b.HasKey("Id");
+                    b.HasKey("ScheduleId");
 
                     b.HasIndex("TourId");
 
@@ -121,10 +168,29 @@ namespace TourService.Migrations
                     b.Navigation("Tour");
                 });
 
+            modelBuilder.Entity("TourService.Entities.TourDestinationEntity", b =>
+                {
+                    b.HasOne("TourService.Entities.DestinationEntity", "Destination")
+                        .WithMany("TourDestinations")
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TourService.Entities.TourEntity", "Tour")
+                        .WithMany("TourDestinations")
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Destination");
+
+                    b.Navigation("Tour");
+                });
+
             modelBuilder.Entity("TourService.Entities.TourScheduleEntity", b =>
                 {
                     b.HasOne("TourService.Entities.TourEntity", "Tour")
-                        .WithMany("Schedules")
+                        .WithMany("TourSchedules")
                         .HasForeignKey("TourId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -132,11 +198,18 @@ namespace TourService.Migrations
                     b.Navigation("Tour");
                 });
 
+            modelBuilder.Entity("TourService.Entities.DestinationEntity", b =>
+                {
+                    b.Navigation("TourDestinations");
+                });
+
             modelBuilder.Entity("TourService.Entities.TourEntity", b =>
                 {
                     b.Navigation("Reviews");
 
-                    b.Navigation("Schedules");
+                    b.Navigation("TourDestinations");
+
+                    b.Navigation("TourSchedules");
                 });
 #pragma warning restore 612, 618
         }

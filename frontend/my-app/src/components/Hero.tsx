@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, MapPin, Calendar, Users } from "lucide-react";
-import heroImage from "@/assets/hero-vietnam.jpg";
 
 const Hero = () => {
   return (
@@ -9,7 +8,7 @@ const Hero = () => {
       {/* Background Image */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroImage.src})` }}
+        style={{ backgroundImage: `url(/images/hero-vietnam.jpg)` }}
       >
         <div className="absolute inset-0 bg-black/30"></div>
       </div>

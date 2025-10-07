@@ -1,44 +1,57 @@
+// src/components/PopularDestinations.tsx
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Star, MapPin } from "lucide-react";
-import hoiAnImage from "@/assets/hoi-an.jpg";
-import phuQuocImage from "@/assets/phu-quoc.jpg";
-import sapaImage from "@/assets/sapa.jpg";
+import { MapPin } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Destination } from "@/lib/api";
 
-const destinations = [
-  {
-    id: 1,
-    name: "Hội An",
-    location: "Quảng Nam",
-    image: hoiAnImage,
-    rating: 4.8,
-    price: "1,200,000",
-    description: "Phố cổ với kiến trúc độc đáo và văn hóa đặc sắc",
-  },
-  {
-    id: 2,
-    name: "Phú Quốc",
-    location: "Kiên Giang",
-    image: phuQuocImage,
-    rating: 4.9,
-    price: "2,500,000",
-    description: "Đảo ngọc với bãi biển tuyệt đẹp và hải sản tươi ngon",
-  },
-  {
-    id: 3,
-    name: "Sapa",
-    location: "Lào Cai",
-    image: sapaImage,
-    rating: 4.7,
-    price: "1,800,000",
-    description: "Ruộng bậc thang và văn hóa dân tộc thiểu số",
-  },
-];
+interface PopularDestinationsProps {
+  destinations: Destination[];
+}
 
-const PopularDestinations = () => {
+export default function PopularDestinations({
+  destinations,
+}: PopularDestinationsProps) {
+  const topRowDestinations = destinations.slice(0, 2);
+  const bottomRowDestinations = destinations.slice(2, 5);
+
+  const renderDestinationCard = (destination: Destination, index: number) => (
+    <Link
+      href={`/destinations/${destination.destinationId}`}
+      passHref
+      key={destination.destinationId}
+    >
+      <Card className="group relative w-full h-full overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
+        <Image
+          src={destination.imageUrl || "/placeholder.svg"}
+          alt={destination.name}
+          fill
+          className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+          sizes="(max-width: 768px) 100vw, 50vw"
+          priority={index === 0}
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
+        <CardContent className="absolute bottom-0 left-0 p-6 w-full text-white">
+          <div className="flex items-center gap-2 text-sm opacity-80">
+            <MapPin className="h-4 w-4" />
+            <span>{destination.region}</span>
+          </div>
+          <h3 className="text-xl lg:text-2xl font-bold mt-1">
+            {destination.name}
+          </h3>
+          <p className="mt-2 text-sm opacity-90 line-clamp-2">
+            {destination.description}
+          </p>
+        </CardContent>
+      </Card>
+    </Link>
+  );
+
   return (
     <section className="py-20 bg-background">
-      <div className="container mx-auto px-4">
+      <div className="w-4/5 mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-foreground mb-4">
             Điểm đến <span className="text-primary">phổ biến</span>
@@ -48,67 +61,35 @@ const PopularDestinations = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {destinations.map((destination) => (
-            <Card
-              key={destination.id}
-              className="group overflow-hidden hover:shadow-travel transition-all duration-300 hover:-translate-y-2"
-            >
-              <div className="relative overflow-hidden">
-                <img
-                  src={
-                    typeof destination.image === "string"
-                      ? destination.image
-                      : destination.image.src
-                  }
-                  alt={destination.name}
-                  className="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1">
-                  <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                  <span className="text-sm font-medium">
-                    {destination.rating}
-                  </span>
-                </div>
-              </div>
-
-              <CardContent className="p-6">
-                <div className="flex items-center gap-2 text-muted-foreground mb-2">
-                  <MapPin className="h-4 w-4" />
-                  <span className="text-sm">{destination.location}</span>
-                </div>
-
-                <h3 className="text-xl font-bold text-foreground mb-2">
-                  {destination.name}
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  {destination.description}
-                </p>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-sm text-muted-foreground">Từ </span>
-                    <span className="text-lg font-bold text-primary">
-                      {destination.price}đ
-                    </span>
-                  </div>
-                  <Button variant="default" size="sm">
-                    Xem chi tiết
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+        {destinations && destinations.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {/* 🚀 Hàng trên: Giảm khoảng cách, đặt chiều cao cố định */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[300px]">
+              {topRowDestinations.map((dest, index) =>
+                renderDestinationCard(dest, index)
+              )}
+            </div>
+            {/* 🚀 Hàng dưới: Giảm khoảng cách, đặt chiều cao cố định */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[300px]">
+              {bottomRowDestinations.map((dest, index) =>
+                renderDestinationCard(dest, index + topRowDestinations.length)
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="text-center mt-12 text-muted-foreground">
+            <p>Hiện chưa có điểm đến phổ biến nào.</p>
+          </div>
+        )}
 
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
-            Xem tất cả điểm đến
-          </Button>
+          <Link href="/destinations" passHref>
+            <Button variant="outline" size="lg">
+              Xem tất cả điểm đến
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
   );
-};
-
-export default PopularDestinations;
+}

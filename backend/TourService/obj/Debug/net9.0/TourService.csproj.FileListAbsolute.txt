@@ -130,3 +130,15 @@ D:\Projects\tour-booking-platform\backend\TourService\obj\Debug\net9.0\refint\To
 D:\Projects\tour-booking-platform\backend\TourService\obj\Debug\net9.0\TourService.pdb
 D:\Projects\tour-booking-platform\backend\TourService\obj\Debug\net9.0\TourService.genruntimeconfig.cache
 D:\Projects\tour-booking-platform\backend\TourService\obj\Debug\net9.0\ref\TourService.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\TourService.staticwebassets.runtime.json
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.Logging.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll

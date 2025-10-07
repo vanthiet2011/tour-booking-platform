@@ -25,9 +25,16 @@ namespace TourService.Controllers
           var destinations = await _repository.GetAllAsync();
           return Ok(destinations);
       }
+      
+      [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularDestinations()
+        {
+            var popularDestinations = await _repository.GetPopularAsync(5);
+            return Ok(popularDestinations);
+        }
 
       // GET: api/destinations/{id}
-      [HttpGet("{id}")]
+        [HttpGet("{id}")]
       public async Task<IActionResult> GetDestinationById(Guid id)
       {
           var destination = await _repository.GetByIdAsync(id);

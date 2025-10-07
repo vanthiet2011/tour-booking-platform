@@ -1,0 +1,5 @@
+# .dockerignore
+
+# Bỏ qua các thư mục build của .NET
+**/bin
+**/obj

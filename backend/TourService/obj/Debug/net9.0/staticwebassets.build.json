@@ -1,12 +1,20 @@
 {
   "Version": 1,
-  "Hash": "r8i8Y1gG8QiRuxf/XdB6/+jDZbctrYp+/17YpuvvQw0=",
+  "Hash": "GdYllBeJV3UL6FiAcCPV7Vc+YJjr/Fuml7lTcd8Rtcs=",
   "Source": "TourService",
   "BasePath": "_content/TourService",
   "Mode": "Default",
   "ManifestType": "Build",
   "ReferencedProjectsConfiguration": [],
-  "DiscoveryPatterns": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "TourService\\wwwroot",
+      "Source": "TourService",
+      "ContentRoot": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\",
+      "BasePath": "_content/TourService",
+      "Pattern": "**"
+    }
+  ],
   "Assets": [],
   "Endpoints": []
 }

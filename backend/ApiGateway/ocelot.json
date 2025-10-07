@@ -22,11 +22,25 @@
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
     },
     {
-      "DownstreamPathTemplate": "/api/destinations/{everything}",
+      "UpstreamPathTemplate": "/api/destinations",
+      "UpstreamHttpMethod": ["GET", "POST"],
+      "DownstreamPathTemplate": "/api/destinations",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }],
-      "UpstreamPathTemplate": "/api/destinations/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/destinations/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/destinations/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/files/upload",
+      "UpstreamHttpMethod": ["POST"],
+      "DownstreamPathTemplate": "/api/files/upload",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     },
     {
       "DownstreamPathTemplate": "/api/bookings/{everything}",

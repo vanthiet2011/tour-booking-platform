@@ -1,9 +1,7 @@
-// Trong thư mục Controllers/ToursController.cs
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TourService.Dtos;
-using TourService.Entities;
-using TourService.Repositories;
+using TourService.Services;
 
 namespace TourService.Controllers
 {
@@ -11,26 +9,24 @@ namespace TourService.Controllers
     [Route("api/[controller]")]
     public class ToursController : ControllerBase
     {
-        private readonly ITourRepository _repository;
+        private readonly ITourService _tourService;
 
-        public ToursController(ITourRepository repository)
+        public ToursController(ITourService tourService)
         {
-            _repository = repository;
+            _tourService = tourService;
         }
 
-        // GET: api/tours
         [HttpGet]
         public async Task<IActionResult> GetAllTours()
         {
-            var tours = await _repository.GetAllAsync();
+            var tours = await _tourService.GetAllAsync();
             return Ok(tours);
         }
 
-        // GET: api/tours/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTourById(Guid id)
         {
-            var tour = await _repository.GetByIdAsync(id);
+            var tour = await _tourService.GetByIdAsync(id);
             if (tour == null)
             {
                 return NotFound();
@@ -38,83 +34,43 @@ namespace TourService.Controllers
             return Ok(tour);
         }
 
-        // POST: api/tours
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> CreateTour([FromBody] CreateTourDto dto)
+        public async Task<IActionResult> CreateTour([FromBody] CreateTourDto createTourDto)
         {
-            var newTour = new TourEntity
+            if (!ModelState.IsValid)
             {
-                TourId = Guid.NewGuid(),
-                Title = dto.Title,
-                Description = dto.Description,
-                Price = dto.Price,
-                Capacity = dto.Capacity,
-                Duration = dto.Duration,
-                CreatedAt = DateTime.UtcNow
-            };
-
-            // Thêm các điểm đến vào tour
-            foreach (var destId in dto.DestinationIds)
-            {
-                newTour.TourDestinations.Add(new TourDestinationEntity { DestinationId = destId });
+                return BadRequest(ModelState);
             }
-
-            // Thêm các lịch trình vào tour
-            foreach (var scheduleDto in dto.Schedules)
-            {
-                newTour.TourSchedules.Add(new TourScheduleEntity
-                {
-                    ScheduleId = Guid.NewGuid(),
-                    StartDate = scheduleDto.StartDate,
-                    EndDate = scheduleDto.EndDate,
-                    SeatsAvailable = scheduleDto.SeatsAvailable
-                });
-            }
-
-            await _repository.CreateAsync(newTour);
-            return CreatedAtAction(nameof(GetTourById), new { id = newTour.TourId }, newTour);
+            var newTour = await _tourService.CreateAsync(createTourDto);
+            return CreatedAtAction(nameof(GetTourById), new { id = newTour.Id }, newTour);
         }
 
-        // PUT: api/tours/{id}
         [HttpPut("{id}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateTour(Guid id, [FromBody] UpdateTourDto dto)
+        public async Task<IActionResult> UpdateTour(Guid id, [FromBody] UpdateTourDto updateTourDto)
         {
-            var existingTour = await _repository.GetByIdAsync(id);
-            if (existingTour == null)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var updatedTour = await _tourService.UpdateAsync(id, updateTourDto);
+            if (updatedTour == null)
             {
                 return NotFound();
             }
-
-            existingTour.Title = dto.Title;
-            existingTour.Description = dto.Description;
-            existingTour.Price = dto.Price;
-            existingTour.Capacity = dto.Capacity;
-            existingTour.Duration = dto.Duration;
-            
-            // Cập nhật lại danh sách điểm đến
-            existingTour.TourDestinations.Clear();
-            foreach (var destId in dto.DestinationIds)
-            {
-                existingTour.TourDestinations.Add(new TourDestinationEntity { DestinationId = destId, TourId = id });
-            }
-
-            await _repository.UpdateAsync(existingTour);
             return NoContent();
         }
 
-        // DELETE: api/tours/{id}
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTour(Guid id)
         {
-            var existingTour = await _repository.GetByIdAsync(id);
-            if (existingTour == null)
+            var success = await _tourService.DeleteAsync(id);
+            if (!success)
             {
                 return NotFound();
             }
-            await _repository.DeleteAsync(id);
             return NoContent();
         }
     }

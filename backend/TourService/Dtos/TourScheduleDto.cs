@@ -1,19 +1,18 @@
-// Trong thư mục Dtos/TourScheduleDto.cs
+// Dtos/TourScheduleDto.cs
+
 using System.ComponentModel.DataAnnotations;
 
 namespace TourService.Dtos
 {
     public class TourScheduleDto
     {
-        public Guid? ScheduleId { get; set; } // Nullable khi tạo mới
+        [Required]
+        public int DayNumber { get; set; }
 
         [Required]
-        public DateTime StartDate { get; set; }
+        [MaxLength(200)]
+        public string Title { get; set; } = string.Empty;
 
-        [Required]
-        public DateTime EndDate { get; set; }
-
-        [Required]
-        public int SeatsAvailable { get; set; }
+        public string? Description { get; set; }
     }
 }

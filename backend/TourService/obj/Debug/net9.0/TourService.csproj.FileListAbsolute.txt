@@ -142,3 +142,5 @@ D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft
 D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
 D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\Pipelines.Sockets.Unofficial.dll
+D:\Projects\tour-booking-platform\backend\TourService\bin\Debug\net9.0\StackExchange.Redis.dll

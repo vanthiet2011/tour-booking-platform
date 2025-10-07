@@ -1,3 +1,4 @@
+// Entities/TourScheduleEntity.cs
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,21 +8,20 @@ namespace TourService.Entities
     public class TourScheduleEntity
     {
         [Key]
-        public Guid ScheduleId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         public Guid TourId { get; set; }
+        public TourEntity Tour { get; set; } = null!;
 
         [Required]
-        public DateTime StartDate { get; set; }
+        public int DayNumber { get; set; }
 
         [Required]
-        public DateTime EndDate { get; set; }
+        [MaxLength(200)]
+        public string Title { get; set; } = string.Empty;
 
-        public int SeatsAvailable { get; set; }
-
-        // Navigation property to the parent Tour
-        [ForeignKey("TourId")]
-        public TourEntity? Tour { get; set; }
+        [Column(TypeName = "text")]
+        public string? Description { get; set; }
     }
 }

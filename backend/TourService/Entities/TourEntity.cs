@@ -1,3 +1,4 @@
+// Entities/TourEntity.cs
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,11 +8,11 @@ namespace TourService.Entities
     public class TourEntity
     {
         [Key]
-        public Guid TourId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(200)]
-        public string? Title { get; set; }
+        public string Name { get; set; } = string.Empty; // Sửa từ Title
 
         [Column(TypeName = "text")]
         public string? Description { get; set; }
@@ -20,17 +21,21 @@ namespace TourService.Entities
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Price { get; set; }
 
+        [MaxLength(256)]
+        public string? ImageUrl { get; set; }
+
+        [MaxLength(50)]
+        public string? Duration { get; set; }
+
+        public bool IsBestseller { get; set; } = false;
+
+        [Required]
         public int Capacity { get; set; }
 
-        public int Duration { get; set; } // Duration in days
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
         public ICollection<ReviewEntity> Reviews { get; set; } = new List<ReviewEntity>();
-
-        // Navigation property for the many-to-many relationship
         public ICollection<TourDestinationEntity> TourDestinations { get; set; } = new List<TourDestinationEntity>();
-
-        // Navigation property for the one-to-many relationship
         public ICollection<TourScheduleEntity> TourSchedules { get; set; } = new List<TourScheduleEntity>();
     }
 }

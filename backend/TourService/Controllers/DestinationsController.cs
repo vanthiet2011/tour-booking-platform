@@ -52,7 +52,7 @@ namespace TourService.Controllers
       {
           var newDestination = new DestinationEntity
           {
-              DestinationId = Guid.NewGuid(),
+              Id = Guid.NewGuid(),
               Name = dto.Name,
               Description = dto.Description,
               ImageUrl = dto.ImageUrl,
@@ -62,7 +62,7 @@ namespace TourService.Controllers
           };
 
           await _repository.CreateAsync(newDestination);
-          return CreatedAtAction(nameof(GetDestinationById), new { id = newDestination.DestinationId }, newDestination);
+          return CreatedAtAction(nameof(GetDestinationById), new { id = newDestination.Id }, newDestination);
       }
 
       // PUT: api/destinations/{id}

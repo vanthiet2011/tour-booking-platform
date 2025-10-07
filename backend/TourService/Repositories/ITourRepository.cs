@@ -1,4 +1,3 @@
-// Trong thư mục Repositories/ITourRepository.cs
 using TourService.Entities;
 
 namespace TourService.Repositories
@@ -7,8 +6,8 @@ namespace TourService.Repositories
     {
         Task<IEnumerable<TourEntity>> GetAllAsync();
         Task<TourEntity?> GetByIdAsync(Guid id);
-        Task CreateAsync(TourEntity tour);
-        Task UpdateAsync(TourEntity tour);
-        Task DeleteAsync(Guid id);
+        Task<TourEntity> CreateAsync(TourEntity tour);
+        Task<TourEntity> UpdateAsync(TourEntity tour);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

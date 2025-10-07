@@ -1,12 +1,12 @@
-// src/lib/api.ts
 import Cookies from "js-cookie";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-// --- Hàm Helper được cập nhật để an toàn về kiểu dữ liệu ---
+// --- Hàm Helper để tự động đính kèm Token ---
 async function fetchWithAuth(url: string, options: RequestInit = {}) {
   const token = Cookies.get("accessToken");
   const headers = new Headers(options.headers);
+
   if (options.body && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
@@ -15,7 +15,6 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
     headers.set("Authorization", `Bearer ${token}`);
   }
 
-  // 3. Gửi yêu cầu với đối tượng headers đã được chuẩn hóa
   const response = await fetch(`${API_BASE_URL}${url}`, {
     ...options,
     headers,
@@ -32,31 +31,27 @@ async function fetchWithAuth(url: string, options: RequestInit = {}) {
     }
   }
 
-  // Nếu response có thể không có body (ví dụ: 204 No Content)
   const contentType = response.headers.get("content-type");
   if (contentType && contentType.includes("application/json")) {
     return response.json();
   }
-  // Trả về null hoặc một đối tượng trống nếu không có JSON body
   return null;
 }
 
+// --- Auth ---
 export const loginUser = async (credentials: any) => {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(credentials),
   });
-
-  if (!response.ok) {
-    throw new Error("Email hoặc mật khẩu không hợp lệ");
-  }
-
+  if (!response.ok) throw new Error("Email hoặc mật khẩu không hợp lệ");
   return response.json();
 };
 
+// --- Destinations ---
 export interface Destination {
-  destinationId: string;
+  id: string; // Đã đồng bộ thành 'id'
   name: string;
   description?: string;
   imageUrl?: string;
@@ -64,6 +59,7 @@ export interface Destination {
   isPopular: boolean;
   createdAt: string;
 }
+
 export interface CreateDestinationPayload {
   name: string;
   description?: string;
@@ -75,22 +71,20 @@ export interface CreateDestinationPayload {
 export interface UpdateDestinationPayload extends CreateDestinationPayload {}
 
 export const getDestinations = async (): Promise<Destination[]> => {
-  return fetchWithAuth("/api/destinations", {
-    method: "GET",
-  });
+  return fetchWithAuth("/api/destinations");
 };
 
 export const getPopularDestinations = async (): Promise<Destination[]> => {
   const response = await fetch(`${API_BASE_URL}/api/destinations/popular`, {
     next: { revalidate: 60 },
   });
-  if (!response.ok) {
-    return [];
-  }
+  if (!response.ok) return [];
   return response.json();
 };
 
-export const createDestination = async (data: CreateDestinationPayload) => {
+export const createDestination = async (
+  data: CreateDestinationPayload
+): Promise<Destination> => {
   return fetchWithAuth("/api/destinations", {
     method: "POST",
     body: JSON.stringify(data),
@@ -108,7 +102,64 @@ export const updateDestination = async (
 };
 
 export const deleteDestination = async (id: string): Promise<void> => {
-  return fetchWithAuth(`/api/destinations/${id}`, {
-    method: "DELETE",
+  return fetchWithAuth(`/api/destinations/${id}`, { method: "DELETE" });
+};
+
+// --- Tours ---
+export interface TourSchedule {
+  id: string;
+  dayNumber: number;
+  title: string;
+  description?: string;
+}
+export interface Tour {
+  id: string; // Đã đồng bộ thành 'id'
+  name: string;
+  description?: string;
+  price: number;
+  capacity: number;
+  duration?: string;
+  isBestseller: boolean;
+  imageUrl?: string;
+  tourDestinations: { destination: { id: string; name: string } }[];
+  tourSchedules: TourSchedule[];
+}
+
+export interface CreateTourPayload {
+  name: string;
+  description?: string;
+  price: number;
+  capacity: number;
+  duration?: string;
+  isBestseller: boolean;
+  imageUrl?: string;
+  destinationIds: string[];
+  schedules: { dayNumber: number; title: string; description?: string }[];
+}
+
+export interface UpdateTourPayload extends CreateTourPayload {}
+
+export const getTours = async (): Promise<Tour[]> => {
+  return fetchWithAuth("/api/tours");
+};
+
+export const createTour = async (data: CreateTourPayload): Promise<Tour> => {
+  return fetchWithAuth("/api/tours", {
+    method: "POST",
+    body: JSON.stringify(data),
   });
+};
+
+export const updateTour = async (
+  id: string,
+  data: UpdateTourPayload
+): Promise<void> => {
+  return fetchWithAuth(`/api/tours/${id}`, {
+    method: "PUT",
+    body: JSON.stringify(data),
+  });
+};
+
+export const deleteTour = async (id: string): Promise<void> => {
+  return fetchWithAuth(`/api/tours/${id}`, { method: "DELETE" });
 };

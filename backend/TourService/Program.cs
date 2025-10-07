@@ -1,6 +1,7 @@
 // TourService/Program.cs
 
 using System.Text;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +9,7 @@ using Microsoft.OpenApi.Models;
 using StackExchange.Redis;
 using TourService.Data;
 using TourService.Repositories;
+using TourService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -23,6 +25,7 @@ builder.Services.AddDbContext<TourDbContext>(options =>
 
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
 builder.Services.AddScoped<ITourRepository, TourRepository>();
+builder.Services.AddScoped<ITourService, TourService.Services.TourService>();
 
 // 2. Cấu hình Authentication
 builder.Services.AddAuthentication(options =>
@@ -46,7 +49,11 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 // 3. Cấu hình Swagger để hỗ trợ JWT

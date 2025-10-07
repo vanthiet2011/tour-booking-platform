@@ -15,11 +15,18 @@
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
     },
     {
-      "DownstreamPathTemplate": "/api/tours/{everything}",
+      "UpstreamPathTemplate": "/api/tours",
+      "UpstreamHttpMethod": ["GET", "POST"],
+      "DownstreamPathTemplate": "/api/tours",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }],
-      "UpstreamPathTemplate": "/tours/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/tours/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/tours/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/api/destinations",

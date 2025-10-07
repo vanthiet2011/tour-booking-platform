@@ -7,7 +7,7 @@ namespace TourService.Entities
     public class DestinationEntity
     {
         [Key]
-        public Guid DestinationId { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [MaxLength(100)]

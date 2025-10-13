@@ -38,10 +38,21 @@ namespace TourService.Data
           .HasForeignKey(ts => ts.TourId);
       // Cấu hình mối quan hệ một-nhiều giữa Tour và Review
       modelBuilder.Entity<TourEntity>()
-              .HasMany(t => t.Reviews)
-              .WithOne(r => r.Tour)
-              .HasForeignKey(r => r.TourId);
+          .HasMany(t => t.Reviews)
+          .WithOne(r => r.Tour)
+          .HasForeignKey(r => r.TourId);
+      
+      modelBuilder.Entity<TourEntity>()
+          .Property(t => t.Highlights)
+          .HasColumnType("jsonb");
 
+      modelBuilder.Entity<TourEntity>()
+          .Property(t => t.GalleryImages)
+          .HasColumnType("jsonb");
+
+      modelBuilder.Entity<TourEntity>()
+          .Property(t => t.Inclusions)
+          .HasColumnType("jsonb");
     }
   }
 }

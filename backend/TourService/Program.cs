@@ -4,8 +4,10 @@ using System.Text;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Npgsql;
 using StackExchange.Redis;
 using TourService.Data;
 using TourService.Repositories;
@@ -17,10 +19,13 @@ var configuration = builder.Configuration;
 // --- Cấu hình Services ---
 
 // 1. Kết nối DB và Repositories
-var connectionString = builder.Configuration.GetConnectionString("Default");
+var connectionString = configuration.GetConnectionString("Default");
+var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
+dataSourceBuilder.EnableDynamicJson(); // Kích hoạt tính năng JSON
+var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<TourDbContext>(options =>
 {
-    options.UseNpgsql(connectionString);
+    options.UseNpgsql(dataSource);
 });
 
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
@@ -103,7 +108,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TourService API v1"));
 }
 
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot")
+    ),
+    RequestPath = ""
+});
+
+// Cấu hình static riêng cho /uploads
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads")
+    ),
+    RequestPath = "/uploads"
+});
 
 
 app.UseAuthentication();

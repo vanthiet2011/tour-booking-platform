@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "GdYllBeJV3UL6FiAcCPV7Vc+YJjr/Fuml7lTcd8Rtcs=",
+  "Hash": "qoKCZ+somGxoee9TwzwTy6e+FVxBK3+2ST5lJHWjDFQ=",
   "Source": "TourService",
   "BasePath": "_content/TourService",
   "Mode": "Default",
@@ -15,6 +15,317 @@
       "Pattern": "**"
     }
   ],
-  "Assets": [],
-  "Endpoints": []
+  "Assets": [
+    {
+      "Identity": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\3d666387-80af-4662-96dd-9410215c42bc.jpg",
+      "SourceId": "TourService",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\",
+      "BasePath": "_content/TourService",
+      "RelativePath": "uploads/3d666387-80af-4662-96dd-9410215c42bc#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "pi3sxrvbj8",
+      "Integrity": "L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\3d666387-80af-4662-96dd-9410215c42bc.jpg"
+    },
+    {
+      "Identity": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg",
+      "SourceId": "TourService",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\",
+      "BasePath": "_content/TourService",
+      "RelativePath": "uploads/b1fde7de-b69d-4a4c-8e0c-d222204580e7#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "pi3sxrvbj8",
+      "Integrity": "L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg"
+    },
+    {
+      "Identity": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\dcdd35dc-92d9-4674-a415-e404e2743851.jpg",
+      "SourceId": "TourService",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\",
+      "BasePath": "_content/TourService",
+      "RelativePath": "uploads/dcdd35dc-92d9-4674-a415-e404e2743851#[.{fingerprint}]?.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "Fingerprint": "3jxibyz6ua",
+      "Integrity": "wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE=",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\uploads\\dcdd35dc-92d9-4674-a415-e404e2743851.jpg"
+    }
+  ],
+  "Endpoints": [
+    {
+      "Route": "uploads/3d666387-80af-4662-96dd-9410215c42bc.jpg",
+      "AssetFile": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\3d666387-80af-4662-96dd-9410215c42bc.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1145846"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 08 Oct 2025 15:22:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/3d666387-80af-4662-96dd-9410215c42bc.pi3sxrvbj8.jpg",
+      "AssetFile": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\3d666387-80af-4662-96dd-9410215c42bc.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1145846"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 08 Oct 2025 15:22:17 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "pi3sxrvbj8"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/3d666387-80af-4662-96dd-9410215c42bc.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg",
+      "AssetFile": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1145846"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 08 Oct 2025 15:25:47 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/b1fde7de-b69d-4a4c-8e0c-d222204580e7.pi3sxrvbj8.jpg",
+      "AssetFile": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1145846"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Wed, 08 Oct 2025 15:25:47 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "pi3sxrvbj8"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/dcdd35dc-92d9-4674-a415-e404e2743851.3jxibyz6ua.jpg",
+      "AssetFile": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\dcdd35dc-92d9-4674-a415-e404e2743851.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "15922215"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 07 Oct 2025 16:01:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "3jxibyz6ua"
+        },
+        {
+          "Name": "label",
+          "Value": "uploads/dcdd35dc-92d9-4674-a415-e404e2743851.jpg"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE="
+        }
+      ]
+    },
+    {
+      "Route": "uploads/dcdd35dc-92d9-4674-a415-e404e2743851.jpg",
+      "AssetFile": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\dcdd35dc-92d9-4674-a415-e404e2743851.jpg",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "15922215"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "image/jpeg"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Tue, 07 Oct 2025 16:01:45 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=3600, must-revalidate"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "integrity",
+          "Value": "sha256-wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE="
+        }
+      ]
+    }
+  ]
 }

@@ -19,27 +19,35 @@ namespace TourService.Services
 
     public Task<TourEntity?> GetByIdAsync(Guid id)
     {
-        return _tourRepository.GetByIdAsync(id);
+      return _tourRepository.GetByIdAsync(id);
+    }
+    
+    public async Task<IEnumerable<TourEntity>> GetByDestinationIdAsync(Guid destinationId)
+    {
+      return await _tourRepository.GetByDestinationIdAsync(destinationId);
     }
 
     public Task<TourEntity> CreateAsync(CreateTourDto createTourDto)
     {
-        var tourEntity = new TourEntity
-        {
-            Name = createTourDto.Name,
-            Description = createTourDto.Description,
-            Price = createTourDto.Price,
-            Capacity = createTourDto.Capacity,
-            Duration = createTourDto.Duration,
-            ImageUrl = createTourDto.ImageUrl,
-            IsBestseller = createTourDto.IsBestseller,
-            TourDestinations = createTourDto.DestinationIds
-                .Select(destId => new TourDestinationEntity { DestinationId = destId }).ToList(),
-            TourSchedules = createTourDto.Schedules
-                .Select(s => new TourScheduleEntity { DayNumber = s.DayNumber, Title = s.Title, Description = s.Description }).ToList()
-        };
+      var tourEntity = new TourEntity
+      {
+        Name = createTourDto.Name,
+        Description = createTourDto.Description,
+        Price = createTourDto.Price,
+        Capacity = createTourDto.Capacity,
+        Duration = createTourDto.Duration,
+        ImageUrl = createTourDto.ImageUrl,
+        IsBestseller = createTourDto.IsBestseller,
+        Highlights = createTourDto.Highlights,
+        GalleryImages = createTourDto.GalleryImages,
+        Inclusions = createTourDto.Inclusions,
+        TourDestinations = createTourDto.DestinationIds
+              .Select(destId => new TourDestinationEntity { DestinationId = destId }).ToList(),
+        TourSchedules = createTourDto.Schedules
+              .Select(s => new TourScheduleEntity { DayNumber = s.DayNumber, Title = s.Title, Description = s.Description }).ToList()
+      };
 
-        return _tourRepository.CreateAsync(tourEntity);
+      return _tourRepository.CreateAsync(tourEntity);
     }
     
     public async Task<TourEntity?> UpdateAsync(Guid id, UpdateTourDto updateTourDto)
@@ -57,6 +65,9 @@ namespace TourService.Services
             Duration = updateTourDto.Duration,
             ImageUrl = updateTourDto.ImageUrl,
             IsBestseller = updateTourDto.IsBestseller,
+            Highlights = updateTourDto.Highlights,
+            GalleryImages = updateTourDto.GalleryImages,
+            Inclusions = updateTourDto.Inclusions,
             TourDestinations = updateTourDto.DestinationIds
                 .Select(destId => new TourDestinationEntity { TourId=id, DestinationId = destId }).ToList(),
             TourSchedules = updateTourDto.Schedules

@@ -1,17 +1,27 @@
+// BookingService/Entities/BookingDetailEntity.cs
+using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using BookingService.Enums;
 
 namespace BookingService.Entities
 {
     public class BookingDetailEntity
     {
+        [Key]
         public Guid Id { get; set; }
-        public Guid BookingId { get; set; }
-        public BookingEntity? Booking { get; set; }
 
         [Required]
-        [MaxLength(100)]
-        public string? TravelerName { get; set; }
+        public Guid BookingId { get; set; }
+        [Required]
+        [MaxLength(50)]
+        public ParticipantType ParticipantType { get; set; }
 
-        public DateTime TravelerDOB { get; set; } // Ngày sinh của khách
+        [Required]
+        public int Quantity { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal UnitPrice { get; set; }
     }
 }

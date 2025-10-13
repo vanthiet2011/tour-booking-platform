@@ -16,10 +16,13 @@ namespace BookingService.Data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
-      modelBuilder.Entity<BookingEntity>().HasMany(b => b.Details)
-        .WithOne(d => d.Booking)
-        .HasForeignKey(d => d.BookingId)
-        .OnDelete(DeleteBehavior.Cascade);
+      modelBuilder.Entity<BookingEntity>()
+          .Property(b => b.Status)
+          .HasConversion<string>();
+          
+      modelBuilder.Entity<BookingDetailEntity>()
+          .Property(bd => bd.ParticipantType)
+          .HasConversion<string>();
     }
   }
 }

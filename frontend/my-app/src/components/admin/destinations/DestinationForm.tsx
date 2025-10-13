@@ -141,7 +141,7 @@ export function DestinationForm({
         imageUrl: imageUrl,
       };
       if (isEditing && destination) {
-        await updateDestination(destination.destinationId, payload);
+        await updateDestination(destination.id, payload);
       } else {
         await createDestination(payload);
       }

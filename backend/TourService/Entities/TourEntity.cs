@@ -1,6 +1,7 @@
 // Entities/TourEntity.cs
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using TourService.Models;
 
 namespace TourService.Entities
 {
@@ -19,7 +20,11 @@ namespace TourService.Entities
 
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
-        public decimal Price { get; set; }
+        public decimal PricePerAdult { get; set; }
+
+        [Required]
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal PricePerChild { get; set; }
 
         [MaxLength(256)]
         public string? ImageUrl { get; set; }
@@ -29,10 +34,10 @@ namespace TourService.Entities
 
         public bool IsBestseller { get; set; } = false;
 
-        [Required]
-        public int Capacity { get; set; }
-
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public List<string> Highlights { get; set; } = new();
+        public List<string> GalleryImages { get; set; } = new();
+        public Inclusions? Inclusions { get; set; }
         
         public ICollection<ReviewEntity> Reviews { get; set; } = new List<ReviewEntity>();
         public ICollection<TourDestinationEntity> TourDestinations { get; set; } = new List<TourDestinationEntity>();

@@ -4,7 +4,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { MapPin, Menu, X, User, ShieldCheck } from "lucide-react";
+import {
+  Compass,
+  Plane,
+  Hotel,
+  MapPin,
+  Menu,
+  X,
+  User,
+  ShieldCheck,
+} from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Header = () => {
@@ -31,53 +40,41 @@ const Header = () => {
     }
   };
 
+  const navItems = [
+    { name: "Điểm đến", href: "/destinations", icon: MapPin },
+    { name: "Tour", href: "/tours", icon: Compass },
+    { name: "Vé máy bay", href: "/flights", icon: Plane },
+    { name: "Khách sạn", href: "/hotels", icon: Hotel },
+  ];
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-soft">
+    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-to-r from-nature to-ocean rounded-full flex items-center justify-center">
+          <Link
+            href="/"
+            className="flex items-center gap-2 font-semibold text-lg"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <MapPin className="h-4 w-4 text-white" />
             </div>
             <span className="text-xl font-bold text-foreground hover:text-primary transition-colors">
-              VietTravel
+              VietNature Tours
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8">
-            <Link
-              href="/#destinations"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Điểm đến
-            </Link>
-            <Link
-              href="/#tours"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Tour
-            </Link>
-            <Link
-              href="/#hotels"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Khách sạn
-            </Link>
-            <Link
-              href="/#flights"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Vé máy bay
-            </Link>
-            <Link
-              href="/#about"
-              className="text-foreground hover:text-primary transition-colors"
-            >
-              Về chúng tôi
-            </Link>
-            {/* Các link khác có thể thêm sau */}
+          <nav className="hidden md:flex items-center gap-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-accent rounded-md"
+              >
+                <item.icon className="h-4 w-4" />
+                {item.name}
+              </Link>
+            ))}
           </nav>
 
           {/* Auth buttons */}

@@ -46,5 +46,43 @@ namespace TourService.Controllers
       var fileUrl = $"{baseUrl}/uploads/{fileName}";
       return Ok(new { Url = fileUrl });
     }
+
+    [HttpPost("upload-multiple")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UploadMultipleImages(List<IFormFile> files)
+    {
+        if (files == null || files.Count == 0)
+            return BadRequest("No files uploaded.");
+
+        var uploadedFilePaths = new List<string>();
+        
+        // Kiểm tra và tạo thư mục uploads nếu chưa có
+        var uploadsPath = Path.Combine(_environment.WebRootPath, "uploads");
+        if (!Directory.Exists(uploadsPath))
+        {
+            Directory.CreateDirectory(uploadsPath);
+        }
+
+        foreach (var file in files)
+        {
+            if (file.Length > 0)
+            {
+                // Tạo tên file độc nhất
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                var filePath = Path.Combine(uploadsPath, fileName);
+
+                // Lưu file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                
+                // Thêm đường dẫn tương đối vào danh sách
+                uploadedFilePaths.Add($"uploads/{fileName}");
+            }
+        }
+
+        return Ok(new { FilePaths = uploadedFilePaths });
+    }
   }
 }

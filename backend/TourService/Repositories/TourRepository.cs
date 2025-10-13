@@ -47,11 +47,41 @@ namespace TourService.Repositories
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
+        public async Task<IEnumerable<TourEntity>> GetByDestinationIdAsync(Guid destinationId)
+        {
+        return await _context.Tours
+            .Where(t => t.TourDestinations.Any(td => td.DestinationId == destinationId))
+            .Include(t => t.TourDestinations).ThenInclude(td => td.Destination)
+            .AsNoTracking()
+            .ToListAsync();
+        }
+
         public async Task<TourEntity> UpdateAsync(TourEntity tour)
         {
-            _context.Tours.Update(tour);
+            var existingTour = await _context.Tours
+                .Include(t => t.TourSchedules)
+                .Include(t => t.TourDestinations)
+                .FirstOrDefaultAsync(t => t.Id == tour.Id);
+            if (existingTour == null) throw new Exception("Không tìm thấy tour để cập nhật.");
+
+            _context.Entry(existingTour).CurrentValues.SetValues(tour);
+
+            existingTour.Highlights = tour.Highlights;
+            existingTour.GalleryImages = tour.GalleryImages;
+            existingTour.Inclusions = tour.Inclusions;
+
+            _context.TourSchedules.RemoveRange(existingTour.TourSchedules);
+            existingTour.TourSchedules = tour.TourSchedules;
+
+            _context.TourDestinations.RemoveRange(existingTour.TourDestinations);
+            var newTourDestinations = tour.TourDestinations.Select(td => new TourDestinationEntity
+            {
+                TourId = existingTour.Id,
+                DestinationId = td.DestinationId
+            }).ToList();
+            existingTour.TourDestinations = newTourDestinations;
             await _context.SaveChangesAsync();
-            return tour;
+            return existingTour;
         }
     }
 }

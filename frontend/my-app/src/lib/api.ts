@@ -112,6 +112,12 @@ export interface TourSchedule {
   title: string;
   description?: string;
 }
+
+export interface Inclusions {
+  included: string[];
+  notIncluded: string[];
+}
+
 export interface Tour {
   id: string; // Đã đồng bộ thành 'id'
   name: string;
@@ -123,6 +129,9 @@ export interface Tour {
   imageUrl?: string;
   tourDestinations: { destination: { id: string; name: string } }[];
   tourSchedules: TourSchedule[];
+  highlights: string[];
+  galleryImages: string[];
+  inclusions: Inclusions;
 }
 
 export interface CreateTourPayload {
@@ -135,12 +144,26 @@ export interface CreateTourPayload {
   imageUrl?: string;
   destinationIds: string[];
   schedules: { dayNumber: number; title: string; description?: string }[];
+  highlights: string[];
+  galleryImages: string[];
+  inclusions: Inclusions;
 }
 
 export interface UpdateTourPayload extends CreateTourPayload {}
 
 export const getTours = async (): Promise<Tour[]> => {
   return fetchWithAuth("/api/tours");
+};
+
+export const getTourById = async (id: string): Promise<Tour | null> => {
+  try {
+    const data = await fetchWithAuth(`/api/tours/${id}`);
+    console.log("✅ Tour data fetched:", data); // 👉 LOG ở đây
+    return data;
+  } catch (error) {
+    console.error(`❌ Failed to fetch tour with id ${id}:`, error);
+    return null;
+  }
 };
 
 export const createTour = async (data: CreateTourPayload): Promise<Tour> => {
@@ -162,4 +185,63 @@ export const updateTour = async (
 
 export const deleteTour = async (id: string): Promise<void> => {
   return fetchWithAuth(`/api/tours/${id}`, { method: "DELETE" });
+};
+
+export const getToursByDestination = async (
+  destinationId: string
+): Promise<Tour[]> => {
+  return fetchWithAuth(`/api/destinations/${destinationId}/tours`);
+};
+
+export const getDestinationById = async (
+  id: string
+): Promise<Destination | null> => {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/destinations/${id}`);
+    if (!response.ok) return null;
+    return response.json();
+  } catch (error) {
+    console.error("Failed to fetch destination:", error);
+    return null;
+  }
+};
+
+export const uploadFile = async (
+  formData: FormData
+): Promise<{ filePath: string }> => {
+  const token = Cookies.get("accessToken");
+  const response = await fetch(`${API_BASE_URL}/api/files/upload`, {
+    method: "POST",
+    headers: {
+      ...(token && { Authorization: `Bearer ${token}` }),
+      // Không cần 'Content-Type', trình duyệt sẽ tự xử lý cho FormData
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload file");
+  }
+  return response.json();
+};
+
+export const uploadMultipleFiles = async (
+  formData: FormData
+): Promise<{ filePaths: string[] }> => {
+  const token = Cookies.get("accessToken");
+  const headers: HeadersInit = {};
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/files/upload-multiple`, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to upload multiple files");
+  }
+  return response.json(); // Backend trả về object { filePaths: [...] }
 };

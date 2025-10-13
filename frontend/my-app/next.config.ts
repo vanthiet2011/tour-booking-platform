@@ -6,16 +6,15 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: "https",
-        hostname: "encrypted-tbn0.gstatic.com",
-      },
-      {
-        protocol: "https",
-        hostname: "drt.danang.vn",
-      },
-      {
         protocol: "http",
         hostname: "localhost",
+        port: "5003",
+        pathname: "/uploads/**",
+      },
+      {
+        protocol: "https",
+        hostname: "encrypted-tbn0.gstatic.com",
+        pathname: "/**",
       },
     ],
   },

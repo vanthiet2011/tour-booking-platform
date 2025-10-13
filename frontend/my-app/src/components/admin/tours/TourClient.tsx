@@ -1,16 +1,16 @@
+// src/components/admin/tours/TourClient.tsx
+
 "use client";
 
 import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { PlusCircle } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { getColumns } from "./columns";
 import { getTours, deleteTour, Tour } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { TourForm } from "./TourForm";
-// Import DeleteConfirmationDialog bạn đã có
 import { DeleteConfirmationDialog } from "../destinations/DeleteConfirmationDialog";
 
 export default function TourClient() {
@@ -22,13 +22,16 @@ export default function TourClient() {
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
 
   const handleAdd = () => {
+    // 🚀 Đảm bảo reset state về null trước khi mở form
     setSelectedTour(null);
     setIsFormOpen(true);
   };
+
   const handleEdit = (tour: Tour) => {
     setSelectedTour(tour);
     setIsFormOpen(true);
   };
+
   const handleDelete = (tour: Tour) => {
     setSelectedTour(tour);
     setIsDeleteDialogOpen(true);
@@ -37,7 +40,7 @@ export default function TourClient() {
   const confirmDelete = async () => {
     if (!selectedTour) return;
     try {
-      await deleteTour(selectedTour.id);
+      await deleteTour(selectedTour.id); // Sửa thành tour.id
       mutate("/api/tours");
       toast({ title: "Thành công", description: "Đã xóa tour." });
     } catch (error) {

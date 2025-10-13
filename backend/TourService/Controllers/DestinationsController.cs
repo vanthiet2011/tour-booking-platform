@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using TourService.Dtos;
 using TourService.Entities;
 using TourService.Repositories;
+using TourService.Services;
 
 namespace TourService.Controllers
 {
@@ -12,11 +13,13 @@ namespace TourService.Controllers
     public class DestinationsController : ControllerBase
     {
       private readonly IDestinationRepository _repository;
+      private readonly ITourService _tourService;
 
-      public DestinationsController(IDestinationRepository repository)
-      {
-          _repository = repository;
-      }
+        public DestinationsController(IDestinationRepository repository, ITourService tourService)
+        {
+            _repository = repository;
+            _tourService = tourService;
+        }
 
       // GET: api/destinations
       [HttpGet]
@@ -44,9 +47,16 @@ namespace TourService.Controllers
           }
           return Ok(destination);
       }
+      
+          [HttpGet("{id}/tours")]
+        public async Task<IActionResult> GetToursByDestination(Guid id)
+    {
+        var tours = await _tourService.GetByDestinationIdAsync(id);
+        return Ok(tours);
+    }
 
       // POST: api/destinations
-      [HttpPost]
+        [HttpPost]
       [Authorize(Roles = "Admin")]
       public async Task<IActionResult> CreateDestination([FromBody] CreateDestinationDto dto)
       {

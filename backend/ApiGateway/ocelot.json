@@ -43,6 +43,13 @@
       "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     },
     {
+      "UpstreamPathTemplate": "/api/destinations/{id}/tours",
+      "UpstreamHttpMethod": ["GET"],
+      "DownstreamPathTemplate": "/api/destinations/{id}/tours",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
       "UpstreamPathTemplate": "/api/files/upload",
       "UpstreamHttpMethod": ["POST"],
       "DownstreamPathTemplate": "/api/files/upload",
@@ -62,6 +69,13 @@
       "DownstreamHostAndPorts": [{ "Host": "payment-service", "Port": 8080 }],
       "UpstreamPathTemplate": "/payments/{everything}",
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
+    },
+    {
+      "UpstreamPathTemplate": "/api/files/{everything}",
+      "UpstreamHttpMethod": ["POST"],
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }],
+      "DownstreamPathTemplate": "/api/files/{everything}"
     }
   ],
   "GlobalConfiguration": {

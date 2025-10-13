@@ -50,6 +50,7 @@ services:
       target: dev
     volumes:
       - ./backend/TourService:/src
+      - ./backend/TourService/wwwroot/uploads:/app/wwwroot/uploads
       - ~/.nuget/packages:/root/.nuget/packages:ro
       - /src/bin
       - /src/obj

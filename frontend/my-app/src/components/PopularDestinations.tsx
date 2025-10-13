@@ -19,9 +19,9 @@ export default function PopularDestinations({
 
   const renderDestinationCard = (destination: Destination, index: number) => (
     <Link
-      href={`/destinations/${destination.destinationId}`}
+      href={`/destinations/${destination.id}`}
       passHref
-      key={destination.destinationId}
+      key={destination.id}
     >
       <Card className="group relative w-full h-full overflow-hidden rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300">
         <Image

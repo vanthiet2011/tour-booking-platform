@@ -60,7 +60,7 @@ namespace TourService.Repositories
                 .ToListAsync();
         }
 
-         public async Task<TourEntity> UpdateAsync(TourEntity tourWithNewData)
+        public async Task<TourEntity> UpdateAsync(TourEntity tourWithNewData)
         {
             var existingTour = await _context.Tours
                 .Include(t => t.TourSchedules)
@@ -70,11 +70,10 @@ namespace TourService.Repositories
 
             if (existingTour == null)
             {
-                throw new Exception($"Không tìm thấy tour để cập nhật với ID: {tourWithNewData.Id}");
+                throw new KeyNotFoundException($"Không tìm thấy tour để cập nhật với ID: {tourWithNewData.Id}");
             }
 
             _context.Entry(existingTour).CurrentValues.SetValues(tourWithNewData);
-
             _context.Entry(existingTour).Property(x => x.CreatedAt).IsModified = false;
 
             existingTour.Highlights = tourWithNewData.Highlights;
@@ -82,14 +81,30 @@ namespace TourService.Repositories
             existingTour.Inclusions = tourWithNewData.Inclusions;
 
             _context.TourSchedules.RemoveRange(existingTour.TourSchedules);
-            existingTour.TourSchedules = tourWithNewData.TourSchedules;
-
             _context.TourDestinations.RemoveRange(existingTour.TourDestinations);
-            existingTour.TourDestinations = tourWithNewData.TourDestinations;
-
             _context.TourDepartures.RemoveRange(existingTour.TourDepartures);
-            existingTour.TourDepartures = tourWithNewData.TourDepartures;
-            
+
+            existingTour.TourSchedules = tourWithNewData.TourSchedules.Select(s => new TourScheduleEntity
+            {
+                DayNumber = s.DayNumber,
+                Title = s.Title,
+                Description = s.Description,
+                Tour = existingTour
+            }).ToList();
+
+            existingTour.TourDestinations = tourWithNewData.TourDestinations.Select(d => new TourDestinationEntity
+            {
+                DestinationId = d.DestinationId,
+                Tour = existingTour
+            }).ToList();
+
+            existingTour.TourDepartures = tourWithNewData.TourDepartures.Select(d => new TourDepartureEntity
+            {
+                StartDate = d.StartDate,
+                EndDate = d.EndDate,
+                AvailableSlots = d.AvailableSlots,
+                Tour = existingTour
+            }).ToList();
             await _context.SaveChangesAsync();
             
             return existingTour;

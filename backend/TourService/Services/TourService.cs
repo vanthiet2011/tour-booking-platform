@@ -63,17 +63,21 @@ namespace TourService.Services
     
     public async Task<TourEntity?> UpdateAsync(Guid id, UpdateTourDto updateTourDto)
     {
-      var existingTour = await _tourRepository.GetByIdAsync(id);
-      if (existingTour == null) return null;
-
       var tourToUpdate = _mapper.Map<TourEntity>(updateTourDto);
       tourToUpdate.Id = id;
       foreach (var departure in tourToUpdate.TourDepartures)
       {
-          departure.StartDate = DateTime.SpecifyKind(departure.StartDate, DateTimeKind.Utc);
-          departure.EndDate = DateTime.SpecifyKind(departure.EndDate, DateTimeKind.Utc);
-      }   
-      return await _tourRepository.UpdateAsync(tourToUpdate);
+        departure.StartDate = DateTime.SpecifyKind(departure.StartDate, DateTimeKind.Utc);
+        departure.EndDate = DateTime.SpecifyKind(departure.EndDate, DateTimeKind.Utc);
+      }
+      try
+      {
+        return await _tourRepository.UpdateAsync(tourToUpdate);
+      }
+      catch (KeyNotFoundException)
+      {
+        return null;
+      }
     }
 
     public Task<bool> DeleteAsync(Guid id)

@@ -42,5 +42,6 @@ namespace TourService.Entities
         public ICollection<ReviewEntity> Reviews { get; set; } = new List<ReviewEntity>();
         public ICollection<TourDestinationEntity> TourDestinations { get; set; } = new List<TourDestinationEntity>();
         public ICollection<TourScheduleEntity> TourSchedules { get; set; } = new List<TourScheduleEntity>();
+        public ICollection<TourDepartureEntity> TourDepartures { get; set; } = new List<TourDepartureEntity>();
     }
 }

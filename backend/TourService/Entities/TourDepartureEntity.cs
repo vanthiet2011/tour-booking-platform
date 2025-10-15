@@ -23,5 +23,8 @@ namespace TourService.Entities
         public int AvailableSlots { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        
+        [ForeignKey("TourId")]
+        public TourEntity? Tour { get; set; }
     }
 }

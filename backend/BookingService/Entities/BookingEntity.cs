@@ -26,5 +26,6 @@ namespace BookingService.Entities
         public decimal TotalPrice { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public ICollection<BookingDetailEntity> BookingDetails { get; set; } = new List<BookingDetailEntity>();
     }
 }

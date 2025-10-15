@@ -56,14 +56,17 @@ services:
       - /src/obj
     command: dotnet watch run --project TourService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
 
-  # booking-service:
-  #   build:
-  #     context: ./backend/BookingService
-  #     dockerfile: Dockerfile
-  #     target: dev
-  #   volumes:
-  #     - ./backend/BookingService:/src
-  #     - ~/.nuget/packages:/root/.nuget/packages:ro
+  booking-service:
+    build:
+      context: ./backend/BookingService
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/BookingService:/src
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+      - /src/bin
+      - /src/obj
+    command: dotnet watch run --project BookingService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
 
   # payment-service:
   #   build:

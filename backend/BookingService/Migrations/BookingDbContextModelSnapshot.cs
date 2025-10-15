@@ -31,13 +31,16 @@ namespace BookingService.Migrations
                     b.Property<Guid>("BookingId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("TravelerDOB")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TravelerName")
+                    b.Property<string>("ParticipantType")
                         .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("Id");
 
@@ -55,14 +58,16 @@ namespace BookingService.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<Guid>("ScheduleId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("integer");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("numeric");
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<Guid>("TourDepartureId")
+                        .HasColumnType("uuid");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uuid");
@@ -75,7 +80,7 @@ namespace BookingService.Migrations
             modelBuilder.Entity("BookingService.Entities.BookingDetailEntity", b =>
                 {
                     b.HasOne("BookingService.Entities.BookingEntity", "Booking")
-                        .WithMany("Details")
+                        .WithMany("BookingDetails")
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -85,7 +90,7 @@ namespace BookingService.Migrations
 
             modelBuilder.Entity("BookingService.Entities.BookingEntity", b =>
                 {
-                    b.Navigation("Details");
+                    b.Navigation("BookingDetails");
                 });
 #pragma warning restore 612, 618
         }

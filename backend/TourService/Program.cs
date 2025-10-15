@@ -13,7 +13,10 @@ using TourService.Data;
 using TourService.Repositories;
 using TourService.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    WebRootPath = "wwwroot"
+});
 var configuration = builder.Configuration;
 
 // --- Cấu hình Services ---
@@ -31,6 +34,8 @@ builder.Services.AddDbContext<TourDbContext>(options =>
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
 builder.Services.AddScoped<ITourRepository, TourRepository>();
 builder.Services.AddScoped<ITourService, TourService.Services.TourService>();
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
 // 2. Cấu hình Authentication
 builder.Services.AddAuthentication(options =>

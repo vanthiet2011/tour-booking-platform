@@ -1,10 +1,10 @@
-// src/components/admin/tours/TourClient.tsx
-
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // 1. Import useRouter
 import useSWR, { mutate } from "swr";
 import { PlusCircle } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { getColumns } from "./columns";
@@ -16,17 +16,18 @@ import { DeleteConfirmationDialog } from "../destinations/DeleteConfirmationDial
 export default function TourClient() {
   const { toast } = useToast();
   const { data: tours, error, isLoading } = useSWR("/api/tours", getTours);
+  const router = useRouter(); // 2. Khởi tạo router
 
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false); // Dành cho Edit
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
 
+  // 3. Sửa hàm handleAdd để điều hướng
   const handleAdd = () => {
-    // 🚀 Đảm bảo reset state về null trước khi mở form
-    setSelectedTour(null);
-    setIsFormOpen(true);
+    router.push("/admin/tours/create");
   };
 
+  // Các hàm handleEdit và handleDelete giữ nguyên
   const handleEdit = (tour: Tour) => {
     setSelectedTour(tour);
     setIsFormOpen(true);
@@ -40,7 +41,7 @@ export default function TourClient() {
   const confirmDelete = async () => {
     if (!selectedTour) return;
     try {
-      await deleteTour(selectedTour.id); // Sửa thành tour.id
+      await deleteTour(selectedTour.id);
       mutate("/api/tours");
       toast({ title: "Thành công", description: "Đã xóa tour." });
     } catch (error) {
@@ -71,6 +72,7 @@ export default function TourClient() {
 
       <DataTable columns={columns} data={tours || []} />
 
+      {/* TourForm này bây giờ chỉ dùng cho việc Edit */}
       <TourForm
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}

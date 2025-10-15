@@ -24,7 +24,7 @@ namespace TourService.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTourById(Guid id)
+        public async Task<ActionResult<TourDetailDto>> GetTourById(Guid id)
         {
             var tour = await _tourService.GetByIdAsync(id);
             if (tour == null)

@@ -44,7 +44,7 @@ namespace TourService.Controllers
       var baseUrl = _configuration["ServicePublicUrl"] ?? $"{Request.Scheme}://{Request.Host}";
 
       var fileUrl = $"{baseUrl}/uploads/{fileName}";
-      return Ok(new { Url = fileUrl });
+      return Ok(new { filePath = fileUrl });
     }
 
     [HttpPost("upload-multiple")]
@@ -82,7 +82,7 @@ namespace TourService.Controllers
             }
         }
 
-        return Ok(new { FilePaths = uploadedFilePaths });
+        return Ok(new { filePaths = uploadedFilePaths });
     }
   }
 }

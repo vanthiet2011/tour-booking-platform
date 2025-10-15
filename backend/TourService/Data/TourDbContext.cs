@@ -10,6 +10,7 @@ namespace TourService.Data
     public DbSet<TourDestinationEntity> TourDestinations { get; set; }
     public DbSet<TourScheduleEntity> TourSchedules { get; set; }
     public DbSet<ReviewEntity> Reviews { get; set; }
+    public DbSet<TourDepartureEntity> TourDepartures { get; set; }
 
     public TourDbContext(DbContextOptions<TourDbContext> options) : base(options) { }
 
@@ -25,22 +26,32 @@ namespace TourService.Data
       modelBuilder.Entity<TourDestinationEntity>()
           .HasOne(td => td.Tour)
           .WithMany(t => t.TourDestinations)
-          .HasForeignKey(td => td.TourId);
+          .HasForeignKey(td => td.TourId)
+          .OnDelete(DeleteBehavior.Cascade);
 
       modelBuilder.Entity<TourDestinationEntity>()
           .HasOne(td => td.Destination)
           .WithMany(d => d.TourDestinations)
-          .HasForeignKey(td => td.DestinationId);
+          .HasForeignKey(td => td.DestinationId)
+          .OnDelete(DeleteBehavior.Cascade);
       // Configure the one-to-many relationship between Tour and TourSchedule
       modelBuilder.Entity<TourEntity>()
           .HasMany(t => t.TourSchedules)
           .WithOne(ts => ts.Tour)
-          .HasForeignKey(ts => ts.TourId);
+          .HasForeignKey(ts => ts.TourId)
+          .OnDelete(DeleteBehavior.Cascade);
       // Cấu hình mối quan hệ một-nhiều giữa Tour và Review
       modelBuilder.Entity<TourEntity>()
           .HasMany(t => t.Reviews)
           .WithOne(r => r.Tour)
-          .HasForeignKey(r => r.TourId);
+          .HasForeignKey(r => r.TourId)
+          .OnDelete(DeleteBehavior.Cascade);
+
+      modelBuilder.Entity<TourEntity>()
+          .HasMany(t => t.TourDepartures)
+          .WithOne(td => td.Tour)
+          .HasForeignKey(td => td.TourId)
+          .OnDelete(DeleteBehavior.Cascade);
       
       modelBuilder.Entity<TourEntity>()
           .Property(t => t.Highlights)

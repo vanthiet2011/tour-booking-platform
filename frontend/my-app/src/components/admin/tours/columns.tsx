@@ -26,10 +26,10 @@ export const getColumns = ({
     header: "Tên Tour",
   },
   {
-    accessorKey: "price",
-    header: "Giá",
+    accessorKey: "pricePerAdult",
+    header: "Giá người lớn",
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue("price"));
+      const amount = parseFloat(row.getValue("pricePerAdult"));
       const formatted = new Intl.NumberFormat("vi-VN", {
         style: "currency",
         currency: "VND",
@@ -43,7 +43,7 @@ export const getColumns = ({
   },
   {
     accessorKey: "isBestseller",
-    header: "Bestseller",
+    header: "Bán chạy",
     cell: ({ row }) => (row.original.isBestseller ? "Có" : "Không"),
   },
   {

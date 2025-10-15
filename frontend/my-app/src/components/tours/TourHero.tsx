@@ -71,7 +71,9 @@ export function TourHero({ tour }: { tour: Tour }) {
             </div>
             <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
               <Tag className="h-5 w-5" />
-              <span className="font-medium">{formatCurrency(tour.price)}</span>
+              <span className="font-medium">
+                {formatCurrency(tour.pricePerAdult)}
+              </span>
             </div>
             {/* {tour.maxGroupSize && (
               <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">

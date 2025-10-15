@@ -8,13 +8,6 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
-        port: "5003",
-        pathname: "/uploads/**",
-      },
-      {
-        protocol: "https",
-        hostname: "encrypted-tbn0.gstatic.com",
-        pathname: "/**",
       },
     ],
   },

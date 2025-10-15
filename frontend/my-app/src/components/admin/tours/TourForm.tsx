@@ -40,11 +40,18 @@ import {
 } from "@/lib/api";
 import { MultiSelect } from "@/components/ui/multi-select";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 // --- ZOD SCHEMA ---
 const scheduleSchema = z.object({
   dayNumber: z.coerce.number().min(1),
   title: z.string().min(1, "Tiêu đề không được trống."),
   description: z.string().optional(),
+});
+
+const departureSchema = z.object({
+  startDate: z.string().min(1, "Ngày bắt đầu là bắt buộc"),
+  endDate: z.string().min(1, "Ngày kết thúc là bắt buộc"),
+  availableSlots: z.coerce.number().int().min(1, "Số chỗ phải lớn hơn 0"),
 });
 
 const inclusionsSchema = z.object({
@@ -55,18 +62,19 @@ const inclusionsSchema = z.object({
 const formSchema = z.object({
   name: z.string().min(2, "Tên tour phải có ít nhất 2 ký tự."),
   description: z.string().optional(),
-  price: z.coerce.number().min(0, "Giá phải là số dương."),
-  capacity: z.coerce.number().int().min(1, "Sức chứa phải lớn hơn 0."),
+  pricePerAdult: z.coerce.number().min(0, "Giá người lớn phải là số dương"),
+  pricePerChild: z.coerce.number().min(0, "Giá trẻ em phải là số dương"),
   duration: z.string().optional(),
   isBestseller: z.boolean().default(false),
-  // Các trường nhận file từ input
   coverImageFile: z.custom<FileList>().optional(),
   galleryImageFiles: z.custom<FileList>().optional(),
-  // Các trường dữ liệu khác
   destinationIds: z.array(z.string()).min(1, "Phải chọn ít nhất một điểm đến."),
   schedules: z.array(scheduleSchema).optional(),
   highlights: z.array(z.string()).optional(),
   inclusions: inclusionsSchema.optional(),
+  tourDepartures: z
+    .array(departureSchema)
+    .min(1, "Phải có ít nhất một ngày khởi hành"),
 });
 
 type TourFormValues = z.infer<typeof formSchema>;
@@ -92,10 +100,29 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
     defaultValues: {}, // Sẽ reset trong useEffect
   });
 
-  const { fields, append, remove } = useFieldArray({
+  // const { fields, append, remove } = useFieldArray({
+  //   control: form.control,
+  //   name: "schedules",
+  // });
+
+  const {
+    fields: scheduleFields,
+    append: appendSchedule,
+    remove: removeSchedule,
+  } = useFieldArray({
     control: form.control,
     name: "schedules",
   });
+
+  const {
+    fields: departureFields,
+    append: appendDeparture,
+    remove: removeDeparture,
+  } = useFieldArray({
+    control: form.control,
+    name: "tourDepartures",
+  });
+
   const isEditing = !!tour;
 
   // Effect để reset form và state khi mở dialog
@@ -105,15 +132,20 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
         form.reset({
           name: tour.name,
           description: tour.description,
-          price: tour.price,
-          capacity: tour.capacity,
+          pricePerAdult: tour.pricePerAdult,
+          pricePerChild: tour.pricePerChild,
           duration: tour.duration,
           isBestseller: tour.isBestseller,
-          destinationIds:
-            tour.tourDestinations?.map((td) => td.destination.id) || [],
-          schedules: tour.tourSchedules || [],
+          destinationIds: tour.destinations?.map((d) => d.id) || [],
+          schedules: tour.schedules || [],
           highlights: tour.highlights || [],
           inclusions: tour.inclusions || { included: [], notIncluded: [] },
+          tourDepartures:
+            tour.tourDepartures.map((d) => ({
+              ...d,
+              startDate: new Date(d.startDate).toISOString().split("T")[0],
+              endDate: new Date(d.endDate).toISOString().split("T")[0],
+            })) || [],
         });
         setCoverPreview(tour.imageUrl || null);
         setGalleryPreviews(tour.galleryImages || []);
@@ -121,14 +153,15 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
         form.reset({
           name: "",
           description: "",
-          price: 0,
-          capacity: 10,
+          pricePerAdult: 0,
+          pricePerChild: 0,
           duration: "",
           isBestseller: false,
           destinationIds: [],
           schedules: [],
           highlights: [],
           inclusions: { included: [], notIncluded: [] },
+          tourDepartures: [],
         });
         setCoverPreview(null);
         setGalleryPreviews([]);
@@ -136,7 +169,6 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
     }
   }, [tour, isEditing, isOpen, form]);
 
-  // Logic Submit đã được gộp và tối ưu
   const onSubmit = async (values: TourFormValues) => {
     setIsUploading(true);
     try {
@@ -145,40 +177,47 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
         (p) => typeof p === "string"
       ) as string[];
 
-      // 1. Upload ảnh bìa mới
+      // 1. Upload ảnh bìa mới (logic này đã đúng)
       if (values.coverImageFile && values.coverImageFile.length > 0) {
         const formData = new FormData();
         formData.append("file", values.coverImageFile[0]);
-        const result = await uploadFile(formData); // Giả sử uploadFile trả về { filePath: '...' }
+        const result = await uploadFile(formData);
         coverImageUrl = result.filePath;
       }
 
-      // 2. Upload các ảnh mới trong thư viện
+      // 2. Upload các ảnh mới trong thư viện (logic này đã đúng)
       const newGalleryFiles = galleryPreviews.filter(
         (p) => p instanceof File
       ) as File[];
       if (newGalleryFiles.length > 0) {
         const formData = new FormData();
         newGalleryFiles.forEach((file) => formData.append("files", file));
-        const result = await uploadMultipleFiles(formData); // result là một object { filePaths: [...] }
-        const newUrls = result.filePaths; // Lấy ra mảng các đường dẫn
-        finalGalleryUrls.push(...newUrls); // Đúng: "Trải" một mảng
+        const result = await uploadMultipleFiles(formData);
+        finalGalleryUrls.push(...result.filePaths);
       }
 
-      // 3. Chuẩn bị payload cuối cùng
+      // 3. Chuẩn bị payload cuối cùng (PHẦN SỬA LỖI QUAN TRỌNG)
+      // Xây dựng payload thủ công thay vì dùng ...values
       const payload: CreateTourPayload = {
-        ...values,
+        name: values.name,
+        description: values.description,
+        pricePerAdult: values.pricePerAdult,
+        pricePerChild: values.pricePerChild,
+        duration: values.duration,
+        isBestseller: values.isBestseller,
         imageUrl: coverImageUrl,
         galleryImages: finalGalleryUrls,
-        schedules: values.schedules || [],
+        destinationIds: values.destinationIds,
         highlights: values.highlights || [],
         inclusions: {
           included: values.inclusions?.included || [],
           notIncluded: values.inclusions?.notIncluded || [],
         },
+        schedules: values.schedules || [],
+        tourDepartures: values.tourDepartures || [],
       };
 
-      // 4. Gửi request tạo mới hoặc cập nhật
+      // 4. Gửi request tạo mới hoặc cập nhật (logic này đã đúng)
       if (isEditing && tour) {
         await updateTour(tour.id, payload);
       } else {
@@ -278,10 +317,10 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                 />
                 <FormField
                   control={form.control}
-                  name="price"
+                  name="pricePerAdult"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Giá</FormLabel>
+                      <FormLabel>Giá người lớn</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -291,10 +330,10 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                 />
                 <FormField
                   control={form.control}
-                  name="capacity"
+                  name="pricePerChild"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Số người tối đa</FormLabel>
+                      <FormLabel>Giá trẻ em</FormLabel>
                       <FormControl>
                         <Input type="number" {...field} />
                       </FormControl>
@@ -353,7 +392,82 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                 />
               </div>
             </div>
-
+            <div className="space-y-4 rounded-lg border p-4">
+              <FormLabel className="text-base font-semibold">
+                Ngày khởi hành
+              </FormLabel>
+              {departureFields.map((field, index) => (
+                <div
+                  key={field.id}
+                  className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end rounded-md border bg-muted/50 p-3"
+                >
+                  <FormField
+                    control={form.control}
+                    name={`tourDepartures.${index}.startDate`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ngày đi</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`tourDepartures.${index}.endDate`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ngày về</FormLabel>
+                        <FormControl>
+                          <Input type="date" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`tourDepartures.${index}.availableSlots`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Số chỗ</FormLabel>
+                        <FormControl>
+                          <Input type="number" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => removeDeparture(index)}
+                    className="text-destructive"
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="mt-2"
+                onClick={() =>
+                  appendDeparture({
+                    startDate: "",
+                    endDate: "",
+                    availableSlots: 10,
+                  })
+                }
+              >
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Thêm ngày khởi hành
+              </Button>
+            </div>
             <div className="space-y-4 rounded-lg border p-4">
               <FormLabel className="text-base font-semibold">
                 Thông tin chi tiết
@@ -399,11 +513,11 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
               {coverPreview && (
                 <div className="relative w-full aspect-[16/9] mt-2">
                   <Image
-                    // SỬA LẠI DÒNG NÀY
                     src={
+                      coverPreview.startsWith("blob:") ||
                       coverPreview.startsWith("http")
                         ? coverPreview
-                        : `http://localhost:5003/${coverPreview}`
+                        : `${API_BASE_URL}/${coverPreview}`
                     }
                     alt="Preview"
                     fill
@@ -437,13 +551,12 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                   {galleryPreviews.map((p, index) => (
                     <div key={index} className="relative aspect-square">
                       <Image
-                        // VÀ SỬA LẠI DÒNG NÀY
                         src={
                           typeof p === "string"
                             ? p.startsWith("http")
-                              ? p
-                              : `http://localhost:5003/${p}`
-                            : URL.createObjectURL(p)
+                              ? p // Giữ nguyên
+                              : `${API_BASE_URL}/${p}` // Ghép nếu là đường dẫn tương đối
+                            : URL.createObjectURL(p) // Xử lý ảnh mới
                         }
                         alt={`Preview ${index}`}
                         fill
@@ -511,7 +624,7 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
               <FormLabel className="text-base font-semibold">
                 Lịch trình chi tiết
               </FormLabel>
-              {fields.map((field, index) => (
+              {scheduleFields.map((field, index) => (
                 <div
                   key={field.id}
                   className="flex gap-2 items-start rounded-md border bg-muted/50 p-3"
@@ -561,7 +674,7 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => remove(index)}
+                    onClick={() => removeSchedule(index)}
                     className="mt-8 text-destructive"
                   >
                     <Trash className="h-4 w-4" />
@@ -574,8 +687,8 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                 size="sm"
                 className="mt-2"
                 onClick={() =>
-                  append({
-                    dayNumber: fields.length + 1,
+                  appendSchedule({
+                    dayNumber: scheduleFields.length + 1,
                     title: "",
                     description: "",
                   })

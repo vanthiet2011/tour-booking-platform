@@ -34,7 +34,7 @@ export default async function TourDetailPage(props: TourDetailPageProps) {
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left column - Tour details */}
           <div className="lg:col-span-2 space-y-16">
-            <TourItinerary schedules={tour.tourSchedules || []} />
+            <TourItinerary schedules={tour.schedules || []} />
             <TourInclusions tour={tour} />
           </div>
 

@@ -23,5 +23,8 @@ namespace BookingService.Entities
         [Required]
         [Column(TypeName = "decimal(18, 2)")]
         public decimal UnitPrice { get; set; }
+
+        [ForeignKey("BookingId")]
+        public BookingEntity? Booking { get; set; }
     }
 }

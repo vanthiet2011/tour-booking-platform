@@ -6,7 +6,7 @@ namespace TourService.Repositories
     {
         Task<IEnumerable<TourEntity>> GetAllAsync();
         Task<TourEntity?> GetByIdAsync(Guid id);
-        Task<IEnumerable<TourEntity>> GetByDestinationIdAsync(Guid destinationId);
+        Task<List<TourEntity>> GetByDestinationIdAsync(Guid destinationId);
         Task<TourEntity> CreateAsync(TourEntity tour);
         Task<TourEntity> UpdateAsync(TourEntity tour);
         Task<bool> DeleteAsync(Guid id);

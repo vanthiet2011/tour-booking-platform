@@ -76,6 +76,18 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }],
       "DownstreamPathTemplate": "/api/files/{everything}"
+    },
+    {
+      "UpstreamPathTemplate": "/uploads/{everything}",
+      "UpstreamHttpMethod": ["GET"],
+      "DownstreamPathTemplate": "/uploads/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "tour-service",
+          "Port": 8080
+        }
+      ]
     }
   ],
   "GlobalConfiguration": {

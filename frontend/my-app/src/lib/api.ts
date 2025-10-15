@@ -113,6 +113,14 @@ export interface TourSchedule {
   description?: string;
 }
 
+export interface TourDeparture {
+  id: string;
+  tourId: string;
+  startDate: string; // ISO date string
+  endDate: string; // ISO date string
+  availableSlots: number;
+}
+
 export interface Inclusions {
   included: string[];
   notIncluded: string[];
@@ -122,13 +130,14 @@ export interface Tour {
   id: string; // Đã đồng bộ thành 'id'
   name: string;
   description?: string;
-  price: number;
-  capacity: number;
+  pricePerAdult: number;
+  pricePerChild: number;
   duration?: string;
   isBestseller: boolean;
   imageUrl?: string;
-  tourDestinations: { destination: { id: string; name: string } }[];
-  tourSchedules: TourSchedule[];
+  destinations: { id: string; name: string }[];
+  schedules: TourSchedule[];
+  tourDepartures: TourDeparture[];
   highlights: string[];
   galleryImages: string[];
   inclusions: Inclusions;
@@ -137,19 +146,32 @@ export interface Tour {
 export interface CreateTourPayload {
   name: string;
   description?: string;
-  price: number;
-  capacity: number;
+  pricePerAdult: number;
+  pricePerChild: number;
   duration?: string;
   isBestseller: boolean;
   imageUrl?: string;
   destinationIds: string[];
   schedules: { dayNumber: number; title: string; description?: string }[];
+  tourDepartures: {
+    startDate: string;
+    endDate: string;
+    availableSlots: number;
+  }[];
   highlights: string[];
   galleryImages: string[];
   inclusions: Inclusions;
 }
 
 export interface UpdateTourPayload extends CreateTourPayload {}
+
+export interface CreateBookingPayload {
+  tourDepartureId: string;
+  details: {
+    participantType: "Adult" | "Child";
+    quantity: number;
+  }[];
+}
 
 export const getTours = async (): Promise<Tour[]> => {
   return fetchWithAuth("/api/tours");

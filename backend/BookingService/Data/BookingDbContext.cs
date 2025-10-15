@@ -19,10 +19,16 @@ namespace BookingService.Data
       modelBuilder.Entity<BookingEntity>()
           .Property(b => b.Status)
           .HasConversion<string>();
-          
+
       modelBuilder.Entity<BookingDetailEntity>()
           .Property(bd => bd.ParticipantType)
           .HasConversion<string>();
+
+      modelBuilder.Entity<BookingEntity>()
+          .HasMany(b => b.BookingDetails)
+          .WithOne(d => d.Booking)
+          .HasForeignKey(d => d.BookingId)
+          .OnDelete(DeleteBehavior.Cascade);
     }
   }
 }

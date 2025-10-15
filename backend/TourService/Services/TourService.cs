@@ -1,80 +1,79 @@
+using AutoMapper;
 using TourService.Dtos;
 using TourService.Entities;
 using TourService.Repositories;
+
 namespace TourService.Services
 {
   public class TourService : ITourService
   {
     private readonly ITourRepository _tourRepository;
+    private readonly IMapper _mapper;
+    private readonly ILogger<TourService> _logger;
 
-    public TourService(ITourRepository tourRepository)
+    public TourService(ITourRepository tourRepository, IMapper mapper, ILogger<TourService> logger)
     {
-        _tourRepository = tourRepository;
+      _tourRepository = tourRepository;
+      _mapper = mapper;
+      _logger = logger;
+
     }
 
-    public Task<IEnumerable<TourEntity>> GetAllAsync()
+    public async Task<IEnumerable<TourDetailDto>> GetAllAsync()
     {
-        return _tourRepository.GetAllAsync();
+      var tourEntitties = await _tourRepository.GetAllAsync();
+        return _mapper.Map<IEnumerable<TourDetailDto>>(tourEntitties);
     }
 
-    public Task<TourEntity?> GetByIdAsync(Guid id)
+    public async Task<TourDetailDto?> GetByIdAsync(Guid id)
     {
-      return _tourRepository.GetByIdAsync(id);
+      var tourEntity = await _tourRepository.GetByIdAsync(id);
+      if (tourEntity == null)
+      {
+          return null;
+      }
+      return _mapper.Map<TourDetailDto>(tourEntity);
     }
     
-    public async Task<IEnumerable<TourEntity>> GetByDestinationIdAsync(Guid destinationId)
+    public async Task<IEnumerable<TourDetailDto>> GetByDestinationIdAsync(Guid destinationId)
     {
-      return await _tourRepository.GetByDestinationIdAsync(destinationId);
+      var tourEntities = await _tourRepository.GetByDestinationIdAsync(destinationId);
+      try
+      {
+        var tourDtos = _mapper.Map<IEnumerable<TourDetailDto>>(tourEntities);
+        return tourDtos;
+      }
+      catch (Exception ex)
+      {
+        _logger.LogError(ex, "Lỗi nghiêm trọng khi mapping TourEntity sang TourDetailDto cho destination ID: {DestinationId}", destinationId);
+        throw;
+      }
     }
 
-    public Task<TourEntity> CreateAsync(CreateTourDto createTourDto)
+    public async Task<TourEntity> CreateAsync(CreateTourDto createTourDto)
     {
-      var tourEntity = new TourEntity
+      var tourEntity = _mapper.Map<TourEntity>(createTourDto);
+      foreach (var departure in tourEntity.TourDepartures)
       {
-        Name = createTourDto.Name,
-        Description = createTourDto.Description,
-        Price = createTourDto.Price,
-        Capacity = createTourDto.Capacity,
-        Duration = createTourDto.Duration,
-        ImageUrl = createTourDto.ImageUrl,
-        IsBestseller = createTourDto.IsBestseller,
-        Highlights = createTourDto.Highlights,
-        GalleryImages = createTourDto.GalleryImages,
-        Inclusions = createTourDto.Inclusions,
-        TourDestinations = createTourDto.DestinationIds
-              .Select(destId => new TourDestinationEntity { DestinationId = destId }).ToList(),
-        TourSchedules = createTourDto.Schedules
-              .Select(s => new TourScheduleEntity { DayNumber = s.DayNumber, Title = s.Title, Description = s.Description }).ToList()
-      };
-
-      return _tourRepository.CreateAsync(tourEntity);
+          departure.StartDate = DateTime.SpecifyKind(departure.StartDate, DateTimeKind.Utc);
+          departure.EndDate = DateTime.SpecifyKind(departure.EndDate, DateTimeKind.Utc);
+      }
+      return await _tourRepository.CreateAsync(tourEntity);
     }
     
     public async Task<TourEntity?> UpdateAsync(Guid id, UpdateTourDto updateTourDto)
     {
-        var existingTour = await _tourRepository.GetByIdAsync(id);
-        if (existingTour == null) return null;
+      var existingTour = await _tourRepository.GetByIdAsync(id);
+      if (existingTour == null) return null;
 
-        // Map DTO to Entity
-        var tourToUpdate = new TourEntity {
-            Id = id,
-            Name = updateTourDto.Name,
-            Description = updateTourDto.Description,
-            Price = updateTourDto.Price,
-            Capacity = updateTourDto.Capacity,
-            Duration = updateTourDto.Duration,
-            ImageUrl = updateTourDto.ImageUrl,
-            IsBestseller = updateTourDto.IsBestseller,
-            Highlights = updateTourDto.Highlights,
-            GalleryImages = updateTourDto.GalleryImages,
-            Inclusions = updateTourDto.Inclusions,
-            TourDestinations = updateTourDto.DestinationIds
-                .Select(destId => new TourDestinationEntity { TourId=id, DestinationId = destId }).ToList(),
-            TourSchedules = updateTourDto.Schedules
-                .Select(s => new TourScheduleEntity { TourId=id, DayNumber = s.DayNumber, Title = s.Title, Description = s.Description }).ToList()
-        };
-        
-        return await _tourRepository.UpdateAsync(tourToUpdate);
+      var tourToUpdate = _mapper.Map<TourEntity>(updateTourDto);
+      tourToUpdate.Id = id;
+      foreach (var departure in tourToUpdate.TourDepartures)
+      {
+          departure.StartDate = DateTime.SpecifyKind(departure.StartDate, DateTimeKind.Utc);
+          departure.EndDate = DateTime.SpecifyKind(departure.EndDate, DateTimeKind.Utc);
+      }   
+      return await _tourRepository.UpdateAsync(tourToUpdate);
     }
 
     public Task<bool> DeleteAsync(Guid id)

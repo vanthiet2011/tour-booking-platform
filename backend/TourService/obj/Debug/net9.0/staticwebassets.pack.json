@@ -1,16 +1,84 @@
 {
   "Files": [
     {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\04b62b78-edc9-4c3e-b4fd-c773bb3ff71c.jpg",
+      "PackagePath": "staticwebassets\\uploads\\04b62b78-edc9-4c3e-b4fd-c773bb3ff71c.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\0f501b95-3569-4a33-acc2-c913215a09a1.jpg",
+      "PackagePath": "staticwebassets\\uploads\\0f501b95-3569-4a33-acc2-c913215a09a1.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\2a594bac-c9e0-4970-b83d-d1acd9941af5.jpg",
+      "PackagePath": "staticwebassets\\uploads\\2a594bac-c9e0-4970-b83d-d1acd9941af5.jpg"
+    },
+    {
       "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\3d666387-80af-4662-96dd-9410215c42bc.jpg",
       "PackagePath": "staticwebassets\\uploads\\3d666387-80af-4662-96dd-9410215c42bc.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\3ff9a198-b4be-4570-a59a-fb5b20da9d4d.jpg",
+      "PackagePath": "staticwebassets\\uploads\\3ff9a198-b4be-4570-a59a-fb5b20da9d4d.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\61238ecb-2d4f-45af-b51b-c67dc4ce8ecc.jpg",
+      "PackagePath": "staticwebassets\\uploads\\61238ecb-2d4f-45af-b51b-c67dc4ce8ecc.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\646f0cc7-755b-4e69-b428-fa13892bb945.jpg",
+      "PackagePath": "staticwebassets\\uploads\\646f0cc7-755b-4e69-b428-fa13892bb945.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\79f2b1ff-1d31-4165-ab79-543b1b049485.jpg",
+      "PackagePath": "staticwebassets\\uploads\\79f2b1ff-1d31-4165-ab79-543b1b049485.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\7cd99aa2-9244-4fd0-b2dd-b8a95b5f4570.jpg",
+      "PackagePath": "staticwebassets\\uploads\\7cd99aa2-9244-4fd0-b2dd-b8a95b5f4570.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\7e6f15f2-a592-4ea5-ad9c-b506933fff9b.jpg",
+      "PackagePath": "staticwebassets\\uploads\\7e6f15f2-a592-4ea5-ad9c-b506933fff9b.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\8b0c930a-7548-4dc2-a7b0-c4ffb833d583.jpg",
+      "PackagePath": "staticwebassets\\uploads\\8b0c930a-7548-4dc2-a7b0-c4ffb833d583.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\9c17d2f6-b8f9-4069-8706-ec092b4f95e6.jpg",
+      "PackagePath": "staticwebassets\\uploads\\9c17d2f6-b8f9-4069-8706-ec092b4f95e6.jpg"
     },
     {
       "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg",
       "PackagePath": "staticwebassets\\uploads\\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg"
     },
     {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\b7afa4d5-03a5-49f9-9e7e-ae79b154b9a3.jpg",
+      "PackagePath": "staticwebassets\\uploads\\b7afa4d5-03a5-49f9-9e7e-ae79b154b9a3.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\c0100552-39f4-438f-b029-21a5519b4aea.jpg",
+      "PackagePath": "staticwebassets\\uploads\\c0100552-39f4-438f-b029-21a5519b4aea.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\c0a5936b-2c10-43c7-b045-aa02daa9c635.jpg",
+      "PackagePath": "staticwebassets\\uploads\\c0a5936b-2c10-43c7-b045-aa02daa9c635.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\c3d2ff07-8b1e-47df-96ed-0e722e1e4a09.jpg",
+      "PackagePath": "staticwebassets\\uploads\\c3d2ff07-8b1e-47df-96ed-0e722e1e4a09.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\d2db61fc-a4a5-4ea0-bafe-3ae9dce360e1.jpg",
+      "PackagePath": "staticwebassets\\uploads\\d2db61fc-a4a5-4ea0-bafe-3ae9dce360e1.jpg"
+    },
+    {
       "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\dcdd35dc-92d9-4674-a415-e404e2743851.jpg",
       "PackagePath": "staticwebassets\\uploads\\dcdd35dc-92d9-4674-a415-e404e2743851.jpg"
+    },
+    {
+      "Id": "D:\\Projects\\tour-booking-platform\\backend\\TourService\\wwwroot\\uploads\\f3f3d0c5-5537-45ce-adaf-5f866ca3b9a3.jpg",
+      "PackagePath": "staticwebassets\\uploads\\f3f3d0c5-5537-45ce-adaf-5f866ca3b9a3.jpg"
     },
     {
       "Id": "obj\\Debug\\net9.0\\staticwebassets\\msbuild.TourService.Microsoft.AspNetCore.StaticWebAssetEndpoints.props",

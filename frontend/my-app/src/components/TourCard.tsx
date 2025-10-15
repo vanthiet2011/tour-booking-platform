@@ -25,6 +25,11 @@ export function TourCard({ tour }: TourCardProps) {
       ?.slice(0, 3)
       .map((td) => td.destination.name)
       .join(" – ") || "Nhiều điểm đến";
+  const totalAvailableSlots =
+    tour.tourDepartures?.reduce(
+      (sum, departure) => sum + departure.availableSlots,
+      0
+    ) || 0;
 
   return (
     <Card className="group w-full overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col">
@@ -66,7 +71,7 @@ export function TourCard({ tour }: TourCardProps) {
           </div>
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span>Còn {tour.capacity} chỗ</span>
+            <span>Còn {totalAvailableSlots} chỗ</span>
           </div>
         </div>
 
@@ -74,7 +79,7 @@ export function TourCard({ tour }: TourCardProps) {
           <div>
             <p className="text-xs text-muted-foreground">Giá chỉ từ</p>
             <p className="text-base font-bold text-primary">
-              {formatCurrency(tour.price)}
+              {formatCurrency(tour.pricePerAdult)}
             </p>
           </div>
           <Link href={`/tours/${tour.id}`} passHref>

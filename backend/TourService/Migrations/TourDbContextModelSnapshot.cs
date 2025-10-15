@@ -85,6 +85,34 @@ namespace TourService.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("TourService.Entities.TourDepartureEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AvailableSlots")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("TourId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TourId");
+
+                    b.ToTable("TourDepartures");
+                });
+
             modelBuilder.Entity("TourService.Entities.TourDestinationEntity", b =>
                 {
                     b.Property<Guid>("TourId")
@@ -105,9 +133,6 @@ namespace TourService.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<int>("Capacity")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -132,7 +157,6 @@ namespace TourService.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<Inclusions>("Inclusions")
-                        .IsRequired()
                         .HasColumnType("jsonb");
 
                     b.Property<bool>("IsBestseller")
@@ -143,7 +167,10 @@ namespace TourService.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal>("PricePerAdult")
+                        .HasColumnType("decimal(18, 2)");
+
+                    b.Property<decimal>("PricePerChild")
                         .HasColumnType("decimal(18, 2)");
 
                     b.HasKey("Id");
@@ -189,6 +216,17 @@ namespace TourService.Migrations
                     b.Navigation("Tour");
                 });
 
+            modelBuilder.Entity("TourService.Entities.TourDepartureEntity", b =>
+                {
+                    b.HasOne("TourService.Entities.TourEntity", "Tour")
+                        .WithMany("TourDepartures")
+                        .HasForeignKey("TourId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tour");
+                });
+
             modelBuilder.Entity("TourService.Entities.TourDestinationEntity", b =>
                 {
                     b.HasOne("TourService.Entities.DestinationEntity", "Destination")
@@ -227,6 +265,8 @@ namespace TourService.Migrations
             modelBuilder.Entity("TourService.Entities.TourEntity", b =>
                 {
                     b.Navigation("Reviews");
+
+                    b.Navigation("TourDepartures");
 
                     b.Navigation("TourDestinations");
 

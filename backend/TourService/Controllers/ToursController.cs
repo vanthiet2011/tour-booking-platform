@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TourService.Dtos;
+using TourService.Repositories;
 using TourService.Services;
 
 namespace TourService.Controllers
@@ -10,10 +11,16 @@ namespace TourService.Controllers
     public class ToursController : ControllerBase
     {
         private readonly ITourService _tourService;
+        private readonly ITourRepository _tourRepository;
+        private readonly ITourDepartureRepository _tourDepartureRepository;
+        private readonly AutoMapper.IMapper _mapper;
 
-        public ToursController(ITourService tourService)
+        public ToursController(ITourService tourService, ITourDepartureRepository tourDepartureRepository, ITourRepository tourRepository, AutoMapper.IMapper mapper)
         {
             _tourService = tourService;
+            _tourDepartureRepository = tourDepartureRepository;
+            _tourRepository = tourRepository;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -72,6 +79,21 @@ namespace TourService.Controllers
                 return NotFound();
             }
             return NoContent();
+        }
+
+        [HttpGet("{tourId:guid}/departures")]
+        public async Task<IActionResult> GetTourDepartures(Guid tourId)
+        {
+            var tourExists = await _tourRepository.GetByIdAsync(tourId);
+            if (tourExists == null)
+            {
+                return NotFound("Không tìm thấy tour.");
+            }
+
+            var departures = await _tourDepartureRepository.GetByTourIdAsync(tourId);
+            var departureDtos = _mapper.Map<IEnumerable<TourDepartureDto>>(departures);
+            
+            return Ok(departureDtos);
         }
     }
 }

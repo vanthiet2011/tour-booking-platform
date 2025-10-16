@@ -4,6 +4,7 @@ namespace BookingService.Enums
     public enum ParticipantType
     {
         Adult,
-        Child
+        Child,
+        Infant
     }
 }

@@ -11,7 +11,7 @@ RUN dotnet build "BookingService.csproj" -c Debug -o /app/publish --no-restore \
 
 # Stage 2: Development (debug)
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS dev
-WORKDIR /app
+WORKDIR /src
 
 # COPY --from=build /app/publish .
 COPY . .

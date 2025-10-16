@@ -24,7 +24,7 @@ var configuration = builder.Configuration;
 // 1. Kết nối DB và Repositories
 var connectionString = configuration.GetConnectionString("Default");
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(connectionString);
-dataSourceBuilder.EnableDynamicJson(); // Kích hoạt tính năng JSON
+dataSourceBuilder.EnableDynamicJson();
 var dataSource = dataSourceBuilder.Build();
 builder.Services.AddDbContext<TourDbContext>(options =>
 {
@@ -33,6 +33,7 @@ builder.Services.AddDbContext<TourDbContext>(options =>
 
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
 builder.Services.AddScoped<ITourRepository, TourRepository>();
+builder.Services.AddScoped<ITourDepartureRepository, TourDepartureRepository>();
 builder.Services.AddScoped<ITourService, TourService.Services.TourService>();
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);

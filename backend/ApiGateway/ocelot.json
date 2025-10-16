@@ -50,18 +50,19 @@
       "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     },
     {
+      "UpstreamPathTemplate": "/api/bookings/{everything}",
+      "DownstreamPathTemplate": "/api/bookings/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "booking-service", "Port": 8080 }],
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "SwaggerKey": "booking"
+    },
+    {
       "UpstreamPathTemplate": "/api/files/upload",
       "UpstreamHttpMethod": ["POST"],
       "DownstreamPathTemplate": "/api/files/upload",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
-    },
-    {
-      "DownstreamPathTemplate": "/api/bookings/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "booking-service", "Port": 8080 }],
-      "UpstreamPathTemplate": "/bookings/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
     },
     {
       "DownstreamPathTemplate": "/api/payments/{everything}",

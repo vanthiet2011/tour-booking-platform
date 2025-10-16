@@ -49,6 +49,22 @@
       "sourceFileMap": {
         "/src": "${workspaceFolder}/backend/TourService"
       }
+    },
+    {
+      "name": "Attach to BookingService (Hot Reload, Docker)",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickRemoteProcess}",
+      "pipeTransport": {
+        "pipeProgram": "docker",
+        "pipeArgs": ["exec", "-i", "booking-service"],
+        "debuggerPath": "/root/vsdbg/vsdbg",
+        "pipeCwd": "${workspaceFolder}",
+        "quoteArgs": false
+      },
+      "sourceFileMap": {
+        "/src": "${workspaceFolder}/backend/BookingService"
+      }
     }
   ]
 }

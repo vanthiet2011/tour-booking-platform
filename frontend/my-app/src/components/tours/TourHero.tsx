@@ -2,6 +2,7 @@ import { Tour } from "@/lib/api";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Users, Tag, Star } from "lucide-react";
+import Link from "next/link";
 
 // Hàm helper định dạng tiền tệ
 const formatCurrency = (amount: number) => {
@@ -14,9 +15,9 @@ const formatCurrency = (amount: number) => {
 
 export function TourHero({ tour }: { tour: Tour }) {
   const displayDestinations =
-    tour.tourDestinations
+    tour.destinations
       ?.slice(0, 3)
-      .map((td) => td.destination.name)
+      .map((destination) => destination.name)
       .join(" – ") || "Nhiều điểm đến";
 
   return (
@@ -87,19 +88,24 @@ export function TourHero({ tour }: { tour: Tour }) {
 
           {/* CTA buttons */}
           <div className="flex flex-wrap gap-4 pt-4">
-            <Button
-              size="lg"
-              className="bg-primary text-primary-foreground hover:bg-primary/90"
-            >
-              Đặt Tour Ngay
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
-            >
-              Xem Chi Tiết
-            </Button>
+            {/* 2. Bọc Button trong Link và thêm href */}
+            <Link href="#booking-section" passHref>
+              <Button
+                size="lg"
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Đặt Tour Ngay
+              </Button>
+            </Link>
+            <Link href="#tour-details" passHref>
+              <Button
+                size="lg"
+                variant="outline"
+                className="border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20"
+              >
+                Xem Chi Tiết
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

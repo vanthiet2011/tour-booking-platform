@@ -1,4 +1,4 @@
-import { getTourById } from "@/lib/api";
+import { getTourById, getTourDeparturesById } from "@/lib/api";
 import { notFound } from "next/navigation";
 
 // Import tất cả các component bạn đã tạo
@@ -11,7 +11,6 @@ import { TourInclusions } from "@/components/tours/TourInclusions";
 import { TourReviews } from "@/components/tours/TourReviews";
 import { TourFAQ } from "@/components/tours/TourFAQ";
 import { BookingForm } from "@/components/tours/BookingForm";
-// TourPricing có thể đã được tích hợp trong BookingForm hoặc TourOverview
 
 interface TourDetailPageProps {
   params: { id: string };
@@ -19,7 +18,10 @@ interface TourDetailPageProps {
 
 export default async function TourDetailPage(props: TourDetailPageProps) {
   const { id } = await props.params;
-  const tour = await getTourById(id);
+  const [tour, departures] = await Promise.all([
+    getTourById(id),
+    getTourDeparturesById(id),
+  ]);
 
   if (!tour) {
     notFound();
@@ -28,20 +30,19 @@ export default async function TourDetailPage(props: TourDetailPageProps) {
   return (
     <main className="min-h-screen">
       <TourHero tour={tour} />
-      <TourOverview highlights={tour.highlights || []} />
+      <div id="tour-details">
+        <TourOverview highlights={tour.highlights || []} />
+      </div>
       <TourGallery tour={tour} />
       <div className="container mx-auto px-30 py-16">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left column - Tour details */}
           <div className="lg:col-span-2 space-y-16">
             <TourItinerary schedules={tour.schedules || []} />
             <TourInclusions tour={tour} />
           </div>
-
-          {/* Right column - Sticky booking form */}
-          <div className="lg:col-span-1">
+          <div id="booking-section" className="lg:col-span-1">
             <div className="lg:sticky lg:top-24">
-              <BookingForm />
+              <BookingForm tour={tour} departures={departures} />
             </div>
           </div>
         </div>

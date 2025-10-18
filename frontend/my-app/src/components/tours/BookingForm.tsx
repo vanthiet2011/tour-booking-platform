@@ -1,158 +1,168 @@
 "use client";
 
-import type React from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { format, parseISO } from "date-fns";
+import { vi } from "date-fns/locale";
+import { Calendar as CalendarIcon, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ArrowRight } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { Tour, TourDepartureInfo } from "@/lib/api";
 
-export function BookingForm() {
-  const [startDate, setStartDate] = useState("2025-01-10");
-  const [endDate, setEndDate] = useState("2025-01-14");
-  const [adults, setAdults] = useState(2);
-  const [children, setChildren] = useState(0);
+interface BookingFormProps {
+  tour: Tour;
+  departures: TourDepartureInfo[] | undefined;
+}
 
-  const calculateDuration = () => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const diffTime = Math.abs(end.getTime() - start.getTime());
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const nights = diffDays - 1;
-    return { days: diffDays, nights };
+export function BookingForm({ tour, departures = [] }: BookingFormProps) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [selectedDeparture, setSelectedDeparture] =
+    useState<TourDepartureInfo | null>(null);
+  const [endDate, setEndDate] = useState("");
+
+  const availableDateStrings = new Set(
+    departures.map((dep) => format(parseISO(dep.startDate), "yyyy-MM-dd"))
+  );
+
+  const availableDates = Array.from(availableDateStrings).map((d) =>
+    parseISO(d)
+  );
+
+  const handleDateSelect = (date: Date | undefined) => {
+    if (!date) return;
+    const dateString = format(date, "yyyy-MM-dd");
+    const departure = departures.find(
+      (d) => format(parseISO(d.startDate), "yyyy-MM-dd") === dateString
+    );
+    setSelectedDeparture(departure || null);
+    if (departure) {
+      setEndDate(format(parseISO(departure.endDate), "dd/MM/yyyy"));
+    } else {
+      setEndDate("");
+    }
   };
 
-  const duration = calculateDuration();
-  const adultPrice = 3990000;
-  const childPrice = 2090000;
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Booking submitted:", { startDate, endDate, adults, children });
+  const handleBookNow = () => {
+    if (!selectedDeparture) {
+      toast({
+        title: "Chưa chọn ngày",
+        description: "Vui lòng chọn một ngày khởi hành từ lịch.",
+        variant: "destructive",
+      });
+      return;
+    }
+    router.push(
+      `/booking/checkout?tourId=${tour.id}&departureId=${selectedDeparture.id}`
+    );
   };
 
   return (
-    <Card className="sticky top-24 border-border/50 bg-card p-6 shadow-lg">
-      <h3 className="mb-6 text-2xl font-bold text-card-foreground">
-        Tour Booking
-      </h3>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="space-y-4">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-card-foreground">
-              Ngày bắt đầu
-            </label>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
-
-          <div>
-            <label className="mb-2 block text-sm font-medium text-card-foreground">
-              Ngày kết thúc
-            </label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full rounded-lg border border-input bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-          </div>
+    <Card className="sticky top-24 p-4 shadow-lg">
+      <CardContent className="space-y-4">
+        <div className="grid w-full items-center gap-2">
+          <label className="mb-2 block text-sm font-medium text-card-foreground">
+            Ngày bắt đầu
+          </label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !selectedDeparture && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDeparture ? (
+                  format(parseISO(selectedDeparture.startDate), "dd/MM/yyyy", {
+                    locale: vi,
+                  })
+                ) : (
+                  <span>Chọn ngày có sẵn</span>
+                )}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={
+                  selectedDeparture
+                    ? parseISO(selectedDeparture.startDate)
+                    : undefined
+                }
+                onSelect={handleDateSelect}
+                modifiers={{ available: availableDates }}
+                modifiersClassNames={{
+                  available: "bg-primary text-primary-foreground rounded-md",
+                }}
+                disabled={(date) =>
+                  !availableDateStrings.has(format(date, "yyyy-MM-dd"))
+                }
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
-        <div className="rounded-lg bg-muted/30 p-4">
-          <p className="text-sm text-muted-foreground">Thời gian :</p>
-          <p className="mt-1 font-medium text-card-foreground">
-            {duration.days} ngày {duration.nights} đêm
-          </p>
+        <div>
+          <label className="mb-2 block text-sm font-medium text-card-foreground">
+            Ngày kết thúc
+          </label>
+          <Button
+            variant="outline"
+            className="w-full justify-start text-left font-normal"
+            disabled
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {selectedDeparture
+              ? format(parseISO(selectedDeparture.endDate), "dd/MM/yyyy", {
+                  locale: vi,
+                })
+              : "Chưa có ngày kết thúc"}
+          </Button>
         </div>
-
-        <div className="space-y-3">
-          <h4 className="font-semibold text-card-foreground">Vé:</h4>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-card-foreground">
-                Người lớn
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {adultPrice.toLocaleString("vi-VN")} VND
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setAdults(Math.max(0, adults - 1))}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background hover:bg-muted"
-              >
-                -
-              </button>
-              <span className="w-8 text-center font-medium">{adults}</span>
-              <button
-                type="button"
-                onClick={() => setAdults(adults + 1)}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background hover:bg-muted"
-              >
-                +
-              </button>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-card-foreground">Trẻ em</p>
-              <p className="text-sm text-muted-foreground">
-                {childPrice.toLocaleString("vi-VN")} VND
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                type="button"
-                onClick={() => setChildren(Math.max(0, children - 1))}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background hover:bg-muted"
-              >
-                -
-              </button>
-              <span className="w-8 text-center font-medium">{children}</span>
-              <button
-                type="button"
-                onClick={() => setChildren(children + 1)}
-                className="flex h-8 w-8 items-center justify-center rounded-md border border-input bg-background hover:bg-muted"
-              >
-                +
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <div className="border-t border-border pt-4">
-          <div className="flex items-center justify-between">
-            <p className="font-semibold text-card-foreground">Tổng cộng:</p>
-            <p className="text-xl font-bold text-primary">
-              {(adults * adultPrice + children * childPrice).toLocaleString(
-                "vi-VN"
-              )}{" "}
-              VND
+        {tour.duration && (
+          <div className="rounded-lg bg-muted/30 p-3 text-sm">
+            <p className="text-muted-foreground">
+              Thời gian:{" "}
+              <span className="font-semibold text-foreground">
+                {tour.duration}
+              </span>
             </p>
           </div>
+        )}
+        <div className="flex justify-between items-center">
+          <span className="text-sm font-medium text-card-foreground">
+            Giá mỗi khách:
+          </span>
+          <span className="font-semibold text-primary text-xl">
+            {new Intl.NumberFormat("vi-VN", {
+              style: "currency",
+              currency: "VND",
+            }).format(tour.pricePerAdult)}
+          </span>
         </div>
+      </CardContent>
 
+      <CardFooter>
         <Button
-          type="submit"
+          onClick={handleBookNow}
+          className="w-full flex items-center justify-center gap-1"
           size="lg"
-          className="w-full bg-[#5a9f5e] text-white hover:bg-[#4a8f4e] transition-colors"
         >
-          Đặt Ngay
-          <ArrowRight className="ml-2 h-5 w-5" />
+          <span className="leading-none">Đặt Ngay</span>
+          <ArrowRight className="h-5 w-5 relative top-[2px]" />
         </Button>
-
-        <p className="text-center text-sm text-muted-foreground">
-          Bạn cần trợ giúp không?
-        </p>
-      </form>
+      </CardFooter>
     </Card>
   );
 }

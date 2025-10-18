@@ -16,6 +16,11 @@ export function TourItinerary({ schedules = [] }: TourItineraryProps) {
     return null;
   }
 
+  // SỬA LẠI: Sắp xếp mảng schedules trước khi map
+  const sortedSchedules = [...schedules].sort(
+    (a, b) => a.dayNumber - b.dayNumber
+  );
+
   return (
     <div>
       <div className="mb-6">
@@ -33,20 +38,21 @@ export function TourItinerary({ schedules = [] }: TourItineraryProps) {
         defaultValue="item-0"
         className="space-y-4"
       >
-        {schedules.map((schedule, index) => (
+        {/* Sử dụng mảng đã được sắp xếp */}
+        {sortedSchedules.map((schedule, index) => (
           <AccordionItem
             value={`item-${index}`}
-            key={index}
+            key={schedule.id || index} // Dùng schedule.id làm key sẽ ổn định hơn
             className="overflow-hidden rounded-lg border-border/50 bg-card"
           >
             <AccordionTrigger className="px-4 py-2 text-left hover:no-underline">
               <div className="flex items-center gap-4">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 font-semibold text-primary">
-                  {schedule.dayNumber || index + 1}
+                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 font-semibold text-primary">
+                  {schedule.dayNumber}
                 </div>
                 <div>
                   <div className="text-sm font-medium text-muted-foreground">
-                    Ngày {schedule.dayNumber || index + 1}
+                    Ngày {schedule.dayNumber}
                   </div>
                   <div className="text-base font-semibold text-card-foreground">
                     {schedule.title}
@@ -55,8 +61,8 @@ export function TourItinerary({ schedules = [] }: TourItineraryProps) {
               </div>
             </AccordionTrigger>
 
-            <AccordionContent className="pl-16">
-              <div className="prose prose-sm max-w-none text-muted-foreground">
+            <AccordionContent className="border-t border-border/30 px-6 pb-6 pt-4 pl-[76px]">
+              <div className="prose prose-sm max-w-none text-muted-foreground prose-p:my-2">
                 <ReactMarkdown>
                   {schedule.description || "Chưa có mô tả chi tiết."}
                 </ReactMarkdown>

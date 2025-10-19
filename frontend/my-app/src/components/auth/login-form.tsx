@@ -6,14 +6,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { useAuth, ApiUser } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie";
-import { loginUser } from "@/lib/api";
+import authService from "@/services/auth.service";
+import { ApiUser } from "@/types/auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface DecodedToken {
   nameid: string;
   email: string;
+  name: string;
   "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
   exp: number;
 }
@@ -21,7 +23,7 @@ interface DecodedToken {
 export function LoginForm() {
   const router = useRouter();
   const { login } = useAuth();
-
+  const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -31,15 +33,7 @@ export function LoginForm() {
     setIsLoading(true);
 
     try {
-      const data = await loginUser(formData);
-
-      if (!Cookies.get("accessToken") && data.accessToken) {
-        Cookies.set("accessToken", data.accessToken, {
-          expires: 1,
-          sameSite: "Lax",
-          path: "/",
-        });
-      }
+      const data = await authService.login(formData);
 
       const decodedToken = jwtDecode<DecodedToken>(data.accessToken);
       const userRole = parseInt(
@@ -48,22 +42,33 @@ export function LoginForm() {
         ],
         10
       );
+
       const userPayload: ApiUser = {
         id: decodedToken.nameid,
         email: decodedToken.email,
         role: userRole,
-        name: decodedToken.email,
+        name: decodedToken.name,
       };
 
       login(userPayload, data.accessToken);
       localStorage.setItem("refreshToken", data.refreshToken);
 
-      console.log("✅ Login success");
+      toast({
+        title: "Đăng nhập thành công!",
+        description: "Chào mừng bạn đã trở lại.",
+      });
+
       router.push("/");
       router.refresh();
     } catch (error: any) {
-      console.error("❗ Login failed:", error);
-      alert("Đăng nhập thất bại: " + error.message);
+      console.error("❗ Đăng nhập thất bại:", error);
+      toast({
+        title: "Đăng nhập thất bại",
+        description:
+          error.response?.data?.message ||
+          "Email hoặc mật khẩu không chính xác.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -75,10 +80,9 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      {/* EMAIL */}
       <div className="space-y-2">
         <Label htmlFor="email" className="text-sm font-medium text-foreground">
-          Email Address
+          Địa chỉ Email
         </Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -86,7 +90,7 @@ export function LoginForm() {
             id="email"
             name="email"
             type="email"
-            placeholder="Enter your email"
+            placeholder="Nhập email của bạn"
             value={formData.email}
             onChange={handleChange}
             className="pl-10 h-12 bg-input border-border focus:border-primary focus:ring-primary"
@@ -95,13 +99,12 @@ export function LoginForm() {
         </div>
       </div>
 
-      {/* PASSWORD */}
       <div className="space-y-2">
         <Label
           htmlFor="password"
           className="text-sm font-medium text-foreground"
         >
-          Password
+          Mật khẩu
         </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -109,7 +112,7 @@ export function LoginForm() {
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
+            placeholder="Nhập mật khẩu của bạn"
             value={formData.password}
             onChange={handleChange}
             className="pl-10 pr-10 h-12 bg-input border-border focus:border-primary focus:ring-primary"
@@ -129,27 +132,25 @@ export function LoginForm() {
         </div>
       </div>
 
-      {/* REMEMBER + FORGOT */}
       <div className="flex items-center justify-between text-sm">
         <label className="flex items-center gap-2 cursor-pointer">
           <input type="checkbox" className="rounded border-border" />
-          <span className="text-muted-foreground">Remember me</span>
+          <span className="text-muted-foreground">Ghi nhớ đăng nhập</span>
         </label>
         <a
           href="#"
           className="text-primary hover:text-primary/80 underline underline-offset-4"
         >
-          Forgot password?
+          Quên mật khẩu?
         </a>
       </div>
 
-      {/* SUBMIT */}
       <Button
         type="submit"
         disabled={isLoading}
         className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-medium"
       >
-        {isLoading ? "Signing In..." : "Sign In"}
+        {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
       </Button>
     </form>
   );

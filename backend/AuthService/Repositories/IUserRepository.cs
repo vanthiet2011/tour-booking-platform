@@ -5,9 +5,10 @@ namespace AuthService.Repositories
 {
   public interface IUserRepository
   {
-    Task<UserEntity?> GetUserByIdAsync(Guid id);
-    Task<UserEntity?> GetUserByEmailAsync(string email);
-    Task CreateUserAsync(UserEntity user);
+    Task<UserEntity?> GetByIdAsync(Guid id);
+    Task<UserEntity?> GetByEmailAsync(string email);
+    Task CreateAsync(UserEntity user);
+    Task UpdateAsync(UserEntity user);
     Task AddRefreshTokenAsync(UserRefreshTokenEntity refreshToken);
     Task<UserRefreshTokenEntity?> GetRefreshTokenAsync(string token);
   }

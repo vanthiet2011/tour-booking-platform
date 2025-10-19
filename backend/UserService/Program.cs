@@ -5,9 +5,11 @@ using System.Text;
 using UserService.Data;
 using UserService.Repositories;
 using System.Text.Json.Serialization;
+using UserService.Kafka;
+using UserService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var configuration = builder.Configuration; // Lấy configuration để sử dụng
+var configuration = builder.Configuration;
 
 // --- Kết nối Database ---
 var connectionString = configuration.GetConnectionString("Default");
@@ -15,6 +17,8 @@ builder.Services.AddDbContext<UserDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
 });
+
+builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -46,7 +50,7 @@ builder.Services.AddAuthentication(options =>
         // Khớp với cấu hình JwtSettings của bạn
         ValidIssuer = configuration["JwtSettings:Issuer"],
         ValidAudience = configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"])),
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]!)),
 
         // Bật các kiểm tra cần thiết
         ValidateIssuer = true,
@@ -66,6 +70,8 @@ builder.Services.AddSwaggerGen();
 
 // Đăng ký Repository
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+builder.Services.AddHostedService<UserCreationConsumer>();
 
 var app = builder.Build();
 

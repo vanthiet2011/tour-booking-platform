@@ -121,6 +121,13 @@ export interface TourDeparture {
   availableSlots: number;
 }
 
+export interface TourDepartureInfo {
+  id: string;
+  startDate: string; // ISO date string
+  endDate: string; // ISO date string
+  availableSlots: number;
+}
+
 export interface Inclusions {
   included: string[];
   notIncluded: string[];
@@ -213,6 +220,18 @@ export const getToursByDestination = async (
   destinationId: string
 ): Promise<Tour[]> => {
   return fetchWithAuth(`/api/destinations/${destinationId}/tours`);
+};
+
+export const getTourDeparturesById = async (
+  tourId: string
+): Promise<TourDepartureInfo[]> => {
+  try {
+    const data = await fetchWithAuth(`/api/tours/${tourId}/departures`);
+    return data || []; // Trả về mảng rỗng nếu data là null
+  } catch (error) {
+    console.error(`Failed to fetch departures for tour ${tourId}:`, error);
+    return []; // Trả về mảng rỗng khi có lỗi
+  }
 };
 
 export const getDestinationById = async (

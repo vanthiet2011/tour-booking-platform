@@ -13,18 +13,18 @@ public class UserProfileRepository : IUserProfileRepository
         _context = context;
     }
 
-    public async Task<UserProfileEntity?> GetUserProfileByIdAsync(Guid id)
+    public async Task<UserProfileEntity?> GetByIdAsync(Guid id)
     {
         return await _context.UserProfiles.FirstOrDefaultAsync(p => p.Id == id);
     }
 
-    public async Task CreateUserProfileAsync(UserProfileEntity userProfile)
+    public async Task CreateAsync(UserProfileEntity userProfile)
     {
         await _context.UserProfiles.AddAsync(userProfile);
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateUserProfileAsync(UserProfileEntity userProfile)
+    public async Task UpdateAsync(UserProfileEntity userProfile)
     {
         userProfile.UpdateAt = DateTime.UtcNow;
         _context.UserProfiles.Update(userProfile);

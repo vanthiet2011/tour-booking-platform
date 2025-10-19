@@ -1,7 +1,8 @@
-
 using System.Text;
 using AuthService.Data;
+using AuthService.HttpClients;
 using AuthService.Repositories;
+using AuthService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -9,21 +10,57 @@ using Microsoft.OpenApi.Models;
 using UserService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
+
 var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
 });
 
+builder.Services.Configure<RouteOptions>(options =>
+{
+    options.LowercaseUrls = true;
+});
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddControllers();
+builder.Services.AddScoped<IAuthService, AuthService.Services.AuthService>();
+builder.Services.AddSingleton<KafkaProducerService>();
+builder.Services.AddSingleton<JwtService>();
+
 builder.Services.AddHttpClient();
-builder.Services.AddSingleton<AuthService.Services.JwtService>();
+builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "AuthService API", Version = "v1" });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Nhập JWT token vào đây (ví dụ: Bearer eyJhbGciOi...)"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -56,20 +93,25 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
-builder.Services.AddHttpClient();
+
 var app = builder.Build();
+
 app.UseRouting();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "AuthService API V1");
-        c.RoutePrefix = "swagger"; // /swagger
+        c.RoutePrefix = "swagger";
     });
 }
+
 app.UseCors("AllowFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();

@@ -10,7 +10,6 @@ namespace AuthService.Entities
     public string? Token { get; set; }
     public DateTime ExpiresAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    // Foreign key to UserEntity
     public Guid UserId { get; set; }
     public UserEntity? User { get; set; }
   }

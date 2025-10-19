@@ -2,12 +2,17 @@
 
 import type React from "react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import authService from "@/services/auth.service";
+import { useToast } from "@/hooks/use-toast";
 
 export function RegisterForm() {
+  const router = useRouter();
+  const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -19,30 +24,37 @@ export function RegisterForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Lỗi",
+        description: "Mật khẩu và xác nhận mật khẩu không khớp.",
+        variant: "destructive",
+      });
+      return;
+    }
     setIsLoading(true);
     try {
-      const response = await fetch("http://localhost:5001/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+      await authService.register({
+        email: formData.email,
+        password: formData.password,
       });
 
-      if (!response.ok) {
-        // Lấy message từ API (ví dụ "Email already exists")
-        const errorData = await response.json();
-        throw new Error(
-          errorData.title || errorData.message || "Register failed"
-        );
-      }
+      toast({
+        title: "Đăng ký thành công!",
+        description:
+          "Tài khoản của bạn đã được tạo. Hãy đăng nhập để tiếp tục.",
+      });
 
-      const data = await response.json();
-      console.log("Register success:", data);
-
-      alert("Register successful! Please login.");
-      window.location.href = "/login";
+      router.push("/login");
     } catch (error: any) {
-      console.error("Register failed:", error);
-      alert("Register failed: " + error.message);
+      console.error("❗ Đăng ký thất bại:", error);
+      toast({
+        title: "Đăng ký thất bại",
+        description:
+          error.response?.data?.message ||
+          "Đã có lỗi xảy ra. Vui lòng thử lại.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -60,7 +72,7 @@ export function RegisterForm() {
       {/* Email */}
       <div className="space-y-2">
         <Label htmlFor="email" className="text-sm font-medium text-foreground">
-          Email Address
+          Địa chỉ Email
         </Label>
         <div className="relative">
           <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -68,7 +80,7 @@ export function RegisterForm() {
             id="email"
             name="email"
             type="email"
-            placeholder="john@example.com"
+            placeholder="vd: nguyenvana@example.com"
             value={formData.email}
             onChange={handleChange}
             className="pl-10 h-12 bg-input border-border focus:border-primary focus:ring-primary"
@@ -77,13 +89,13 @@ export function RegisterForm() {
         </div>
       </div>
 
-      {/* Password */}
+      {/* Mật khẩu */}
       <div className="space-y-2">
         <Label
           htmlFor="password"
           className="text-sm font-medium text-foreground"
         >
-          Password
+          Mật khẩu
         </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -91,7 +103,7 @@ export function RegisterForm() {
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
-            placeholder="Create a strong password"
+            placeholder="Nhập mật khẩu mạnh"
             value={formData.password}
             onChange={handleChange}
             className="pl-10 pr-10 h-12 bg-input border-border focus:border-primary focus:ring-primary"
@@ -111,13 +123,13 @@ export function RegisterForm() {
         </div>
       </div>
 
-      {/* Confirm Password */}
+      {/* Xác nhận mật khẩu */}
       <div className="space-y-2">
         <Label
           htmlFor="confirmPassword"
           className="text-sm font-medium text-foreground"
         >
-          Confirm Password
+          Xác nhận mật khẩu
         </Label>
         <div className="relative">
           <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -125,7 +137,7 @@ export function RegisterForm() {
             id="confirmPassword"
             name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
-            placeholder="Confirm your password"
+            placeholder="Nhập lại mật khẩu"
             value={formData.confirmPassword}
             onChange={handleChange}
             className="pl-10 pr-10 h-12 bg-input border-border focus:border-primary focus:ring-primary"
@@ -145,7 +157,7 @@ export function RegisterForm() {
         </div>
       </div>
 
-      {/* Terms */}
+      {/* Điều khoản */}
       <div className="flex items-start gap-2">
         <input
           type="checkbox"
@@ -153,45 +165,46 @@ export function RegisterForm() {
           required
         />
         <p className="text-xs text-muted-foreground">
-          I agree to the{" "}
+          Tôi đồng ý với{" "}
           <a
             href="#"
             className="text-primary hover:text-primary/80 underline underline-offset-4"
           >
-            Terms of Service
+            Điều khoản dịch vụ
           </a>{" "}
-          and{" "}
+          và{" "}
           <a
             href="#"
             className="text-primary hover:text-primary/80 underline underline-offset-4"
           >
-            Privacy Policy
+            Chính sách bảo mật
           </a>
+          .
         </p>
       </div>
 
-      {/* Submit */}
+      {/* Nút đăng ký */}
       <Button
         type="submit"
         disabled={isLoading}
         className="w-full h-12 bg-accent hover:bg-accent/90 text-accent-foreground font-medium"
       >
-        {isLoading ? "Creating Account..." : "Create Account"}
+        {isLoading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
       </Button>
 
-      {/* Divider */}
+      {/* Hoặc đăng ký với */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-card px-2 text-muted-foreground">
-            Or sign up with
+            Hoặc đăng ký bằng
           </span>
         </div>
       </div>
 
-      {/* Social Buttons */}
+      {/* Nút mạng xã hội */}
       <div className="grid grid-cols-2 gap-3">
         <Button variant="outline" type="button" className="h-12 bg-transparent">
           <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
@@ -202,6 +215,7 @@ export function RegisterForm() {
           </svg>
           Google
         </Button>
+
         <Button variant="outline" type="button" className="h-12 bg-transparent">
           <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24" fill="currentColor">
             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />

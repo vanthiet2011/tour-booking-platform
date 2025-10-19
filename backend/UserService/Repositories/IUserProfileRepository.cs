@@ -5,9 +5,9 @@ namespace UserService.Repositories
 {
   public interface IUserProfileRepository
 {
-    Task<UserProfileEntity?> GetUserProfileByIdAsync(Guid id);
-    Task CreateUserProfileAsync(UserProfileEntity userProfile);
-    Task UpdateUserProfileAsync(UserProfileEntity userProfile);
+    Task<UserProfileEntity?> GetByIdAsync(Guid id);
+    Task CreateAsync(UserProfileEntity userProfile);
+    Task UpdateAsync(UserProfileEntity userProfile);
     Task<bool> ExistsAsync(Guid id);
 }
 }

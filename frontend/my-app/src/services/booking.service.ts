@@ -1,0 +1,12 @@
+// src/services/booking.service.ts
+import apiClient from "./api-client";
+import { Booking, BookingPayload } from "@/types/booking";
+
+const bookingService = {
+  create: async (payload: BookingPayload): Promise<Booking> => {
+    const { data } = await apiClient.post<Booking>("/bookings", payload);
+    return data;
+  },
+};
+
+export default bookingService;

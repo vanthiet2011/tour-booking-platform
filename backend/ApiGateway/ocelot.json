@@ -1,11 +1,17 @@
 {
   "Routes": [
     {
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/auth/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "auth-service", "Port": 8080 }],
-      "UpstreamPathTemplate": "/auth/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 8080
+        }
+      ],
+      "Key": "Auth"
     },
     {
       "DownstreamPathTemplate": "/api/users/{everything}",

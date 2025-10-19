@@ -14,6 +14,7 @@ namespace UserService.Entities
     [MaxLength(100)]
     public string? FullName { get; set; }
     [MaxLength(20)]
+    public DateTime? DateOfBirth { get; set; }
     public string? PhoneNumber { get; set; }
     [MaxLength(256)]
     public string? Address { get; set; }

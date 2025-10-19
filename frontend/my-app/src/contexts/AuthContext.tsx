@@ -1,4 +1,6 @@
+// src/contexts/AuthContext.tsx
 "use client";
+
 import Cookies from "js-cookie";
 import React, {
   createContext,
@@ -7,17 +9,13 @@ import React, {
   ReactNode,
   useEffect,
 } from "react";
-
-export interface ApiUser {
-  id: string;
-  name: string;
-  email: string;
-  role: number;
-}
+import authService from "@/services/auth.service";
+import { ApiUser } from "@/types/auth";
 
 interface AuthContextType {
   user: ApiUser | null;
   token: string | null;
+  isLoading: boolean;
   login: (user: ApiUser, token: string) => void;
   logout: () => void;
 }
@@ -26,34 +24,28 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ApiUser | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [token, setToken] = useState<string | null>(
     () => Cookies.get("accessToken") || null
   );
 
   useEffect(() => {
     const fetchUserOnLoad = async () => {
-      if (!token) {
-        setUser(null);
-        return;
-      }
-      try {
-        const res = await fetch("http://localhost:8000/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data);
-        } else {
-          console.error("Token is invalid or expired.");
+      if (token) {
+        try {
+          const userData = await authService.getMe();
+          setUser(userData);
+        } catch (error) {
+          console.error(
+            "Failed to fetch user on load, token might be invalid:",
+            error
+          );
           setUser(null);
+          setToken(null);
           Cookies.remove("accessToken");
         }
-      } catch (err) {
-        console.error("Failed to fetch user on load:", err);
-        setUser(null);
-        Cookies.remove("accessToken");
       }
+      setIsLoading(false);
     };
 
     fetchUserOnLoad();
@@ -62,19 +54,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = (user: ApiUser, token: string) => {
     setUser(user);
     setToken(token);
-    localStorage.setItem("accessToken", token);
     Cookies.set("accessToken", token, { expires: 7, path: "/" });
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem("accessToken");
     Cookies.remove("accessToken", { path: "/" });
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
@@ -82,6 +72,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  if (context === undefined) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
   return context;
 };

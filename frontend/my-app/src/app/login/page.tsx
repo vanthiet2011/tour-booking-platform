@@ -20,31 +20,32 @@ export default function LoginPage() {
             className="inline-flex items-center gap-2 text-2xl font-bold text-foreground hover:text-primary transition-colors"
           >
             <Plane className="h-8 w-8" />
-            WanderWise
+            VietNature Tours
           </Link>
         </div>
 
-        {/* Login Card */}
+        {/* Thẻ đăng nhập */}
         <Card className="shadow-xl border-0 bg-card/95 backdrop-blur-sm">
           <CardHeader className="text-center pb-4">
             <CardTitle className="text-2xl font-bold text-foreground">
-              Welcome Back
+              Chào mừng bạn trở lại
             </CardTitle>
             <CardDescription className="text-muted-foreground">
-              Sign in to continue your travel journey
+              Đăng nhập để tiếp tục hành trình khám phá của bạn
             </CardDescription>
           </CardHeader>
+
           <CardContent>
             <LoginForm />
 
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
-                {"Don't have an account? "}
+                {"Chưa có tài khoản? "}
                 <Link
                   href="/register"
                   className="text-primary hover:text-primary/80 font-medium underline underline-offset-4"
                 >
-                  Create one here
+                  Đăng ký ngay
                 </Link>
               </p>
             </div>
@@ -53,7 +54,21 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground mt-8">
-          By signing in, you agree to our Terms of Service and Privacy Policy
+          Khi đăng nhập, bạn đồng ý với{" "}
+          <a
+            href="#"
+            className="text-primary hover:text-primary/80 underline underline-offset-4"
+          >
+            Điều khoản dịch vụ
+          </a>{" "}
+          và{" "}
+          <a
+            href="#"
+            className="text-primary hover:text-primary/80 underline underline-offset-4"
+          >
+            Chính sách bảo mật
+          </a>{" "}
+          của chúng tôi.
         </p>
       </div>
     </div>

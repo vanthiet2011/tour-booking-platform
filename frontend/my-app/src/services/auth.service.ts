@@ -25,6 +25,21 @@ const authService = {
     const { data } = await apiClient.get<ApiUser>("/auth/me");
     return data;
   },
+
+  loginWithGoogle: async (token: string): Promise<LoginResponse> => {
+    const { data } = await apiClient.post<LoginResponse>("/auth/login/google", {
+      token,
+    });
+    return data;
+  },
+
+  loginWithFacebook: async (token: string): Promise<LoginResponse> => {
+    const { data } = await apiClient.post<LoginResponse>(
+      "/auth/login/facebook",
+      { token }
+    );
+    return data;
+  },
 };
 
 export default authService;

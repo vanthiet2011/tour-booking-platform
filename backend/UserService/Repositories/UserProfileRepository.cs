@@ -26,7 +26,7 @@ public class UserProfileRepository : IUserProfileRepository
 
     public async Task UpdateAsync(UserProfileEntity userProfile)
     {
-        userProfile.UpdateAt = DateTime.UtcNow;
+        userProfile.UpdatedAt = DateTime.UtcNow;
         _context.UserProfiles.Update(userProfile);
         await _context.SaveChangesAsync();
     }

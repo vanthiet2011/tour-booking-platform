@@ -19,42 +19,46 @@ public class UserCreationConsumer : BackgroundService
         {
             BootstrapServers = config["Kafka:BootstrapServers"],
             GroupId = "user-service-group",
-            AutoOffsetReset = AutoOffsetReset.Earliest // Bắt đầu đọc từ message cũ nhất nếu chưa có offset
+            AutoOffsetReset = AutoOffsetReset.Earliest
         };
         _consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _consumer.Subscribe("user-creation-topic");
-        _logger.LogInformation("--> UserService is waiting for 'user-creation-topic' messages...");
-
-        while (!stoppingToken.IsCancellationRequested)
+        return Task.Run(() =>
         {
-            try
+            _consumer.Subscribe("user-creation-topic");
+            _logger.LogInformation("--> UserService is waiting for 'user-creation-topic' messages...");
+
+            while (!stoppingToken.IsCancellationRequested)
             {
-                var consumeResult = _consumer.Consume(stoppingToken);
-                if (consumeResult?.Message?.Value == null) continue;
-
-                var userDto = JsonSerializer.Deserialize<UserCreatedDto>(consumeResult.Message.Value);
-
-                if (userDto != null)
+                try
                 {
-                    _logger.LogInformation("--> Received UserCreated event for User ID: {UserId}", userDto.Id);
-                    using var scope = _serviceProvider.CreateScope();
-                    var userService = scope.ServiceProvider.GetRequiredService<IUserProfileService>();
-                    await userService.CreateProfileFromEventAsync(userDto);
+                    var consumeResult = _consumer.Consume(stoppingToken);
+                    if (consumeResult?.Message?.Value == null) continue;
+
+                    var userDto = JsonSerializer.Deserialize<UserCreatedDto>(consumeResult.Message.Value);
+
+                    if (userDto != null)
+                    {
+                        _logger.LogInformation("--> Received UserCreated event for User ID: {UserId}", userDto.Id);
+                        
+                        using var scope = _serviceProvider.CreateScope();
+                        var userService = scope.ServiceProvider.GetRequiredService<IUserProfileService>();
+                        userService.CreateProfileFromEventAsync(userDto).GetAwaiter().GetResult();
+                    }
+                }
+                catch (OperationCanceledException)
+                {
+                    _logger.LogInformation("--> Kafka consumer is shutting down.");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "--> Error processing Kafka message.");
                 }
             }
-            catch (OperationCanceledException)
-            {
-                _logger.LogInformation("--> Kafka consumer is shutting down.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "--> Error processing Kafka message.");
-            }
-        }
+        }, stoppingToken);
     }
 
     public override void Dispose()

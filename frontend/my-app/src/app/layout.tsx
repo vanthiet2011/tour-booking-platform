@@ -3,11 +3,12 @@ import type { Metadata } from "next";
 import { Inter, Lora } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
-
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/components/theme-provider"; // 1. Import ThemeProvider
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({
   subsets: ["latin", "vietnamese"],
@@ -29,28 +30,26 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
+
   return (
-    // Thêm suppressHydrationWarning để tránh lỗi với theme
     <html lang="vi" suppressHydrationWarning>
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          inter.variable,
-          lora.variable
-        )}
-      >
-        {/* 2. Bọc toàn bộ ứng dụng bằng ThemeProvider */}
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem={false}
-        >
-          <AuthProvider>
-            <Header />
-            <main>{children}</main>
-            <Footer />
-          </AuthProvider>
-        </ThemeProvider>
+      <body>
+        <GoogleOAuthProvider clientId={googleClientId}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AuthProvider>
+              <Header />
+              <main className="flex-grow">{children}</main>
+              <Footer />
+              <Toaster />
+            </AuthProvider>
+          </ThemeProvider>
+        </GoogleOAuthProvider>
       </body>
     </html>
   );

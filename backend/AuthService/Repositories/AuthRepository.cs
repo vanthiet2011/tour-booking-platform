@@ -5,10 +5,10 @@ using AuthService.Repositories;
 
 namespace UserService.Repositories
 {
-  public class UserRepository : IUserRepository
+  public class AuthRepository : IAuthRepository
   {
     private readonly UserDbContext _context;
-    public UserRepository(UserDbContext context)
+    public AuthRepository(UserDbContext context)
     {
       _context = context;
     }

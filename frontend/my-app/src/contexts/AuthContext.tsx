@@ -1,4 +1,3 @@
-// src/contexts/AuthContext.tsx
 "use client";
 
 import Cookies from "js-cookie";
@@ -14,7 +13,6 @@ import { ApiUser } from "@/types/auth";
 
 interface AuthContextType {
   user: ApiUser | null;
-  token: string | null;
   isLoading: boolean;
   login: (user: ApiUser, token: string) => void;
   logout: () => void;
@@ -25,23 +23,19 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<ApiUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [token, setToken] = useState<string | null>(
-    () => Cookies.get("accessToken") || null
-  );
 
   useEffect(() => {
     const fetchUserOnLoad = async () => {
+      const token = Cookies.get("accessToken");
       if (token) {
         try {
+          // Sử dụng authService để gọi đúng API
           const userData = await authService.getMe();
           setUser(userData);
         } catch (error) {
-          console.error(
-            "Failed to fetch user on load, token might be invalid:",
-            error
-          );
+          console.error("Failed to fetch user, token might be invalid:", error);
+          // Nếu lỗi, token không hợp lệ -> đăng xuất
           setUser(null);
-          setToken(null);
           Cookies.remove("accessToken");
         }
       }
@@ -49,23 +43,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
 
     fetchUserOnLoad();
-  }, [token]);
+  }, []);
 
   const login = (user: ApiUser, token: string) => {
     setUser(user);
-    setToken(token);
     Cookies.set("accessToken", token, { expires: 7, path: "/" });
   };
 
   const logout = () => {
     setUser(null);
-    setToken(null);
     Cookies.remove("accessToken", { path: "/" });
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, isLoading, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, isLoading, login, logout }}>
+      {!isLoading && children}
     </AuthContext.Provider>
   );
 };

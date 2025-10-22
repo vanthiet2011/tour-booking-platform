@@ -35,12 +35,51 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
     {
-      var result = await _authService.LoginAsync(loginDto);
-      if (result == null)
+      try
       {
-          return Unauthorized(new { message = "Invalid credentials" });
+        var response = await _authService.LoginAsync(loginDto);
+        return Ok(response);
       }
-      return Ok(new { result.Value.AccessToken, result.Value.RefreshToken });
+      catch (BadHttpRequestException ex)
+      {
+        return Unauthorized(new { message = ex.Message });
+      }
+    }
+
+    [HttpPost("login/google")]
+    public async Task<IActionResult> LoginWithGoogle([FromBody] SocialLoginRequestDto request)
+    {
+      try
+      {
+        var response = await _authService.LoginWithGoogleAsync(request);
+        return Ok(response);
+      }
+      catch (BadHttpRequestException ex)
+      {
+        return Unauthorized(new { message = ex.Message });
+      }
+      catch (Exception)
+      {
+        return Unauthorized(new { message = "Invalid Google token." });
+      }
+    }
+    
+    [HttpPost("login/facebook")]
+    public async Task<IActionResult> LoginWithFacebook([FromBody] SocialLoginRequestDto request)
+    {
+      try
+      {
+        var response = await _authService.LoginWithFacebookAsync(request);
+        return Ok(response);
+      }
+      catch (BadHttpRequestException ex)
+      {
+        return BadRequest(new { message = ex.Message });
+      }
+      catch (Exception)
+      {
+        return Unauthorized(new { message = "Invalid Facebook token." });
+      }
     }
 
     [HttpGet("me")]

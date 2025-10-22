@@ -1,13 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+import { format } from "date-fns";
+import { CalendarIcon, User, Camera } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   Card,
   CardContent,
@@ -22,39 +31,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
-import { User, Camera } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext"; // Import useAuth để xử lý logout
+import { useAuth } from "@/contexts/AuthContext";
+import userService from "@/services/user.service";
+import uploadService from "@/services/upload.service";
+import { cn } from "@/lib/utils";
 
 const profileSchema = z.object({
-  fullName: z.string().min(1, "Họ tên không được để trống"),
-  phoneNumber: z.string().optional(),
-  address: z.string().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  fullName: z.string().nullable(),
+  phoneNumber: z.string().nullable(),
+  address: z.string().nullable(),
+  gender: z.enum(["Male", "Female", "Other"]).nullable(),
+  dateOfBirth: z.date().nullable(),
+  avatarUrl: z.string().url().nullable().or(z.literal("")),
 });
 
 type ProfileForm = z.infer<typeof profileSchema>;
 
-interface Profile {
-  id: string;
-  fullName: string | null;
-  phoneNumber: string | null;
-  address: string | null;
-  gender: string | null;
-  avatarUrl: string | null;
-}
-
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const { user, logout } = useAuth(); // Lấy user và hàm logout từ context
   const router = useRouter();
+  // Đổi tên isLoading từ useAuth để tránh xung đột
+  const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
+  // State isLoading của riêng trang Profile
+  const [isProfileLoading, setIsProfileLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const token =
-    typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -62,135 +68,136 @@ export default function ProfilePage() {
       fullName: "",
       phoneNumber: "",
       address: "",
-      gender: undefined,
+      gender: null,
+      dateOfBirth: null,
+      avatarUrl: "",
     },
   });
 
-  // Load profile from API
   useEffect(() => {
+    // Không làm gì nếu context xác thực vẫn đang tải
+    if (isAuthLoading) {
+      return;
+    }
+
+    // Nếu không có người dùng, chuyển hướng đến trang đăng nhập
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+
     const loadProfile = async () => {
-      if (!token) {
-        router.push("/login");
-        return;
-      }
-
+      // Bắt đầu tải profile
+      setIsProfileLoading(true);
       try {
-        const res = await fetch("http://localhost:8000/users/me", {
-          method: "GET",
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        if (!res.ok) {
-          const errorData = await res.text();
-          throw new Error(errorData || "Không thể tải hồ sơ");
-        }
-
-        const data: Profile = await res.json();
-        setProfile(data);
+        const data = await userService.getMe();
         form.reset({
-          fullName: data.fullName || "",
-          phoneNumber: data.phoneNumber || "",
-          address: data.address || "",
-          gender: (data.gender as any) || undefined,
+          fullName: data.fullName,
+          phoneNumber: data.phoneNumber,
+          address: data.address,
+          gender: data.gender as "Male" | "Female" | "Other" | null,
+          dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
+          avatarUrl: data.avatarUrl,
         });
-      } catch (err: any) {
-        console.error(err);
+        if (data.avatarUrl) {
+          setAvatarPreview(data.avatarUrl);
+        }
+      } catch (error) {
+        console.error("Không thể tải hồ sơ", error);
         toast({
           title: "Lỗi",
-          description: err.message || "Không thể tải hồ sơ",
+          description: "Không thể tải thông tin hồ sơ của bạn.",
           variant: "destructive",
         });
-        // Nếu token hết hạn hoặc không hợp lệ, đăng xuất người dùng
-        if (
-          err.message.includes("401") ||
-          err.message.includes("Unauthorized")
-        ) {
-          logout();
-          router.push("/login");
-        }
+      } finally {
+        // Hoàn tất tải profile
+        setIsProfileLoading(false);
       }
     };
 
     loadProfile();
-  }, [token, router, form, toast, logout]);
+    // Loại bỏ 'form' và 'toast' khỏi mảng phụ thuộc
+  }, [user, isAuthLoading, router]);
 
-  // Submit form
-  const handleSubmit = async (data: ProfileForm) => {
-    if (!token) return;
-
-    setIsLoading(true);
-    try {
-      const res = await fetch("http://localhost:8000/users/me", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          fullName: data.fullName,
-          phoneNumber: data.phoneNumber || null,
-          address: data.address || null,
-          gender: data.gender || null,
-          avatarUrl: profile?.avatarUrl || null,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Cập nhật hồ sơ thất bại");
-
-      toast({
-        title: "Thành công",
-        description: "Cập nhật hồ sơ thành công",
-      });
-    } catch (err: any) {
-      console.error(err);
-      toast({
-        title: "Lỗi",
-        description: err.message || "Không thể cập nhật hồ sơ",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setAvatarPreview(previewUrl);
     }
   };
 
-  // Sử dụng hàm logout từ AuthContext để đồng bộ trạng thái
-  const handleLogout = () => {
-    logout();
-    router.push("/login");
+  const onSubmit = async (data: ProfileForm) => {
+    setIsSubmitting(true);
+    let finalAvatarUrl = form.getValues("avatarUrl");
+
+    try {
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append("file", avatarFile);
+        const uploadResult = await uploadService.uploadImage(avatarFile);
+        finalAvatarUrl = uploadResult.filePath;
+      }
+
+      await userService.updateMe({
+        ...data,
+        avatarUrl: finalAvatarUrl,
+        dateOfBirth: data.dateOfBirth ? data.dateOfBirth.toISOString() : null,
+      });
+
+      toast({
+        title: "Thành công",
+        description: "Hồ sơ của bạn đã được cập nhật.",
+      });
+    } catch (error) {
+      toast({
+        title: "Lỗi",
+        description: "Không thể cập nhật hồ sơ.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (!profile && !user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <h2 className="text-xl font-semibold">Đang tải...</h2>
-      </div>
-    );
+  // Hiển thị "Đang tải..." nếu context xác thực hoặc trang hồ sơ đang tải
+  if (isAuthLoading || isProfileLoading) {
+    return <div className="container mx-auto p-4">Đang tải...</div>;
+  }
+
+  // Nếu không có user (đã được kiểm tra trong useEffect, nhưng để đây cho an toàn)
+  if (!user) {
+    return null;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 p-4 pt-24">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold text-primary">Hồ sơ cá nhân</h1>
-          <Button variant="outline" onClick={handleLogout}>
-            Đăng xuất
-          </Button>
-        </div>
-
+    <div className="bg-gray-50/50 dark:bg-gray-900/50 min-h-screen">
+      <div className="container mx-auto max-w-4xl py-12 px-4">
         <Card>
           <CardHeader className="text-center">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleAvatarChange}
+              className="hidden"
+              accept="image/png, image/jpeg, image/gif"
+            />
             <div className="flex justify-center mb-4">
               <div className="relative">
                 <Avatar className="w-24 h-24">
-                  <AvatarImage src={profile?.avatarUrl || undefined} />
+                  <AvatarImage src={avatarPreview || undefined} />
                   <AvatarFallback className="text-2xl">
                     <User className="w-12 h-12" />
                   </AvatarFallback>
                 </Avatar>
                 <Button
+                  type="button"
                   size="sm"
                   variant="secondary"
                   className="absolute -bottom-2 -right-2 rounded-full w-8 h-8 p-0"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isSubmitting}
                 >
                   <Camera className="w-4 h-4" />
                 </Button>
@@ -201,75 +208,87 @@ export default function ProfilePage() {
               Điền thông tin cá nhân để hoàn thiện hồ sơ
             </CardDescription>
           </CardHeader>
+
           <CardContent>
-            <form
-              onSubmit={form.handleSubmit(handleSubmit)}
-              className="space-y-6"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Họ và tên *</Label>
-                <Input
-                  id="fullName"
-                  placeholder="Nguyễn Văn A"
-                  {...form.register("fullName")}
+                <Label htmlFor="fullName">Họ và tên</Label>
+                <Input id="fullName" {...form.register("fullName")} />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Ngày sinh</Label>
+                <Controller
+                  control={form.control}
+                  name="dateOfBirth"
+                  render={({ field }) => (
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? (
+                            format(field.value, "dd-MM-yyyy")
+                          ) : (
+                            <span>Chọn ngày</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0">
+                        <Calendar
+                          mode="single"
+                          selected={field.value || undefined}
+                          onSelect={field.onChange}
+                          initialFocus
+                          disabled={(date) => date > new Date()}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  )}
                 />
-                {form.formState.errors.fullName && (
-                  <p className="text-sm text-destructive">
-                    {form.formState.errors.fullName.message}
-                  </p>
-                )}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="phoneNumber">Số điện thoại</Label>
-                <Input
-                  id="phoneNumber"
-                  placeholder="0123456789"
-                  {...form.register("phoneNumber")}
-                />
+                <Input id="phoneNumber" {...form.register("phoneNumber")} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="address">Địa chỉ</Label>
-                <Textarea
-                  id="address"
-                  placeholder="123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh"
-                  {...form.register("address")}
-                />
+                <Input id="address" {...form.register("address")} />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="gender">Giới tính</Label>
-                <Select
-                  value={form.watch("gender") || ""}
-                  onValueChange={(value) =>
-                    form.setValue("gender", value as any)
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Chọn giới tính" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="male">Nam</SelectItem>
-                    <SelectItem value="female">Nữ</SelectItem>
-                    <SelectItem value="other">Khác</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Controller
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <Select
+                      value={field.value || ""}
+                      onValueChange={(value) => field.onChange(value as any)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Chọn giới tính" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Male">Nam</SelectItem>
+                        <SelectItem value="Female">Nữ</SelectItem>
+                        <SelectItem value="Other">Khác</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
 
-              <div className="flex gap-4">
-                <Button type="submit" disabled={isLoading} className="flex-1">
-                  {isLoading ? "Đang cập nhật..." : "Cập nhật hồ sơ"}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => router.push("/")}
-                  className="flex-1"
-                >
-                  Quay lại trang chủ
-                </Button>
-              </div>
+              <Button type="submit" disabled={isSubmitting} className="w-full">
+                {isSubmitting ? "Đang cập nhật..." : "Cập nhật hồ sơ"}
+              </Button>
             </form>
           </CardContent>
         </Card>

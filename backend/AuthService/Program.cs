@@ -1,6 +1,5 @@
 using System.Text;
 using AuthService.Data;
-using AuthService.HttpClients;
 using AuthService.Repositories;
 using AuthService.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -10,7 +9,6 @@ using Microsoft.OpenApi.Models;
 using UserService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
-
 var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
@@ -22,7 +20,7 @@ builder.Services.Configure<RouteOptions>(options =>
     options.LowercaseUrls = true;
 });
 
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService.Services.AuthService>();
 builder.Services.AddSingleton<KafkaProducerService>();
 builder.Services.AddSingleton<JwtService>();
@@ -65,7 +63,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:3000")
+        policy.WithOrigins("https://localhost:3000")
               .AllowAnyHeader()
               .AllowAnyMethod()
               .AllowCredentials();

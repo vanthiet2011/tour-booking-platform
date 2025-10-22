@@ -21,6 +21,19 @@
       "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
     },
     {
+      "UpstreamPathTemplate": "/api/UserProfiles/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/api/UserProfiles/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "user-service",
+          "Port": 8080
+        }
+      ],
+      "Key": "UserProfiles"
+    },
+    {
       "UpstreamPathTemplate": "/api/tours",
       "UpstreamHttpMethod": ["GET", "POST"],
       "DownstreamPathTemplate": "/api/tours",

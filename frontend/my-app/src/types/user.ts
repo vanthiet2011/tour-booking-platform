@@ -1,11 +1,20 @@
 export interface UserProfile {
-  userId: string;
+  id: string;
   fullName: string | null;
-  email: string;
-  phoneNumber: string | null;
-  address: string | null;
   dateOfBirth: string | null;
-  gender: number | null;
+  gender: string | null;
+  address: string | null;
+  phoneNumber: string | null;
+  avatarUrl: string | null;
+  createAt: string;
+  updateAt: string | null;
 }
 
-export type UpdateProfileDto = Omit<UserProfile, "userId" | "email">;
+export interface UpdateProfileDto {
+  fullName: string | null;
+  dateOfBirth?: string | null;
+  gender: "Male" | "Female" | "Other" | string | null;
+  address: string | null;
+  phoneNumber: string | null;
+  avatarUrl: string | null;
+}

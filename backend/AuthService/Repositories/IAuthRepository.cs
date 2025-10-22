@@ -3,7 +3,7 @@ using AuthService.Entities;
 
 namespace AuthService.Repositories
 {
-  public interface IUserRepository
+  public interface IAuthRepository
   {
     Task<UserEntity?> GetByIdAsync(Guid id);
     Task<UserEntity?> GetByEmailAsync(string email);

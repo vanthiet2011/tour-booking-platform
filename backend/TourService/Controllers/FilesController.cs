@@ -21,7 +21,7 @@ namespace TourService.Controllers
     }
 
     [HttpPost("upload")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public async Task<IActionResult> UploadImage(IFormFile file)
     {
       if (file == null || file.Length == 0)
@@ -48,7 +48,7 @@ namespace TourService.Controllers
     }
 
     [HttpPost("upload-multiple")]
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public async Task<IActionResult> UploadMultipleImages(List<IFormFile> files)
     {
         if (files == null || files.Count == 0)

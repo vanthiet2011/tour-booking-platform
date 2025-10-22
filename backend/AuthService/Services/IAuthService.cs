@@ -7,6 +7,8 @@ public interface IAuthService
 {
     Task<UserDto> RegisterAsync(RegisterDto registerDto);
     Task<UserDto> RegisterAdminAsync(RegisterDto registerDto);
-    Task<(string AccessToken, string RefreshToken)?> LoginAsync(LoginDto loginDto);
+    Task<LoginResponseDto> LoginAsync(LoginDto loginDto);
     Task<UserDto?> GetUserByIdAsync(string id);
+    Task<LoginResponseDto> LoginWithGoogleAsync(SocialLoginRequestDto request);
+    Task<LoginResponseDto> LoginWithFacebookAsync(SocialLoginRequestDto request);
 }

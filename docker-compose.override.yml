@@ -23,10 +23,10 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     volumes:
-      - ./backend/AuthService:/app
+      - ./backend/AuthService:/src
       - ~/.nuget/packages:/root/.nuget/packages:ro
-      - /app/bin
-      - /app/obj
+      - /src/bin
+      - /src/obj
     command: dotnet watch run --project AuthService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
 
   user-service:

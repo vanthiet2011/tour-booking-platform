@@ -10,8 +10,6 @@ namespace UserService.Entities
   {
     [Key]
     public Guid Id { get; set; }
-    [Required]
-    [MaxLength(100)]
     public string? FullName { get; set; }
     [MaxLength(20)]
     public DateTime? DateOfBirth { get; set; }
@@ -23,7 +21,7 @@ namespace UserService.Entities
     [Required]
     public Gender Gender { get; set; }
     [Required]
-    public DateTime CreateAt { get; set; }
-    public DateTime? UpdateAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
   }
 }

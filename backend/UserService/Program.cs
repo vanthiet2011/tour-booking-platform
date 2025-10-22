@@ -7,11 +7,12 @@ using UserService.Repositories;
 using System.Text.Json.Serialization;
 using UserService.Kafka;
 using UserService.Services;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
-// --- Kết nối Database ---
+// --- Database ---
 var connectionString = configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
@@ -24,7 +25,8 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
-// --- Cấu hình CORS ---
+
+// --- CORS ---
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend", policy =>
@@ -36,7 +38,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-// --- Cấu hình Authentication ---
+// --- Authentication ---
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -47,35 +49,60 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        // Khớp với cấu hình JwtSettings của bạn
         ValidIssuer = configuration["JwtSettings:Issuer"],
         ValidAudience = configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]!)),
-
-        // Bật các kiểm tra cần thiết
+        IssuerSigningKey = new SymmetricSecurityKey(
+            Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]!)
+        ),
         ValidateIssuer = true,
         ValidateAudience = true,
-        ValidateLifetime = true, // Nên bật để kiểm tra token hết hạn
+        ValidateLifetime = true,
         ValidateIssuerSigningKey = true
     };
 });
 
-// Thêm Authorization
 builder.Services.AddAuthorization();
 
-
-builder.Services.AddControllers();
+// --- Swagger ---
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new() { Title = "UserService API", Version = "v1" });
 
-// Đăng ký Repository
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Nhập 'Bearer {token}' (bao gồm chữ Bearer và khoảng trắng trước token)"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
+// --- Repositories & Services ---
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddHostedService<UserCreationConsumer>();
 
 var app = builder.Build();
 
-// --- Cấu hình HTTP request pipeline ---
+// --- Middleware ---
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -84,7 +111,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("AllowFrontend");
 
-// QUAN TRỌNG: Thêm UseAuthentication và UseAuthorization VÀO ĐÚNG THỨ TỰ
 app.UseAuthentication();
 app.UseAuthorization();
 

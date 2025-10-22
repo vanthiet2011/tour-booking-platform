@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   #---------------------------------
   # INFRASTRUCTURE SERVICES
@@ -17,6 +19,8 @@ services:
       - tour-service
       - booking-service
       - payment-service
+    networks:
+      - app-net
 
   auth_db:
     image: postgres:14-alpine
@@ -27,9 +31,11 @@ services:
       - POSTGRES_USER=your_user
       - POSTGRES_PASSWORD=your_password
     ports:
-      - "5432:5432" # Port for AuthService
+      - "5432:5432"
     volumes:
       - auth_data:/var/lib/postgresql/data
+    networks:
+      - app-net
 
   user_db:
     image: postgres:14-alpine
@@ -40,9 +46,11 @@ services:
       - POSTGRES_USER=your_user
       - POSTGRES_PASSWORD=your_password
     ports:
-      - "5433:5432" # Port for UserService
+      - "5433:5432"
     volumes:
       - user_data:/var/lib/postgresql/data
+    networks:
+      - app-net
 
   tour_db:
     image: postgres:14-alpine
@@ -53,9 +61,11 @@ services:
       - POSTGRES_USER=your_user
       - POSTGRES_PASSWORD=your_password
     ports:
-      - "5434:5432" # Port for TourService
+      - "5434:5432"
     volumes:
       - tour_data:/var/lib/postgresql/data
+    networks:
+      - app-net
 
   booking_db:
     image: postgres:14-alpine
@@ -66,9 +76,11 @@ services:
       - POSTGRES_USER=your_user
       - POSTGRES_PASSWORD=your_password
     ports:
-      - "5435:5432" # Port for BookingService
+      - "5435:5432"
     volumes:
       - booking_data:/var/lib/postgresql/data
+    networks:
+      - app-net
 
   payment_db:
     image: postgres:14-alpine
@@ -79,9 +91,11 @@ services:
       - POSTGRES_USER=your_user
       - POSTGRES_PASSWORD=your_password
     ports:
-      - "5436:5432" # Port for PaymentService
+      - "5436:5432"
     volumes:
       - payment_data:/var/lib/postgresql/data
+    networks:
+      - app-net
 
   redis_cache:
     image: redis:6-alpine
@@ -91,13 +105,24 @@ services:
       - "6379:6379"
     volumes:
       - redis_data:/data
+    networks:
+      - app-net
 
+  #-----------------------------
+  # KAFKA + ZOOKEEPER + KAFDROP
+  #-----------------------------
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.3
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_OPTS: "-Dzookeeper.4lw.commands.whitelist=*"
+    networks:
+      - app-net
+    volumes:
+      - zookeeper_data:/var/lib/zookeeper/data
+      - zookeeper_log:/var/lib/zookeeper/log
 
   kafka:
     image: confluentinc/cp-kafka:7.5.3
@@ -110,40 +135,64 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - app-net
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    container_name: kafdrop
+    restart: always
+    ports:
+      - "19000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      SERVER_PORT: 9000
+    depends_on:
+      - kafka
+    networks:
+      - app-net
 
   #---------------------------------
   # APPLICATION SERVICES
   #---------------------------------
-  frontend:
-    build:
-      context: ./frontend/my-app
-      dockerfile: Dockerfile
-      target: prod
-    container_name: nextjs-frontend
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-    restart: unless-stopped
-
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: frontend
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend:/app
+  #     - node_modules_cache:/app/node_modules
+  #   environment:
+  #     - NODE_ENV=development
+  #   networks:
+  #     - app-net
   auth-service:
     build:
       context: ./backend/AuthService
       dockerfile: Dockerfile
-      target: final
     container_name: auth-service
     ports:
       - "5001:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Production
       - ConnectionStrings__Default=Host=auth_db;Port=5432;Database=AuthDb;Username=your_user;Password=your_password
+      - Kafka__BootstrapServers=kafka:9092
     depends_on:
       - auth_db
       - kafka
+    networks:
+      - app-net
 
   user-service:
     build:
@@ -155,9 +204,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=user_db;Port=5432;Database=UserDb;Username=your_user;Password=your_password
+      - Kafka__BootstrapServers=kafka:9092
     depends_on:
       - user_db
       - kafka
+    networks:
+      - app-net
 
   tour-service:
     build:
@@ -169,8 +221,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=tour_db;Port=5432;Database=TourDb;Username=your_user;Password=your_password
+      - Kafka__BootstrapServers=kafka:9092
     depends_on:
       - tour_db
+      - kafka
+    networks:
+      - app-net
 
   booking-service:
     build:
@@ -182,8 +238,12 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=booking_db;Port=5432;Database=BookingDb;Username=your_user;Password=your_password
+      - Kafka__BootstrapServers=kafka:9092
     depends_on:
       - booking_db
+      - kafka
+    networks:
+      - app-net
 
   payment-service:
     build:
@@ -195,9 +255,31 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=Host=payment_db;Port=5432;Database=PaymentDb;Username=your_user;Password=your_password
+      - Kafka__BootstrapServers=kafka:9092
     depends_on:
       - payment_db
+      - kafka
+    networks:
+      - app-net
 
+  nginx:
+    image: nginx:latest
+    container_name: nginx_reverse_proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - gateway
+    restart: always
+    networks:
+      - app-net
+
+#---------------------------------
+# VOLUMES & NETWORK
+#---------------------------------
 volumes:
   auth_data:
   user_data:
@@ -206,3 +288,10 @@ volumes:
   payment_data:
   redis_data:
   node_modules_cache:
+  zookeeper_data:
+  zookeeper_log:
+  kafka_data:
+
+networks:
+  app-net:
+    driver: bridge

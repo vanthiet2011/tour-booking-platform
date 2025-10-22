@@ -1,5 +1,12 @@
-export type UserRole = "Customer" | "Admin";
+export type UserRole = "Admin" | "Customer" | "Partner";
 
+export interface DecodedToken {
+  nameid: string;
+  email: string;
+  name: string;
+  "http://schemas.microsoft.com/ws/2008/06/identity/claims/role": string;
+  exp: number;
+}
 export interface User {
   id: string;
   email: string;
@@ -21,6 +28,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
+  user: User;
 }
 
 export interface RegisterRequest {

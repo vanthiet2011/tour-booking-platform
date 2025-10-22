@@ -38,12 +38,17 @@ public class UserProfileService : IUserProfileService
 
     public async Task CreateProfileFromEventAsync(UserCreatedDto userDto)
     {
-        if (await _profileRepository.GetByIdAsync(Guid.Parse(userDto.Id.ToString())) != null)
+        if (!Guid.TryParse(userDto.Id.ToString(), out var userIdGuid))
+        {
+            _logger.LogError("--> Invalid User ID received from Kafka: {UserId}", userDto.Id);
+            return;
+        }
+        if (await _profileRepository.GetByIdAsync(userIdGuid) != null)
         {
             _logger.LogWarning("--> UserProfile for User ID: {UserId} already exists. Skipping creation.", userDto.Id);
             return;
         }
-        var newProfile = new UserProfileEntity { Id = userDto.Id };
+        var newProfile = new UserProfileEntity { Id = userDto.Id, CreatedAt = userDto.CreatedAt };
         await _profileRepository.CreateAsync(newProfile);
         _logger.LogInformation("--> UserProfile created for User ID: {UserId}", userDto.Id);
     }

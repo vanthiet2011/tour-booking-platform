@@ -29,19 +29,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import {
-  getDestinations,
-  createTour,
-  updateTour,
-  uploadFile, // Giữ lại để upload ảnh bìa
-  uploadMultipleFiles, // Import hàm upload nhiều file
-  Tour,
-  CreateTourPayload,
-} from "@/lib/api";
+import uploadService from "@/services/upload.service";
+import type { Tour, CreateTourPayload, UpdateTourPayload } from "@/types/tour";
+import type { Destination } from "@/types/destination";
 import { MultiSelect } from "@/components/ui/multi-select";
+import destinationService from "@/services/destination.service";
+import tourService from "@/services/tour.service";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-// --- ZOD SCHEMA ---
+
 const scheduleSchema = z.object({
   dayNumber: z.coerce.number().min(1),
   title: z.string().min(1, "Tiêu đề không được trống."),
@@ -85,25 +81,21 @@ interface TourFormProps {
   tour: Tour | null;
 }
 
-// === COMPONENT CHÍNH ===
 export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
   const { toast } = useToast();
-  const { data: destinations } = useSWR("/api/destinations", getDestinations);
+  const { data: destinations } = useSWR(
+    "/api/destinations",
+    destinationService.getAll
+  );
   const [isUploading, setIsUploading] = useState(false);
 
-  // State quản lý ảnh preview
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [galleryPreviews, setGalleryPreviews] = useState<(string | File)[]>([]);
 
   const form = useForm<TourFormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {}, // Sẽ reset trong useEffect
+    defaultValues: {},
   });
-
-  // const { fields, append, remove } = useFieldArray({
-  //   control: form.control,
-  //   name: "schedules",
-  // });
 
   const {
     fields: scheduleFields,
@@ -125,7 +117,6 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
 
   const isEditing = !!tour;
 
-  // Effect để reset form và state khi mở dialog
   useEffect(() => {
     if (isOpen) {
       if (isEditing && tour) {
@@ -177,27 +168,21 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
         (p) => typeof p === "string"
       ) as string[];
 
-      // 1. Upload ảnh bìa mới (logic này đã đúng)
-      if (values.coverImageFile && values.coverImageFile.length > 0) {
-        const formData = new FormData();
-        formData.append("file", values.coverImageFile[0]);
-        const result = await uploadFile(formData);
+      const coverFile = values.coverImageFile?.[0];
+      if (coverFile) {
+        const result = await uploadService.uploadImage(coverFile);
         coverImageUrl = result.filePath;
       }
-
-      // 2. Upload các ảnh mới trong thư viện (logic này đã đúng)
       const newGalleryFiles = galleryPreviews.filter(
         (p) => p instanceof File
       ) as File[];
       if (newGalleryFiles.length > 0) {
-        const formData = new FormData();
-        newGalleryFiles.forEach((file) => formData.append("files", file));
-        const result = await uploadMultipleFiles(formData);
+        const result = await uploadService.uploadMultipleImages(
+          newGalleryFiles
+        );
         finalGalleryUrls.push(...result.filePaths);
       }
 
-      // 3. Chuẩn bị payload cuối cùng (PHẦN SỬA LỖI QUAN TRỌNG)
-      // Xây dựng payload thủ công thay vì dùng ...values
       const payload: CreateTourPayload = {
         name: values.name,
         description: values.description,
@@ -219,9 +204,9 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
 
       // 4. Gửi request tạo mới hoặc cập nhật (logic này đã đúng)
       if (isEditing && tour) {
-        await updateTour(tour.id, payload);
+        await tourService.update(tour.id, payload);
       } else {
-        await createTour(payload);
+        await tourService.create(payload);
       }
 
       mutate("/api/tours");

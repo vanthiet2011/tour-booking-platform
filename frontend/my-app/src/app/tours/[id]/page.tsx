@@ -1,4 +1,5 @@
-import { getTourById, getTourDeparturesById } from "@/lib/api";
+// import { getTourById, getTourDeparturesById } from "@/lib/api";
+import tourService from "@/services/tour.service";
 import { notFound } from "next/navigation";
 
 // Import tất cả các component bạn đã tạo
@@ -19,8 +20,8 @@ interface TourDetailPageProps {
 export default async function TourDetailPage(props: TourDetailPageProps) {
   const { id } = await props.params;
   const [tour, departures] = await Promise.all([
-    getTourById(id),
-    getTourDeparturesById(id),
+    tourService.getById(id),
+    tourService.getTourDeparturesById(id),
   ]);
 
   if (!tour) {

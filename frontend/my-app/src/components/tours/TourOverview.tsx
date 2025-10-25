@@ -1,14 +1,9 @@
-// src/components/tours/TourOverview.tsx
-
 import { Card } from "@/components/ui/card";
 import { Compass, Heart, Camera, Leaf, LucideIcon } from "lucide-react";
-
-// Định nghĩa kiểu dữ liệu cho props
 interface TourOverviewProps {
-  highlights?: string[]; // Cho phép highlights có thể là undefined
+  highlights?: string[];
 }
 
-// Dữ liệu tĩnh cho icon và title
 const staticHighlights: { icon: LucideIcon; title: string }[] = [
   { icon: Compass, title: "Tham quan" },
   { icon: Heart, title: "Lưu trú" },
@@ -16,7 +11,6 @@ const staticHighlights: { icon: LucideIcon; title: string }[] = [
   { icon: Leaf, title: "Hoạt động khác" },
 ];
 
-// === SỬA ĐỔI CHÍNH Ở ĐÂY ===
 export function TourOverview({ highlights = [] }: TourOverviewProps) {
   return (
     <section className="bg-secondary/30 py-6">
@@ -30,7 +24,6 @@ export function TourOverview({ highlights = [] }: TourOverviewProps) {
           </p>
         </div>
 
-        {/* Chỉ hiển thị grid nếu có highlights */}
         {highlights.length > 0 && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {highlights.map((description, index) => {

@@ -10,7 +10,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tour } from "@/lib/api";
+import { Tour } from "@/types/tour";
 
 type TourActionsProps = {
   onEdit: (tour: Tour) => void;

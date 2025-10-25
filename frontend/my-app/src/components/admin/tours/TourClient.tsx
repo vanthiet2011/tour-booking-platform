@@ -1,33 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // 1. Import useRouter
+import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { PlusCircle } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { getColumns } from "./columns";
-import { getTours, deleteTour, Tour } from "@/lib/api";
+import tourService from "@/services/tour.service";
+import { Tour } from "@/types/tour";
 import { useToast } from "@/hooks/use-toast";
 import { TourForm } from "./TourForm";
 import { DeleteConfirmationDialog } from "../destinations/DeleteConfirmationDialog";
 
 export default function TourClient() {
   const { toast } = useToast();
-  const { data: tours, error, isLoading } = useSWR("/api/tours", getTours);
-  const router = useRouter(); // 2. Khởi tạo router
+  const {
+    data: tours,
+    error,
+    isLoading,
+  } = useSWR("/api/tours", tourService.getAll);
+  const router = useRouter();
 
-  const [isFormOpen, setIsFormOpen] = useState(false); // Dành cho Edit
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
 
-  // 3. Sửa hàm handleAdd để điều hướng
   const handleAdd = () => {
     router.push("/admin/tours/create");
   };
 
-  // Các hàm handleEdit và handleDelete giữ nguyên
   const handleEdit = (tour: Tour) => {
     setSelectedTour(tour);
     setIsFormOpen(true);
@@ -41,7 +44,7 @@ export default function TourClient() {
   const confirmDelete = async () => {
     if (!selectedTour) return;
     try {
-      await deleteTour(selectedTour.id);
+      await tourService.delete(selectedTour.id);
       mutate("/api/tours");
       toast({ title: "Thành công", description: "Đã xóa tour." });
     } catch (error) {
@@ -70,9 +73,8 @@ export default function TourClient() {
         </Button>
       </div>
 
-      <DataTable columns={columns} data={tours || []} />
+      <DataTable columns={columns} data={tours?.items || []} />
 
-      {/* TourForm này bây giờ chỉ dùng cho việc Edit */}
       <TourForm
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}

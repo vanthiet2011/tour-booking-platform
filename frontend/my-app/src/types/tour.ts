@@ -25,6 +25,13 @@ export interface TourDeparture {
   availableSlots: number;
 }
 
+export interface TourDepartureInfo {
+  id: string;
+  startDate: string;
+  endDate: string;
+  availableSlots: number;
+}
+
 export interface TourSchedule {
   id: string;
   dayNumber: number;

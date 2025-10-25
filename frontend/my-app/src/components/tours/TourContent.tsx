@@ -1,7 +1,7 @@
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Tour } from "@/lib/api";
+import { Tour } from "@/types/tour";
 import {
   Accordion,
   AccordionContent,

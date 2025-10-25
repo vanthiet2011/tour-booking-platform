@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/popover";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Tour, TourDepartureInfo } from "@/lib/api";
+import { Tour, TourDepartureInfo } from "@/types/tour";
 
 interface BookingFormProps {
   tour: Tour;

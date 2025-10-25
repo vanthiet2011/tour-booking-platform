@@ -3,8 +3,8 @@ import tourService from "@/services/tour.service";
 import destinationService from "@/services/destination.service";
 import type { Tour } from "@/types/tour";
 import type { Destination } from "@/types/destination";
-import { TourCard } from "@/components/TourCard";
-import { TourFilters } from "@/components/TourFilters";
+import { TourCard } from "@/components/tours/TourCard";
+import { TourFilters } from "@/components/tours/TourFilters";
 
 interface DestinationToursPageProps {
   params: { id: string };

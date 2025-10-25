@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Clock, Users, Flame } from "lucide-react";
-import { Tour } from "@/lib/api";
+import { Tour } from "@/types/tour";
 import { Button } from "@/components/ui/button";
 
 interface TourCardProps {

@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { getDestinations } from "@/lib/api";
+import destinationService from "@/services/destination.service";
 import { MultiStepTourFormValues } from "../CreateTourForm";
 
 // Zod schema cho riêng bước này
@@ -52,7 +52,10 @@ interface Step1Props {
 export function Step1_GeneralInfo() {
   const { control } = useFormContext<MultiStepTourFormValues>();
 
-  const { data: destinations } = useSWR("/api/destinations", getDestinations);
+  const { data: destinations } = useSWR(
+    "/api/destinations",
+    destinationService.getAll
+  );
   const destinationOptions =
     destinations?.map((d) => ({ value: d.id, label: d.name })) || [];
 

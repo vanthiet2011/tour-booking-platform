@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { TourSchedule } from "@/lib/api";
+import { TourSchedule } from "@/types/tour";
 import ReactMarkdown from "react-markdown";
 
 interface TourItineraryProps {
@@ -16,7 +16,6 @@ export function TourItinerary({ schedules = [] }: TourItineraryProps) {
     return null;
   }
 
-  // SỬA LẠI: Sắp xếp mảng schedules trước khi map
   const sortedSchedules = [...schedules].sort(
     (a, b) => a.dayNumber - b.dayNumber
   );
@@ -38,11 +37,10 @@ export function TourItinerary({ schedules = [] }: TourItineraryProps) {
         defaultValue="item-0"
         className="space-y-4"
       >
-        {/* Sử dụng mảng đã được sắp xếp */}
         {sortedSchedules.map((schedule, index) => (
           <AccordionItem
             value={`item-${index}`}
-            key={schedule.id || index} // Dùng schedule.id làm key sẽ ổn định hơn
+            key={schedule.id || index}
             className="overflow-hidden rounded-lg border-border/50 bg-card"
           >
             <AccordionTrigger className="px-4 py-2 text-left hover:no-underline">

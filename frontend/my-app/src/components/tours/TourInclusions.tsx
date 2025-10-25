@@ -1,4 +1,4 @@
-import { Tour } from "@/lib/api";
+import { Tour } from "@/types/tour";
 import { Check, X } from "lucide-react";
 import { Card } from "@/components/ui/card";
 

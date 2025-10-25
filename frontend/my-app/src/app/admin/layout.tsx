@@ -3,8 +3,8 @@ import { AdminHeader } from "@/components/admin/AdminHeader";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Admin Dashboard - VietTravel",
-  description: "Khu vực quản trị của VietTravel",
+  title: "Admin Dashboard - VietNatures",
+  description: "Khu vực quản trị của VietNatures",
 };
 
 export default function AdminLayout({

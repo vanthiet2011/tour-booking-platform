@@ -20,6 +20,13 @@ const destinationService = {
     return data;
   },
 
+  getPopular: async (): Promise<Destination[]> => {
+    const { data } = await apiClient.get<Destination[]>(
+      "/api/destinations/popular"
+    );
+    return data;
+  },
+
   create: async (payload: CreateDestinationPayload): Promise<Destination> => {
     const { data } = await apiClient.post<Destination>(
       "/api/destinations",

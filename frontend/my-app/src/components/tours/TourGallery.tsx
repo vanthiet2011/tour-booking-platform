@@ -1,6 +1,6 @@
 // components/tour-gallery.tsx
 
-import { Tour } from "@/lib/api";
+import { Tour } from "@/types/tour";
 import Image from "next/image";
 
 export function TourGallery({ tour }: { tour: Tour }) {

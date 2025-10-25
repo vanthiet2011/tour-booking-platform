@@ -1,4 +1,4 @@
-import { Tour } from "@/lib/api";
+import { Tour } from "@/types/tour";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Clock, MapPin, Users, Tag, Star } from "lucide-react";

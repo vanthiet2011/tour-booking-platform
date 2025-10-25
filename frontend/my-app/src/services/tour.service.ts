@@ -2,6 +2,7 @@
 import apiClient from "./api-client";
 import {
   Tour,
+  TourDepartureInfo,
   TourPagingResponse,
   CreateTourPayload,
   UpdateTourPayload,
@@ -27,6 +28,15 @@ const tourService = {
     return data;
   },
 
+  getTourDeparturesById: async (
+    tourId: string
+  ): Promise<TourDepartureInfo[]> => {
+    const { data } = await apiClient.get<TourDepartureInfo[]>(
+      `/api/tours/${tourId}/departures`
+    );
+    return data || [];
+  },
+  
   create: async (tourData: CreateTourPayload): Promise<Tour> => {
     const { data } = await apiClient.post<Tour>("/api/tours", tourData);
     return data;

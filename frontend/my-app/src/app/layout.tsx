@@ -4,10 +4,10 @@ import { Inter, Lora } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { ThemeProvider } from "@/components/theme-provider"; // 1. Import ThemeProvider
+import { ThemeProvider } from "@/components/layout/theme-provider"; // 1. Import ThemeProvider
 import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({

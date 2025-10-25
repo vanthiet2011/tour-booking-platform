@@ -1,19 +1,14 @@
-// src/app/page.tsx
-
-import Hero from "@/components/Hero";
-import PopularDestinations from "@/components/PopularDestinations";
-import { getPopularDestinations } from "@/lib/api";
+import Hero from "@/components/home/Hero";
+import PopularDestinations from "@/components/destinations/PopularDestinations";
+import destinationService from "@/services/destination.service";
 
 export default async function Home() {
-  // Fetch dữ liệu trên server
-  const popularDestinations = await getPopularDestinations();
+  const popularDestinations = await destinationService.getPopular();
 
   return (
     <main>
       <Hero />
-      {/* Truyền dữ liệu đã fetch vào component PopularDestinations */}
       <PopularDestinations destinations={popularDestinations} />
-      {/* ... các component khác */}
     </main>
   );
 }

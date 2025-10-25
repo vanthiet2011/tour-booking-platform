@@ -1,6 +1,7 @@
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Đọc file ocelot.json
@@ -15,7 +16,7 @@ builder.Services.AddOcelot(builder.Configuration);
 var app = builder.Build();
 
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:3000") // Chỉ định nguồn gốc được phép
+    .WithOrigins("http://localhost:3000", "https://localhost:3000")
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials());

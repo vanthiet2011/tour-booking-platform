@@ -1,34 +1,42 @@
-// src/services/destination.service.ts
 import apiClient from "./api-client";
 import {
   Destination,
-  DestinationPagingResponse,
-  CreateDestinationDto,
+  CreateDestinationPayload,
+  UpdateDestinationPayload,
 } from "@/types/destination";
+import { Tour } from "@/types/tour";
+import { get } from "http";
 
 const destinationService = {
-  getAll: async (
-    params: URLSearchParams
-  ): Promise<DestinationPagingResponse> => {
-    const { data } = await apiClient.get<DestinationPagingResponse>(
-      "/destinations",
-      { params }
+  getAll: async (): Promise<Destination[]> => {
+    const { data } = await apiClient.get<Destination[]>("/api/destinations");
+    return data;
+  },
+
+  getById: async (id: string): Promise<Destination> => {
+    const { data } = await apiClient.get<Destination>(
+      `/api/destinations/${id}`
     );
     return data;
   },
 
-  create: async (
-    destinationData: CreateDestinationDto
-  ): Promise<Destination> => {
+  create: async (payload: CreateDestinationPayload): Promise<Destination> => {
     const { data } = await apiClient.post<Destination>(
-      "/destinations",
-      destinationData
+      "/api/destinations",
+      payload
     );
     return data;
+  },
+
+  update: async (
+    id: string,
+    payload: UpdateDestinationPayload
+  ): Promise<void> => {
+    await apiClient.put(`/api/destinations/${id}`, payload);
   },
 
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/destinations/${id}`);
+    await apiClient.delete(`/api/destinations/${id}`);
   },
 };
 

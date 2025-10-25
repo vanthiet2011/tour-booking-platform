@@ -14,7 +14,6 @@ import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import authService from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
 
-// ------------------ Validation Schema ------------------
 const registerSchema = z
   .object({
     email: z.string().email("Email không hợp lệ."),
@@ -35,7 +34,6 @@ const registerSchema = z
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-// ------------------ RegisterForm Component ------------------
 export function RegisterForm() {
   const router = useRouter();
   const { toast } = useToast();
@@ -58,7 +56,6 @@ export function RegisterForm() {
     formState: { errors, isSubmitting },
   } = form;
 
-  // ------------------ Success & Error Handlers ------------------
   const handleRegisterSuccess = () => {
     toast({
       title: "Đăng ký thành công!",
@@ -78,7 +75,6 @@ export function RegisterForm() {
     });
   };
 
-  // ------------------ Form Submit ------------------
   const onFormSubmit = async (values: RegisterFormValues) => {
     try {
       await authService.register({
@@ -91,7 +87,6 @@ export function RegisterForm() {
     }
   };
 
-  // ------------------ Google Register ------------------
   const googleRegister = useGoogleLogin({
     flow: "auth-code",
     onSuccess: async (tokenResponse) => {
@@ -106,7 +101,6 @@ export function RegisterForm() {
       handleRegisterError({ message: "Google register failed" }, "Google"),
   });
 
-  // ------------------ Facebook Register ------------------
   const responseFacebook = async (profile: any) => {
     const accessToken = profile?.accessToken;
     if (accessToken) {
@@ -131,7 +125,6 @@ export function RegisterForm() {
     );
   };
 
-  // ------------------ JSX ------------------
   return (
     <div className="space-y-6">
       <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
@@ -153,7 +146,6 @@ export function RegisterForm() {
           )}
         </div>
 
-        {/* Password */}
         <div className="space-y-2">
           <Label htmlFor="password">Mật khẩu</Label>
           <div className="relative">
@@ -184,7 +176,6 @@ export function RegisterForm() {
           )}
         </div>
 
-        {/* Confirm Password */}
         <div className="space-y-2">
           <Label htmlFor="confirmPassword">Xác nhận mật khẩu</Label>
           <div className="relative">
@@ -215,7 +206,6 @@ export function RegisterForm() {
           )}
         </div>
 
-        {/* Accept Terms */}
         <div className="flex items-start gap-2">
           <input
             type="checkbox"
@@ -235,7 +225,6 @@ export function RegisterForm() {
           </p>
         </div>
 
-        {/* Submit Button */}
         <Button
           type="submit"
           disabled={isSubmitting}
@@ -245,7 +234,6 @@ export function RegisterForm() {
         </Button>
       </form>
 
-      {/* Divider */}
       <div className="relative my-6">
         <div className="absolute inset-0 flex items-center">
           <div className="w-full border-t border-border" />
@@ -257,7 +245,6 @@ export function RegisterForm() {
         </div>
       </div>
 
-      {/* Social Buttons */}
       <div className="grid grid-cols-2 gap-3">
         <Button
           variant="outline"

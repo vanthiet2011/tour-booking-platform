@@ -3,12 +3,12 @@ import apiClient from "./api-client";
 
 const userService = {
   getMe: async (): Promise<UserProfile> => {
-    const { data } = await apiClient.get<UserProfile>("/UserProfiles/me");
+    const { data } = await apiClient.get<UserProfile>("/api/UserProfiles/me");
     return data;
   },
 
   updateMe: async (profileData: UpdateProfileDto): Promise<void> => {
-    await apiClient.put("/UserProfiles/me", profileData);
+    await apiClient.put("/api/UserProfiles/me", profileData);
   },
 };
 

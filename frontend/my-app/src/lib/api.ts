@@ -134,7 +134,7 @@ export interface Inclusions {
 }
 
 export interface Tour {
-  id: string; // Đã đồng bộ thành 'id'
+  id: string;
   name: string;
   description?: string;
   pricePerAdult: number;

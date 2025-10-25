@@ -1,8 +1,11 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 import { getCookie } from "cookies-next";
 
+const isServer = typeof window === "undefined";
+const baseURL = isServer ? process.env.INTERNAL_API_URL : "";
+
 const apiClient: AxiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api",
+  baseURL: baseURL,
   headers: {
     "Content-Type": "application/json",
   },

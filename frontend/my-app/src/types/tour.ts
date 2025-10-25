@@ -1,51 +1,62 @@
 import { PagingResponse } from ".";
 import { Destination } from "./destination";
 
+export interface Tour {
+  id: string;
+  name: string;
+  description?: string;
+  pricePerAdult: number;
+  pricePerChild: number;
+  duration?: string;
+  isBestseller: boolean;
+  imageUrl?: string;
+  destinations: { id: string; name: string }[];
+  schedules: TourSchedule[];
+  tourDepartures: TourDeparture[];
+  highlights: string[];
+  galleryImages: string[];
+  inclusions: Inclusions;
+}
 export interface TourDeparture {
   id: string;
-  departureTime: string;
+  tourId: string;
+  startDate: string;
+  endDate: string;
   availableSlots: number;
 }
 
 export interface TourSchedule {
   id: string;
-  day: number;
+  dayNumber: number;
   title: string;
-  content: string;
+  description?: string;
 }
 
-export interface Tour {
-  id: string;
-  name: string;
-  duration: string;
-  description: string;
-  overview: string;
-  priceAdult: number;
-  priceChild: number;
-  includes: string[];
-  excludes: string[];
-  highlights: string[];
-  images: string[];
-  destinations: Destination[];
-  schedules: TourSchedule[];
-  departures: TourDeparture[];
+export interface Inclusions {
+  included: string[];
+  notIncluded: string[];
 }
 
-export interface CreateTourDto {
+export interface CreateTourPayload {
   name: string;
-  duration: string;
-  description: string;
-  overview: string;
-  priceAdult: number;
-  priceChild: number;
-  includes: string[];
-  excludes: string[];
-  highlights: string[];
-  images: string[];
+  description?: string;
+  pricePerAdult: number;
+  pricePerChild: number;
+  duration?: string;
+  isBestseller: boolean;
+  imageUrl?: string;
   destinationIds: string[];
-  schedules: Omit<TourSchedule, "id">[];
+  schedules: { dayNumber: number; title: string; description?: string }[];
+  tourDepartures: {
+    startDate: string;
+    endDate: string;
+    availableSlots: number;
+  }[];
+  highlights: string[];
+  galleryImages: string[];
+  inclusions: Inclusions;
 }
 
-export type UpdateTourDto = Partial<CreateTourDto>;
+export interface UpdateTourPayload extends CreateTourPayload {}
 
 export type TourPagingResponse = PagingResponse<Tour>;

@@ -15,6 +15,19 @@ services:
       - "3000:3000"
     command: sh -c "npm install && npm run dev"
 
+  gateway:
+    build:
+      context: ./backend/ApiGateway
+      dockerfile: Dockerfile
+      target: dev # Sử dụng dev stage
+    volumes:
+      - ./backend/ApiGateway:/src # Mount source code
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+      - /src/bin
+      - /src/obj
+    ports:
+      - "8000:8080" # Cổng 8000 (local) -> 8080 (container)
+
   auth-service:
     build:
       context: ./backend/AuthService

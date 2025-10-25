@@ -11,9 +11,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Destination } from "@/lib/api";
+import { Destination } from "@/types/destination";
 
-// Định nghĩa hàm callback cho các action
 type DestinationActionsProps = {
   onEdit: (destination: Destination) => void;
   onDelete: (destination: Destination) => void;

@@ -18,7 +18,6 @@ import { useToast } from "@/hooks/use-toast";
 import authService from "@/services/auth.service";
 import { ApiUser, LoginResponse, DecodedToken } from "@/types/auth";
 
-// ✅ Điểm 1: Định nghĩa schema validation bằng Zod
 const loginSchema = z.object({
   email: z.string().email("Địa chỉ email không hợp lệ."),
   password: z.string().min(1, "Mật khẩu không được để trống."),
@@ -33,7 +32,6 @@ export function LoginForm() {
   const { toast } = useToast();
   const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ Điểm 3: Sử dụng useForm để quản lý toàn bộ trạng thái form
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -46,29 +44,24 @@ export function LoginForm() {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting }, // Dùng isSubmitting thay cho isLoading
+    formState: { errors, isSubmitting },
   } = form;
 
-  // 🔹 Hàm xử lý đăng nhập thành công (không đổi)
   const handleLoginSuccess = (response: LoginResponse, rememberMe: boolean) => {
     const decodedToken = jwtDecode<DecodedToken>(response.accessToken);
-    const userRole = parseInt(
+    const roleString =
       decodedToken[
         "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ],
-      10
-    );
-
+      ];
+    const userRoleAsNumber = roleString === "Admin" ? 0 : 1;
     const userPayload: ApiUser = {
-      id: decodedToken.nameid,
+      id: decodedToken.sub,
       email: decodedToken.email,
-      role: userRole,
-      name: decodedToken.name,
+      role: userRoleAsNumber,
     };
 
     login(userPayload, response.accessToken);
 
-    // Xử lý "Ghi nhớ đăng nhập"
     if (rememberMe) {
       localStorage.setItem("refreshToken", response.refreshToken);
     } else {
@@ -80,9 +73,7 @@ export function LoginForm() {
       description: "Chào mừng bạn đã trở lại.",
     });
 
-    // Điều hướng dựa trên vai trò người dùng
-    if (userRole === 1) {
-      // Giả sử 1 là Admin
+    if (userRoleAsNumber === 1) {
       router.push("/admin/dashboard");
     } else {
       router.push("/");
@@ -90,7 +81,6 @@ export function LoginForm() {
     router.refresh();
   };
 
-  // 🔹 Hàm xử lý lỗi đăng nhập (không đổi)
   const handleLoginError = (error: any, provider: string) => {
     console.error(`❗ Đăng nhập ${provider} thất bại:`, error);
     toast({
@@ -102,7 +92,6 @@ export function LoginForm() {
     });
   };
 
-  // ✅ Điểm 4: Hàm onSubmit mới, tương thích với react-hook-form
   const onFormSubmit = async (values: LoginFormValues) => {
     try {
       const response = await authService.login(values);
@@ -126,7 +115,6 @@ export function LoginForm() {
       handleLoginError({ message: "Google login failed" }, "Google"),
   });
 
-  // Đăng nhập Facebook
   const responseFacebook = async (profile: any) => {
     const accessToken = (profile as any)?.accessToken;
     if (accessToken) {
@@ -212,7 +200,7 @@ export function LoginForm() {
             <span className="text-muted-foreground">Ghi nhớ đăng nhập</span>
           </label>
           <Link
-            href="/forgot-password" // Cập nhật link khi có trang
+            href="/forgot-password"
             className="text-primary hover:text-primary/80 underline underline-offset-4"
           >
             Quên mật khẩu?
@@ -228,7 +216,6 @@ export function LoginForm() {
         </Button>
       </form>
 
-      {/* --- Divider --- */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
@@ -240,7 +227,6 @@ export function LoginForm() {
         </div>
       </div>
 
-      {/* --- Social buttons --- */}
       <div className="grid grid-cols-2 gap-4">
         <Button
           variant="outline"

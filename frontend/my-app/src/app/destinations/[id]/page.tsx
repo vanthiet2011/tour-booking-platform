@@ -1,5 +1,8 @@
 // src/app/destinations/[id]/page.tsx
-import { getToursByDestination, getDestinationById } from "@/lib/api";
+import tourService from "@/services/tour.service";
+import destinationService from "@/services/destination.service";
+import type { Tour } from "@/types/tour";
+import type { Destination } from "@/types/destination";
 import { TourCard } from "@/components/TourCard";
 import { TourFilters } from "@/components/TourFilters";
 
@@ -13,8 +16,8 @@ export default async function DestinationToursPage({
   const { id } = await params;
 
   const [tours, destination] = await Promise.all([
-    getToursByDestination(id),
-    getDestinationById(id),
+    tourService.getToursByDestination(id) as Promise<Tour[]>,
+    (destinationService.getById(id) as Promise<Destination>) || null,
   ]);
 
   return (

@@ -1,31 +1,24 @@
-// src/components/admin/destinations/DestinationsClient.tsx
 "use client";
 
 import { useState } from "react";
 import useSWR, { mutate } from "swr";
 import { PlusCircle } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { DataTable } from "@/components/ui/data-table"; // Giả sử bạn đã có component này
+import { DataTable } from "@/components/ui/data-table";
 import { getColumns } from "./columns";
-import { getDestinations, deleteDestination, Destination } from "@/lib/api";
+import destinationService from "@/services/destination.service";
+import { Destination } from "@/types/destination";
 import { useToast } from "@/hooks/use-toast";
-
-// Components cho form và dialog (sẽ tạo ở bước sau)
 import { DestinationForm } from "./DestinationForm";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 
 export default function DestinationsClient() {
   const { toast } = useToast();
-  // Fetch data bằng SWR
   const {
     data: destinations,
     error,
     isLoading,
-  } = useSWR(
-    "/api/destinations", // key cho cache
-    getDestinations // hàm fetcher
-  );
+  } = useSWR("/api/destinations", destinationService.getAll);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -50,7 +43,7 @@ export default function DestinationsClient() {
   const confirmDelete = async () => {
     if (!selectedDestination) return;
     try {
-      await deleteDestination(selectedDestination.destinationId);
+      await destinationService.delete(selectedDestination.id);
       // Tự động re-fetch data sau khi xóa
       mutate("/api/destinations");
       toast({ title: "Thành công", description: "Đã xóa điểm đến." });

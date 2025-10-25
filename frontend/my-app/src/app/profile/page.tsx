@@ -51,13 +51,10 @@ type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
   const router = useRouter();
-  // Đổi tên isLoading từ useAuth để tránh xung đột
   const { user, isLoading: isAuthLoading } = useAuth();
   const { toast } = useToast();
-  // State isLoading của riêng trang Profile
   const [isProfileLoading, setIsProfileLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -75,19 +72,16 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    // Không làm gì nếu context xác thực vẫn đang tải
     if (isAuthLoading) {
       return;
     }
 
-    // Nếu không có người dùng, chuyển hướng đến trang đăng nhập
     if (!user) {
       router.push("/login");
       return;
     }
 
     const loadProfile = async () => {
-      // Bắt đầu tải profile
       setIsProfileLoading(true);
       try {
         const data = await userService.getMe();
@@ -116,7 +110,6 @@ export default function ProfilePage() {
     };
 
     loadProfile();
-    // Loại bỏ 'form' và 'toast' khỏi mảng phụ thuộc
   }, [user, isAuthLoading, router]);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -161,12 +154,10 @@ export default function ProfilePage() {
     }
   };
 
-  // Hiển thị "Đang tải..." nếu context xác thực hoặc trang hồ sơ đang tải
   if (isAuthLoading || isProfileLoading) {
     return <div className="container mx-auto p-4">Đang tải...</div>;
   }
 
-  // Nếu không có user (đã được kiểm tra trong useEffect, nhưng để đây cho an toàn)
   if (!user) {
     return null;
   }

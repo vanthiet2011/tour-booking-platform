@@ -21,9 +21,9 @@ const formatCurrency = (amount: number) => {
 
 export function TourCard({ tour }: TourCardProps) {
   const displayDestinations =
-    tour.tourDestinations
+    tour.destinations
       ?.slice(0, 3)
-      .map((td) => td.destination.name)
+      .map((td) => td.name)
       .join(" – ") || "Nhiều điểm đến";
   const totalAvailableSlots =
     tour.tourDepartures?.reduce(

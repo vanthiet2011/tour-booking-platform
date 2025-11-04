@@ -9,27 +9,25 @@ import { get } from "http";
 
 const destinationService = {
   getAll: async (): Promise<Destination[]> => {
-    const { data } = await apiClient.get<Destination[]>("/api/destinations");
+    const { data } = await apiClient.get<Destination[]>("/destinations");
     return data;
   },
 
   getById: async (id: string): Promise<Destination> => {
-    const { data } = await apiClient.get<Destination>(
-      `/api/destinations/${id}`
-    );
+    const { data } = await apiClient.get<Destination>(`/destinations/${id}`);
     return data;
   },
 
   getPopular: async (): Promise<Destination[]> => {
     const { data } = await apiClient.get<Destination[]>(
-      "/api/destinations/popular"
+      "/destinations/popular"
     );
     return data;
   },
 
   create: async (payload: CreateDestinationPayload): Promise<Destination> => {
     const { data } = await apiClient.post<Destination>(
-      "/api/destinations",
+      "/destinations",
       payload
     );
     return data;
@@ -39,11 +37,11 @@ const destinationService = {
     id: string,
     payload: UpdateDestinationPayload
   ): Promise<void> => {
-    await apiClient.put(`/api/destinations/${id}`, payload);
+    await apiClient.put(`/destinations/${id}`, payload);
   },
 
   delete: async (id: string): Promise<void> => {
-    await apiClient.delete(`/api/destinations/${id}`);
+    await apiClient.delete(`/destinations/${id}`);
   },
 };
 

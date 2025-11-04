@@ -33,12 +33,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  createDestination,
-  updateDestination,
-  Destination,
-  CreateDestinationPayload,
-} from "@/lib/api";
+import destinationService from "@/services/destination.service";
+import { Destination, CreateDestinationPayload } from "@/types/destination";
 import { useToast } from "@/hooks/use-toast";
 
 interface DestinationFormProps {
@@ -141,9 +137,9 @@ export function DestinationForm({
         imageUrl: imageUrl,
       };
       if (isEditing && destination) {
-        await updateDestination(destination.id, payload);
+        await destinationService.update(destination.id, payload);
       } else {
-        await createDestination(payload);
+        await destinationService.create(payload);
       }
 
       mutate("/api/destinations");

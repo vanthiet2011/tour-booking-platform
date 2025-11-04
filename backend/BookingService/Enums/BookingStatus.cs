@@ -6,6 +6,7 @@ namespace BookingService.Enums
     Pending,
     Confirmed,
     Cancelled,
+    Failed,
     Completed
   }
 }

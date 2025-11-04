@@ -7,7 +7,7 @@ using TourService.Services;
 namespace TourService.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class ToursController : ControllerBase
     {
         private readonly ITourService _tourService;

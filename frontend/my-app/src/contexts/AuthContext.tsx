@@ -29,7 +29,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       const token = Cookies.get("accessToken");
       if (token) {
         try {
-          // Sử dụng authService để gọi đúng API
           const userData = await authService.getMe();
           setUser(userData);
         } catch (error) {

@@ -29,6 +29,18 @@ namespace BookingService.Data
           .WithOne(d => d.Booking)
           .HasForeignKey(d => d.BookingId)
           .OnDelete(DeleteBehavior.Cascade);
+
+      modelBuilder.Entity<BookingDetailEntity>()
+          .HasIndex(bd => new { bd.BookingId, bd.ParticipantType })
+          .IsUnique();
+
+      modelBuilder.Entity<BookingEntity>()
+          .Property(b => b.CreatedAt)
+          .HasDefaultValueSql("NOW()");
+
+      modelBuilder.Entity<BookingEntity>()
+          .Property(b => b.UpdatedAt)
+          .ValueGeneratedOnUpdate();
     }
   }
 }

@@ -81,11 +81,14 @@ services:
       - /src/obj
     command: dotnet watch run --project BookingService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
 
-  # payment-service:
-  #   build:
-  #     context: ./backend/PaymentService
-  #     dockerfile: Dockerfile
-  #     target: dev
-  #   volumes:
-  #     - ./backend/PaymentService:/src
-  #     - ~/.nuget/packages:/root/.nuget/packages:ro
+  payment-service:
+    build:
+      context: ./backend/PaymentService
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/PaymentService:/src
+      - ~/.nuget/packages:/root/.nuget/packages:ro
+      - /src/bin
+      - /src/obj
+    command: dotnet watch run --project PaymentService.csproj --urls http://0.0.0.0:8080 --no-launch-profile

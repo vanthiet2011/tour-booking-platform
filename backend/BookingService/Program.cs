@@ -6,10 +6,21 @@ using BookingService.Data;
 using BookingService.Repositories;
 using BookingService.Services;
 using System.Text;
+using System.Text.Json.Serialization;
+using Confluent.Kafka;
+using System.Text.Json;
+using BookingService.Kafka.Producers;
+using BookingService.Kafka.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
 builder.Services.AddEndpointsApiExplorer();
 
 var connectionString = builder.Configuration.GetConnectionString("Default");
@@ -18,6 +29,39 @@ builder.Services.AddDbContext<BookingDbContext>(options =>
     options.UseNpgsql(connectionString);
 });
 
+
+builder.Services.AddSingleton<IProducer<string, string>>(sp =>
+{
+    var kafkaBootstrapServers = builder.Configuration["Kafka:BootstrapServers"];
+    if (string.IsNullOrEmpty(kafkaBootstrapServers))
+    {
+        throw new InvalidOperationException("KAFKA_BOOTSTRAP_SERVERS is not configured.");
+    }
+    var config = new ProducerConfig { BootstrapServers = kafkaBootstrapServers };
+    return new ProducerBuilder<string, string>(config).Build();
+});
+
+builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+builder.Services.AddSingleton<ConsumerConfig>(sp =>
+{
+    var kafkaBootstrapServers = builder.Configuration["Kafka:BootstrapServers"];
+    if (string.IsNullOrEmpty(kafkaBootstrapServers))
+    {
+        throw new InvalidOperationException("Kafka:BootstrapServers chưa được cấu hình trong appsettings.json.");
+    }
+    
+    return new ConsumerConfig
+    {
+        BootstrapServers = kafkaBootstrapServers,
+        AutoOffsetReset = AutoOffsetReset.Earliest,
+        EnableAutoCommit = false
+    };
+});
+
+builder.Services.AddHostedService<SlotsResponseConsumer>();
+builder.Services.AddHostedService<PaymentLinkConsumer>();
+builder.Services.AddHostedService<PaymentResultConsumer>();
+
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService.Services.BookingService>();
 
@@ -25,6 +69,12 @@ builder.Services.AddHttpClient<ITourServiceClient, TourServiceClient>(client =>
 {
     var tourServiceUrl = builder.Configuration["Services:TourServiceUrl"] ?? "http://tour-service:8080";
     client.BaseAddress = new Uri(tourServiceUrl);
+});
+
+
+builder.Services.Configure<JsonSerializerOptions>(options =>
+{
+    options.PropertyNameCaseInsensitive = true;
 });
 
 builder.Services.AddAutoMapper(typeof(Program));
@@ -44,7 +94,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:SecretKey"]!))
     };
 });
 

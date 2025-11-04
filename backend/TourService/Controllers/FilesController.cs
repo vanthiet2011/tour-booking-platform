@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace TourService.Controllers
 {
   [ApiController]
-  [Route("api/[controller]")]
+  [Route("[controller]")]
   public class FilesController : ControllerBase
   {
     private readonly IWebHostEnvironment _environment;

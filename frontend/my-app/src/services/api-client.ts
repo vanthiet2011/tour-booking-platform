@@ -1,36 +1,36 @@
-import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+  AxiosError,
+} from "axios";
 import { getCookie } from "cookies-next";
 
 const isServer = typeof window === "undefined";
-const baseURL = isServer ? process.env.INTERNAL_API_URL : "";
+
+const baseURL = isServer
+  ? process.env.INTERNAL_API_URL
+  : process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const apiClient: AxiosInstance = axios.create({
-  baseURL: baseURL,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  baseURL,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 apiClient.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     const token = getCookie("accessToken");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error: AxiosError) => Promise.reject(error)
 );
 
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      // Logic xử lý khi token hết hạn, ví dụ: logout người dùng
-      // Hoặc gọi API refresh token
-      console.error("Unauthorized access - 401");
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      console.warn("Unauthorized");
     }
     return Promise.reject(error);
   }

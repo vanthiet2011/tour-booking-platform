@@ -21,7 +21,7 @@ const lora = Lora({
 });
 
 export const metadata: Metadata = {
-  title: "VietNature Tours - Khám phá Việt Nam",
+  title: "VietNature - Khám phá Việt Nam",
   description: "Nền tảng đặt tour du lịch hàng đầu Việt Nam.",
 };
 

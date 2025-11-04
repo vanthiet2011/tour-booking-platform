@@ -7,8 +7,8 @@ using AuthService.Enums;
 
 namespace AuthService.Controllers;
 
-[Route("api/auth")]
 [ApiController]
+[Route("[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;

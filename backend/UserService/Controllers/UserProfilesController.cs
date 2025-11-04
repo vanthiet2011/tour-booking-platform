@@ -6,8 +6,8 @@ using UserService.Services; // Thêm using này
 
 namespace UserService.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("[controller]")]
 public class UserProfilesController : ControllerBase
 {
     private readonly IUserProfileService _userProfileService;

@@ -14,10 +14,13 @@ public class BookingEntity
     public Guid UserId { get; set; }
 
     [Required]
+    public Guid TourId { get; set; }
+
+    [Required]
     public Guid TourDepartureId { get; set; }
 
     [Required]
-    public BookingStatus Status { get; set; }
+    public BookingStatus Status { get; set; } = BookingStatus.Pending;
 
     [Required]
     [Column(TypeName = "decimal(18, 2)")]
@@ -35,9 +38,27 @@ public class BookingEntity
     [MaxLength(100)]
     public required string ContactEmail { get; set; }
 
+    [Required]
+    [MaxLength(200)]
+    public required string ContactAddress { get; set; }
+
     public string? Note { get; set; }
 
+    public string? FailureReason { get; set; }
+
+    [Column(TypeName = "text")]
+    public string? PaymentLink { get; set; }
+
+    [Required]
+    public DateTime StartDate { get; set; }
+
+    public DateTime? EndDate { get; set; }
+
+    [Required]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    [Required]
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     public ICollection<BookingDetailEntity> BookingDetails { get; set; } = new List<BookingDetailEntity>();
 }

@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using TourService.Dtos;
 using TourService.Repositories;
 
 namespace TourService.Controllers;
 
 [ApiController]
-[Route("api/tour-departures")]
+[Route("[controller]")]
 public class TourDeparturesController : ControllerBase
 {
     private readonly ITourDepartureRepository _departureRepository;
@@ -26,11 +27,13 @@ public class TourDeparturesController : ControllerBase
         {
             return NotFound(new { message = "Không tìm thấy thông tin tour cho chuyến khởi hành này." });
         }
-        var response = new
+        var response = new TourDepartureDto
         {
+            Id = departure.Id,
             TourId = departure.Tour.Id,
-            AdultPrice = departure.Tour.PricePerAdult,
-            ChildPrice = departure.Tour.PricePerChild
+            StartDate = departure.StartDate,
+            EndDate = departure.EndDate,
+            AvailableSlots = departure.AvailableSlots
         };
         return Ok(response);
     }

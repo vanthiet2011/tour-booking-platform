@@ -1,8 +1,9 @@
-namespace BookingService.Services;
+using BookingService.Dtos;
 
-public record TourDepartureDetailsDto(Guid TourId, decimal AdultPrice, decimal ChildPrice);
+namespace BookingService.Services;
 
 public interface ITourServiceClient
 {
-    Task<TourDepartureDetailsDto?> GetTourDepartureDetailsAsync(Guid tourDepartureId);
+    Task<TourDepartureDto?> GetTourDepartureAsync(Guid tourDepartureId);
+    Task<TourPricingDto?> GetTourPricingAsync(Guid tourId);
 }

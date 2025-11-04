@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import useSWR, { mutate } from "swr";
 import { PlusCircle } from "lucide-react";
@@ -16,20 +16,22 @@ import { DeleteConfirmationDialog } from "../destinations/DeleteConfirmationDial
 
 export default function TourClient() {
   const { toast } = useToast();
+  const router = useRouter();
+
   const {
     data: tours,
     error,
     isLoading,
   } = useSWR("/api/tours", tourService.getAll);
-  const router = useRouter();
+
+  // 👇 Log dữ liệu và lỗi để kiểm tra
+  useEffect(() => {}, [tours, error]);
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedTour, setSelectedTour] = useState<Tour | null>(null);
 
-  const handleAdd = () => {
-    router.push("/admin/tours/create");
-  };
+  const handleAdd = () => router.push("/admin/tours/create");
 
   const handleEdit = (tour: Tour) => {
     setSelectedTour(tour);
@@ -48,6 +50,7 @@ export default function TourClient() {
       mutate("/api/tours");
       toast({ title: "Thành công", description: "Đã xóa tour." });
     } catch (error) {
+      console.error("🧨 Lỗi khi xóa tour:", error);
       toast({
         title: "Lỗi",
         description: "Không thể xóa tour.",
@@ -73,7 +76,7 @@ export default function TourClient() {
         </Button>
       </div>
 
-      <DataTable columns={columns} data={tours?.items || []} />
+      <DataTable columns={columns} data={tours || []} />
 
       <TourForm
         isOpen={isFormOpen}

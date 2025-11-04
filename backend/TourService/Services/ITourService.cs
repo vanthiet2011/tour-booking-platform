@@ -1,5 +1,6 @@
 using TourService.Dtos;
 using TourService.Entities;
+using TourService.Events;
 
 namespace TourService.Services
 {
@@ -11,5 +12,7 @@ namespace TourService.Services
       Task<TourEntity> CreateAsync(CreateTourDto createTourDto);
       Task<TourEntity?> UpdateAsync(Guid id, UpdateTourDto updateTourDto);
       Task<bool> DeleteAsync(Guid id);
+      Task HandleBookingRequestAsync(BookingRequestedEvent bookingEvent);
+      Task HandleReleaseSlotsAsync(ReleaseSlotsEvent releaseEvent);
   }
 }

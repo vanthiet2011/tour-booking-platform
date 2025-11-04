@@ -2,6 +2,7 @@
 
 using System.Text;
 using System.Text.Json.Serialization;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
@@ -10,6 +11,8 @@ using Microsoft.OpenApi.Models;
 using Npgsql;
 using StackExchange.Redis;
 using TourService.Data;
+using TourService.Kafka.Consumers;
+using TourService.Kafka.Producers;
 using TourService.Repositories;
 using TourService.Services;
 
@@ -31,10 +34,27 @@ builder.Services.AddDbContext<TourDbContext>(options =>
     options.UseNpgsql(dataSource);
 });
 
+
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
 builder.Services.AddScoped<ITourRepository, TourRepository>();
 builder.Services.AddScoped<ITourDepartureRepository, TourDepartureRepository>();
 builder.Services.AddScoped<ITourService, TourService.Services.TourService>();
+
+builder.Services.AddSingleton<IProducer<string, string>>(sp =>
+{
+    var kafkaBootstrapServers = configuration["Kafka:BootstrapServers"];
+    if (string.IsNullOrEmpty(kafkaBootstrapServers))
+    {
+        throw new InvalidOperationException("Kafka:BootstrapServers chưa được cấu hình trong appsettings.json.");
+    }
+    var config = new ProducerConfig { BootstrapServers = kafkaBootstrapServers };
+    return new ProducerBuilder<string, string>(config).Build();
+});
+
+builder.Services.AddSingleton<ITourKafkaProducerService, TourKafkaProducerService>();
+builder.Services.AddHostedService<BookingRequestedConsumer>();
+builder.Services.AddHostedService<SlotsReleaseConsumer>();
+
 
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
@@ -54,7 +74,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = configuration["JwtSettings:Issuer"],
         ValidAudience = configuration["JwtSettings:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:SecretKey"]!))
     };
 });
 
@@ -98,7 +118,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(redisConnectionString)
+    ConnectionMultiplexer.Connect(redisConnectionString!)
 );
 
 

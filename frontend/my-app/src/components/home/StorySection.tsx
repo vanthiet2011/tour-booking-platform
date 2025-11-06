@@ -4,12 +4,13 @@ import React from "react";
 
 export default function StorySection() {
   return (
-    <section className="py-20 bg-background">
+    <section className="py-8 bg-background">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-4xl lg:text-5xl font-bold mb-6">
-              Câu Chuyện Đằng Sau VietNature
+            <h2 className="text-4xl lg:text-4xl font-bold mb-6">
+              Câu Chuyện Đằng Sau{" "}
+              <span className="text-primary">VietNature</span>
             </h2>
             <p className="text-lg text-muted-foreground mb-4 leading-relaxed">
               Được thành lập bởi những du khách yêu Việt Nam, VietNature sinh ra

@@ -18,7 +18,7 @@ const Footer = () => {
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                 <MapPin className="h-4 w-4" />
               </div>
-              <span className="text-xl font-bold">VietTravel</span>
+              <span className="text-xl font-bold">VietNature</span>
             </div>
             <p className="text-white/80 mb-4">
               Đồng hành cùng bạn khám phá vẻ đẹp Việt Nam với dịch vụ chuyên
@@ -126,7 +126,7 @@ const Footer = () => {
               <div className="flex items-center gap-3">
                 <Mail className="h-4 w-4 text-sand" />
                 <span className="text-white/80 text-sm">
-                  info@viettravel.com
+                  info@VietNature.com
                 </span>
               </div>
             </div>
@@ -135,7 +135,7 @@ const Footer = () => {
 
         <div className="border-t border-white/20 mt-12 pt-8 text-center">
           <p className="text-white/60">
-            © 2024 VietTravel. Tất cả quyền được bảo lưu.
+            © 2024 VietNature. Tất cả quyền được bảo lưu.
           </p>
         </div>
       </div>

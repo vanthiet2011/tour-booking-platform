@@ -15,6 +15,7 @@ import {
   Compass,
   Plane,
   Hotel,
+  Home,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -26,8 +27,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { title } from "process";
 
 const mainNav = [
+  { title: "Trang chủ", href: "/", icon: Home },
   { title: "Điểm đến", href: "/destinations", icon: MapPin },
   { title: "Tour", href: "/tours", icon: Compass },
   { title: "Vé máy bay", href: "/flights", icon: Plane },

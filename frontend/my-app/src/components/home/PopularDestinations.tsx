@@ -1,7 +1,6 @@
 // src/components/PopularDestinations.tsx
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -50,11 +49,11 @@ export default function PopularDestinations({
   );
 
   return (
-    <section className="py-20 bg-background">
-      <div className="w-4/5 mx-auto px-4">
+    <section className="py-8 bg-background">
+      <div className="w-9/10 mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-foreground mb-4">
-            Điểm đến <span className="text-primary">phổ biến</span>
+            Điểm Đến <span className="text-primary">Phổ Biến</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             Khám phá những địa điểm du lịch được yêu thích nhất tại Việt Nam
@@ -62,15 +61,13 @@ export default function PopularDestinations({
         </div>
 
         {destinations && destinations.length > 0 ? (
-          <div className="flex flex-col gap-4">
-            {/* 🚀 Hàng trên: Giảm khoảng cách, đặt chiều cao cố định */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[300px]">
+          <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 h-[300px]">
               {topRowDestinations.map((dest, index) =>
                 renderDestinationCard(dest, index)
               )}
             </div>
-            {/* 🚀 Hàng dưới: Giảm khoảng cách, đặt chiều cao cố định */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[300px]">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 h-[300px]">
               {bottomRowDestinations.map((dest, index) =>
                 renderDestinationCard(dest, index + topRowDestinations.length)
               )}
@@ -83,10 +80,10 @@ export default function PopularDestinations({
         )}
 
         <div className="text-center mt-12">
-          <Link href="/destinations" passHref>
-            <Button variant="outline" size="lg">
-              Xem tất cả điểm đến
-            </Button>
+          <Link href="/destinations">
+            <button className="border-2 border-primary text-primary px-8 py-3 rounded-full font-semibold hover:bg-primary hover:text-primary-foreground transition">
+              Xem Tất Cả Điểm đến →
+            </button>
           </Link>
         </div>
       </div>

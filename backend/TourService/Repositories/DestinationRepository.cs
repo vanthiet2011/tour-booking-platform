@@ -59,7 +59,7 @@ namespace TourService.Repositories
             return (items, totalCount);
         }
 
-        public async Task<IEnumerable<DestinationEntity>> GetPopularFromDbAsync(int count)
+        public async Task<IEnumerable<DestinationEntity>> GetPopularAsync(int count)
         {
              return await _context.Destinations
                 .Include(d => d.DestinationCategories)

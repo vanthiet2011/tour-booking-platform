@@ -14,17 +14,17 @@ namespace TourService.Services
     public class DestinationService : IDestinationService
     {
         private readonly IDestinationRepository _destinationRepository;
-        private readonly IDatabase _redisDb;
+        private readonly ICachingService _cachingService;
         private readonly IMapper _mapper;
         private const string PopularDestinationsCacheKey = "popular_destinations";
 
         public DestinationService(
             IDestinationRepository destinationRepository,
-            IConnectionMultiplexer redis,
+            ICachingService cachingService,
             IMapper mapper)
         {
             _destinationRepository = destinationRepository;
-            _redisDb = redis.GetDatabase();
+            _cachingService = cachingService;
             _mapper = mapper;
         }
 
@@ -57,42 +57,33 @@ namespace TourService.Services
 
         public async Task<IEnumerable<DestinationResponseDto>> GetPopularDestinationsAsync(int count)
         {
-            var cachedDestinations = await _redisDb.StringGetAsync(PopularDestinationsCacheKey);
-            
-            if(!cachedDestinations.IsNullOrEmpty)
-            {
-                return JsonSerializer.Deserialize<IEnumerable<DestinationResponseDto>>(cachedDestinations.ToString())!;
-            }
+            var cachedDestinations = await _cachingService.GetAsync<IEnumerable<DestinationResponseDto>>(PopularDestinationsCacheKey);
+            if (cachedDestinations != null) return cachedDestinations;
 
-            var entitiesFromDb = await _destinationRepository.GetPopularFromDbAsync(count);
-            var dtos = _mapper.Map<IEnumerable<DestinationResponseDto>>(entitiesFromDb);
+            var entities = await _destinationRepository.GetPopularAsync(count);
+            var dtos = _mapper.Map<IEnumerable<DestinationResponseDto>>(entities);
             
-            await _redisDb.StringSetAsync(
-                PopularDestinationsCacheKey, 
-                JsonSerializer.Serialize(dtos), 
-                TimeSpan.FromMinutes(10)
-            );
-            
+            await _cachingService.SetAsync(PopularDestinationsCacheKey, dtos, TimeSpan.FromHours(1));
             return dtos;
         }
 
         public async Task<DestinationEntity> CreateDestinationAsync(DestinationEntity destination, List<Guid> categoryIds)
         {
             var createdEntity = await _destinationRepository.CreateAsync(destination, categoryIds);
-            await _redisDb.KeyDeleteAsync(PopularDestinationsCacheKey); 
+            await _cachingService.RemoveAsync(PopularDestinationsCacheKey);
             return createdEntity;
         }
 
         public async Task UpdateDestinationAsync(DestinationEntity destination, List<Guid> categoryIds)
         {
             await _destinationRepository.UpdateAsync(destination, categoryIds);
-            await _redisDb.KeyDeleteAsync(PopularDestinationsCacheKey);
+            await _cachingService.RemoveAsync(PopularDestinationsCacheKey);
         }
 
         public async Task DeleteDestinationAsync(Guid id)
         {
             await _destinationRepository.DeleteAsync(id);
-            await _redisDb.KeyDeleteAsync(PopularDestinationsCacheKey);
+            await _cachingService.RemoveAsync(PopularDestinationsCacheKey);
         }
     }
 }

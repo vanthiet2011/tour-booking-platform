@@ -17,7 +17,7 @@ namespace TourService.Repositories
             int pageSize
         );
         Task<DestinationEntity?> GetByIdAsync(Guid? id);
-        Task<IEnumerable<DestinationEntity>> GetPopularFromDbAsync(int count);
+        Task<IEnumerable<DestinationEntity>> GetPopularAsync(int count);
 
         Task<DestinationEntity> CreateAsync(DestinationEntity destination, List<Guid> categoryIds);
         Task UpdateAsync(DestinationEntity destination, List<Guid> categoryIds);

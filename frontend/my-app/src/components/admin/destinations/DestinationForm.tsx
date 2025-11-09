@@ -34,8 +34,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import destinationService from "@/services/destination.service";
-import { Destination, CreateDestinationPayload } from "@/types/destination";
+import {
+  Destination,
+  CreateDestinationPayload,
+  Category,
+} from "@/types/destination";
 import { useToast } from "@/hooks/use-toast";
+import categoryService from "@/services/category.service";
+import { MultiSelect } from "@/components/ui/multi-select";
+import uploadService from "@/services/upload.service";
 
 interface DestinationFormProps {
   isOpen: boolean;
@@ -49,6 +56,7 @@ const formSchema = z.object({
   imageUrl: z.string().optional().or(z.literal("")),
   region: z.string().min(1, "Vui lòng chọn vùng miền."),
   isPopular: z.boolean().default(false),
+  categoryIds: z.array(z.string()).min(1, "Vui lòng chọn ít nhất một danh mục"),
 });
 
 export function DestinationForm({
@@ -59,6 +67,8 @@ export function DestinationForm({
   const { toast } = useToast();
   const [imageUrl, setImageUrl] = useState<string | undefined>("");
   const [isUploading, setIsUploading] = useState(false);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -67,6 +77,7 @@ export function DestinationForm({
       imageUrl: "",
       region: "",
       isPopular: false,
+      categoryIds: [],
     },
   });
 
@@ -75,7 +86,11 @@ export function DestinationForm({
   useEffect(() => {
     if (isOpen) {
       if (isEditing && destination) {
-        form.reset(destination);
+        form.reset({
+          ...destination,
+          categoryIds:
+            destination.categories?.filter(Boolean).map((c) => c.id) || [],
+        });
         setImageUrl(destination.imageUrl);
       } else {
         form.reset({
@@ -84,41 +99,54 @@ export function DestinationForm({
           imageUrl: "",
           region: "",
           isPopular: false,
+          categoryIds: [],
         });
         setImageUrl("");
       }
     }
   }, [destination, isEditing, isOpen, form]);
 
+  useEffect(() => {
+    if (isOpen) {
+      setLoadingCategories(true);
+      categoryService
+        .getAll()
+        .then((data) => setCategories(data))
+        .catch((err) => {
+          console.error("Lỗi tải danh mục:", err);
+          if (err?.response?.status !== 204) {
+            toast({
+              title: "Lỗi",
+              description: "Không thể tải danh sách danh mục.",
+              variant: "destructive",
+            });
+          }
+        })
+        .finally(() => setLoadingCategories(false));
+    }
+  }, [isOpen]);
+
+  const categoryOptions = categories.map((c) => ({
+    value: c.id,
+    label: c.name,
+  }));
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/files/upload`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${Cookies.get("accessToken")}`,
-          },
-          body: formData,
-        }
-      );
+      const data = await uploadService.uploadImage(file);
+      const fullImageUrl = data.filePath;
 
-      if (!response.ok) throw new Error("Upload failed");
+      setImageUrl(fullImageUrl);
+      form.setValue("imageUrl", fullImageUrl, { shouldValidate: true });
 
-      const data = await response.json();
-      setImageUrl(data.url);
-      form.setValue("imageUrl", data.url, { shouldValidate: true });
       toast({ title: "Thành công", description: "Đã tải ảnh lên." });
     } catch (error) {
+      console.error("Lỗi tải ảnh:", error);
       toast({
         title: "Lỗi",
         description: "Không thể tải ảnh lên.",
@@ -255,6 +283,28 @@ export function DestinationForm({
                       <SelectItem value="Miền Nam">Miền Nam</SelectItem>
                     </SelectContent>
                   </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="categoryIds"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Danh mục</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      options={categoryOptions}
+                      selected={field.value}
+                      onChange={field.onChange}
+                      placeholder="Chọn danh mục..."
+                      // disabled={
+                      //   loadingCategories || form.formState.isSubmitting
+                      // }
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

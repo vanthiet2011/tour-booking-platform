@@ -24,6 +24,20 @@
       "Key": "UserProfiles"
     },
     {
+      "UpstreamPathTemplate": "/api/categories",
+      "UpstreamHttpMethod": ["GET", "POST"],
+      "DownstreamPathTemplate": "/categories",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/categories/{id}",
+      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/categories/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
       "UpstreamPathTemplate": "/api/tours",
       "UpstreamHttpMethod": ["GET", "POST"],
       "DownstreamPathTemplate": "/tours",

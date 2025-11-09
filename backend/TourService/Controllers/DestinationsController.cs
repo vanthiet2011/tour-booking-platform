@@ -1,10 +1,10 @@
-// Trong thư mục Controllers/DestinationsController.cs
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TourService.Dtos;
 using TourService.Entities;
-using TourService.Repositories;
 using TourService.Services;
+using System.Collections.Generic;
 
 namespace TourService.Controllers
 {
@@ -12,103 +12,98 @@ namespace TourService.Controllers
     [Route("[controller]")]
     public class DestinationsController : ControllerBase
     {
-      private readonly IDestinationRepository _repository;
-      private readonly ITourService _tourService;
+        private readonly IDestinationService _destinationService;
+        private readonly ITourService _tourService;
+        private readonly IMapper _mapper;
 
-        public DestinationsController(IDestinationRepository repository, ITourService tourService)
+        public DestinationsController(
+            IDestinationService destinationService, 
+            ITourService tourService, 
+            IMapper mapper)
         {
-            _repository = repository;
+            _destinationService = destinationService;
             _tourService = tourService;
+            _mapper = mapper;
         }
 
-      // GET: api/destinations
-      [HttpGet]
-      public async Task<IActionResult> GetAllDestinations()
-      {
-          var destinations = await _repository.GetAllAsync();
-          return Ok(destinations);
-      }
-      
-      [HttpGet("popular")]
-        public async Task<IActionResult> GetPopularDestinations()
+        // GET: destinations
+        [HttpGet]
+        public async Task<IActionResult> GetAllDestinations(
+            [FromQuery] PaginationParams paginationParams,
+            [FromQuery] Guid? categoryId = null,
+            [FromQuery] string? region = null,
+            [FromQuery] string? search = null)
         {
-            var popularDestinations = await _repository.GetPopularAsync(5);
-            return Ok(popularDestinations);
+            var paginatedData = await _destinationService.GetAllDestinationsAsync(
+                categoryId, 
+                region, 
+                search, 
+                paginationParams
+            );
+            return Ok(paginatedData);
+        }
+        
+        // GET: destinations/popular
+        [HttpGet("popular")]
+        public async Task<IActionResult> GetPopularDestinations([FromQuery] int count = 5)
+        {
+            var popularDtos = await _destinationService.GetPopularDestinationsAsync(count);
+            return Ok(popularDtos);
         }
 
-      // GET: api/destinations/{id}
+        // GET: destinations/{id}
         [HttpGet("{id}")]
-      public async Task<IActionResult> GetDestinationById(Guid id)
-      {
-          var destination = await _repository.GetByIdAsync(id);
-          if (destination == null)
-          {
-              return NotFound();
-          }
-          return Ok(destination);
-      }
-      
-          [HttpGet("{id}/tours")]
+        public async Task<IActionResult> GetDestinationById(Guid id)
+        {
+            var entity = await _destinationService.GetDestinationByIdAsync(id);
+            if (entity == null) return NotFound();
+            var dto = _mapper.Map<DestinationResponseDto>(entity);
+            return Ok(dto);
+        }
+        
+        // GET: destinations/{id}/tours
+        [HttpGet("{id}/tours")]
         public async Task<IActionResult> GetToursByDestination(Guid id)
-    {
-        var tours = await _tourService.GetByDestinationIdAsync(id);
-        return Ok(tours);
-    }
+        {
+             var entities = await _tourService.GetByDestinationIdAsync(id);
+             var dtos = _mapper.Map<IEnumerable<TourDetailDto>>(entities);
+             return Ok(dtos);
+        }
 
-      // POST: api/destinations
+        // POST: destinations
         [HttpPost]
-      [Authorize(Roles = "Admin")]
-      public async Task<IActionResult> CreateDestination([FromBody] CreateDestinationDto dto)
-      {
-          var newDestination = new DestinationEntity
-          {
-              Id = Guid.NewGuid(),
-              Name = dto.Name,
-              Description = dto.Description,
-              ImageUrl = dto.ImageUrl,
-              Region = dto.Region,
-              IsPopular = dto.IsPopular,
-              CreatedAt = DateTime.UtcNow
-          };
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> CreateDestination([FromBody] CreateDestinationDto dto)
+        {
+            var newEntity = _mapper.Map<DestinationEntity>(dto);
+            newEntity.CreatedAt = DateTime.UtcNow;
+            var createdEntity = await _destinationService.CreateDestinationAsync(newEntity, dto.CategoryIds);
+            var returnDto = _mapper.Map<DestinationResponseDto>(createdEntity);
+            return CreatedAtAction(nameof(GetDestinationById), new { id = returnDto.Id }, returnDto);
+        }
 
-          await _repository.CreateAsync(newDestination);
-          return CreatedAtAction(nameof(GetDestinationById), new { id = newDestination.Id }, newDestination);
-      }
+        // PUT: destinations/{id}
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateDestination(Guid id, [FromBody] UpdateDestinationDto dto)
+        {
+            var existingDestination = await _destinationService.GetDestinationByIdAsync(id);
+            if (existingDestination == null) return NotFound();
+            var entityToUpdate = _mapper.Map<DestinationEntity>(dto);
+            entityToUpdate.Id = id;
+            await _destinationService.UpdateDestinationAsync(entityToUpdate, dto.CategoryIds);
+            return NoContent();
+        }
 
-      // PUT: api/destinations/{id}
-      [HttpPut("{id}")]
-      [Authorize(Roles = "Admin")]
-      public async Task<IActionResult> UpdateDestination(Guid id, [FromBody] UpdateDestinationDto dto)
-      {
-          var existingDestination = await _repository.GetByIdAsync(id);
-          if (existingDestination == null)
-          {
-              return NotFound();
-          }
-
-          existingDestination.Name = dto.Name;
-          existingDestination.Description = dto.Description;
-          existingDestination.ImageUrl = dto.ImageUrl;
-          existingDestination.Region = dto.Region;
-          existingDestination.IsPopular = dto.IsPopular;
-
-          await _repository.UpdateAsync(existingDestination);
-          return NoContent(); // Trả về 204 No Content khi cập nhật thành công
-      }
-
-      // DELETE: api/destinations/{id}
-      [HttpDelete("{id}")]
-      [Authorize(Roles = "Admin")]
-      public async Task<IActionResult> DeleteDestination(Guid id)
-      {
-          var existingDestination = await _repository.GetByIdAsync(id);
-          if (existingDestination == null)
-          {
-              return NotFound();
-          }
-
-          await _repository.DeleteAsync(id);
-          return NoContent(); // Trả về 204 No Content khi xóa thành công
-      }
+        // DELETE: destinations/{id}
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteDestination(Guid id)
+        {
+            var existingDestination = await _destinationService.GetDestinationByIdAsync(id);
+            if (existingDestination == null) return NotFound();
+            await _destinationService.DeleteDestinationAsync(id);         
+            return NoContent();
+        }
     }
 }

@@ -4,6 +4,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +47,23 @@ export const getColumns = ({
   {
     accessorKey: "createdAt",
     header: "Ngày Tạo",
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    cell: ({ row }) => {
+      const dateString = row.getValue("createdAt") as string;
+      if (!dateString) {
+        return <span>N/A</span>;
+      }
+
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) {
+          return <span>InvalidDate</span>;
+        }
+        return <span>{format(date, "dd/MM/yyyy")}</span>;
+      } catch (error) {
+        console.error("Lỗi parse ngày:", error);
+        return <span>InvalidDate</span>;
+      }
+    },
   },
   {
     id: "actions",

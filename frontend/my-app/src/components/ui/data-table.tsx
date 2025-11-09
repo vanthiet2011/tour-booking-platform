@@ -50,24 +50,26 @@ export function DataTable<TData, TValue>({
     <div>
       <div className="rounded-md border">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-primary/10 text-primary font-semibold uppercase">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
+              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    className="px-4 py-3 text-left border-b border-gray-200"
+                  >
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
+
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
@@ -98,7 +100,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      {/* <div className="flex items-center justify-end space-x-2 py-4">
         <Button
           variant="outline"
           size="sm"
@@ -115,7 +117,7 @@ export function DataTable<TData, TValue>({
         >
           Trang sau
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 }

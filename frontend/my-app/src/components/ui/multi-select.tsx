@@ -21,6 +21,7 @@ interface MultiSelectProps {
   onChange: (selected: string[]) => void;
   className?: string;
   placeholder?: string;
+  disabled?: boolean;
 }
 
 export function MultiSelect({
@@ -28,6 +29,7 @@ export function MultiSelect({
   selected,
   onChange,
   className,
+  disabled = false,
   ...props
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
@@ -66,6 +68,7 @@ export function MultiSelect({
               <Badge key={value} variant="secondary">
                 {label}
                 <button
+                  disabled={disabled}
                   className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
                   onKeyDown={(e) => {
                     if (e.key === "Enter") {
@@ -85,6 +88,7 @@ export function MultiSelect({
           })}
           <CommandPrimitive.Input
             value={inputValue}
+            disabled={disabled}
             onValueChange={setInputValue}
             onBlur={() => setOpen(false)}
             onFocus={() => setOpen(true)}
@@ -103,6 +107,7 @@ export function MultiSelect({
                   return (
                     <CommandItem
                       key={option.value}
+                      disabled={disabled}
                       onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();

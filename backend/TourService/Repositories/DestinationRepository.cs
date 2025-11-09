@@ -1,6 +1,4 @@
-using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 using TourService.Data;
 using TourService.Entities;
 
@@ -9,63 +7,126 @@ namespace TourService.Repositories
     public class DestinationRepository : IDestinationRepository
     {
         private readonly TourDbContext _context;
-        private readonly IDatabase _redisDb;
-        private const string PopularDestinationsCacheKey = "popular_destinations";
-
-        public DestinationRepository(TourDbContext context, IConnectionMultiplexer redis)
+        public DestinationRepository(TourDbContext context)
         {
             _context = context;
-            _redisDb = redis.GetDatabase();
         }
 
-        public async Task<IEnumerable<DestinationEntity>> GetAllAsync()
+        public async Task<IEnumerable<DestinationEntity>> GetAllAsync(Guid? categoryId)
         {
-            return await _context.Destinations.ToListAsync();
-        }
-
-        public async Task<IEnumerable<DestinationEntity>> GetPopularAsync(int count)
-        {
-            var cachedDestinations = await _redisDb.StringGetAsync(PopularDestinationsCacheKey);
-            if(!cachedDestinations.IsNullOrEmpty)
+            var query = _context.Destinations
+                                .Include(d => d.DestinationCategories)
+                                .ThenInclude(dc => dc.Category)
+                                .AsQueryable();
+            if (categoryId.HasValue && categoryId.Value != Guid.Empty)
             {
-                return JsonSerializer.Deserialize<IEnumerable<DestinationEntity>>(cachedDestinations.ToString())!;
+                var cid = categoryId.Value;
+                query = query.Where(d => d.DestinationCategories.Any(c => c.CategoryId == cid));
             }
-            var destinationsFromDb = await _context.Destinations
-                                 .Where(d => d.IsPopular)
-                                 .OrderByDescending(d => d.CreatedAt)
-                                 .Take(count)
-                                 .ToListAsync();
-            await _redisDb.StringSetAsync(PopularDestinationsCacheKey, JsonSerializer.Serialize(destinationsFromDb), TimeSpan.FromMinutes(10));
-            return destinationsFromDb;
+            query = query.OrderByDescending(d => d.CreatedAt);
+            return await query.ToListAsync();
         }
 
-        public async Task<DestinationEntity?> GetByIdAsync(Guid id)
+        public async Task<(IEnumerable<DestinationEntity> Items, int TotalCount)> GetAllPaginatedAsync(
+            Guid? categoryId, 
+            string? region, 
+            string? search, 
+            int page, 
+            int pageSize)
         {
-            return await _context.Destinations.FindAsync(id);
+            var query = _context.Destinations
+                .Include(d => d.DestinationCategories)
+                .ThenInclude(dc => dc.Category)
+                .AsQueryable();
+
+            if (categoryId.HasValue)
+                query = query.Where(d => d.DestinationCategories.Any(c => c.CategoryId == categoryId.Value));
+
+            if (!string.IsNullOrEmpty(region))
+                query = query.Where(d => d.Region == region);
+
+            if (!string.IsNullOrEmpty(search))
+                query = query.Where(d => d.Name!.Contains(search) || d.Description!.Contains(search));
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .OrderByDescending(d => d.CreatedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
         }
 
-        public async Task CreateAsync(DestinationEntity destination)
+        public async Task<IEnumerable<DestinationEntity>> GetPopularFromDbAsync(int count)
         {
+             return await _context.Destinations
+                .Include(d => d.DestinationCategories)
+                .ThenInclude(dc => dc.Category)
+                .Where(d => d.IsPopular)
+                .OrderByDescending(d => d.CreatedAt)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<DestinationEntity?> GetByIdAsync(Guid? id)
+        {
+            return await _context.Destinations
+                .Include(d => d.DestinationCategories)
+                .ThenInclude(dc => dc.Category)
+                .FirstOrDefaultAsync(d => d.Id == id);
+        }
+        public async Task<DestinationEntity> CreateAsync(DestinationEntity destination, List<Guid> categoryIds)
+        {
+            destination.Id = Guid.NewGuid(); 
+            if (categoryIds != null)
+            {
+                foreach (var catId in categoryIds)
+                {
+                    destination.DestinationCategories.Add(new DestinationCategoryEntity
+                    {
+                        DestinationId = destination.Id,
+                        CategoryId = catId
+                    });
+                }
+            }
             await _context.Destinations.AddAsync(destination);
             await _context.SaveChangesAsync();
-            await _redisDb.KeyDeleteAsync(PopularDestinationsCacheKey);
+            return destination;
         }
 
-        public async Task UpdateAsync(DestinationEntity destination)
+        public async Task UpdateAsync(DestinationEntity destination, List<Guid> categoryIds)
         {
-            _context.Destinations.Update(destination);
-            await _context.SaveChangesAsync();
-            await _redisDb.KeyDeleteAsync(PopularDestinationsCacheKey);
-        }
+            var existingEntity = await _context.Destinations
+                .Include(d => d.DestinationCategories)
+                .FirstOrDefaultAsync(d => d.Id == destination.Id);
 
+            if (existingEntity == null) return; 
+
+            _context.Entry(existingEntity).CurrentValues.SetValues(destination);
+            existingEntity.DestinationCategories.Clear();
+
+            if (categoryIds != null)
+            {
+                foreach (var catId in categoryIds)
+                {
+                    existingEntity.DestinationCategories.Add(new DestinationCategoryEntity
+                    {
+                        DestinationId = existingEntity.Id,
+                        CategoryId = catId
+                    });
+                }
+            }
+            await _context.SaveChangesAsync();
+        }
         public async Task DeleteAsync(Guid id)
         {
-            var destination = await GetByIdAsync(id);
+            var destination = await _context.Destinations.FindAsync(id); 
             if (destination != null)
             {
                 _context.Destinations.Remove(destination);
                 await _context.SaveChangesAsync();
-                await _redisDb.KeyDeleteAsync(PopularDestinationsCacheKey);
             }
         }
     }

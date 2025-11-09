@@ -18,6 +18,60 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\04b62b78-edc9-4c3e-b4fd-c773bb3ff71c.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\091f942f-b975-45d7-9f24-bfe0fb0f8796.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/091f942f-b975-45d7-9f24-bfe0fb0f8796.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>4sm4ip068o</Fingerprint>
+      <Integrity>VCIohVBiwTENBnCGkGRpxL/TjuyNUGwXjsKP5mR4F+M=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\091f942f-b975-45d7-9f24-bfe0fb0f8796.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\09fff233-d010-4f4e-a785-4964a3ef687f.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/09fff233-d010-4f4e-a785-4964a3ef687f.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>3jxibyz6ua</Fingerprint>
+      <Integrity>wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\09fff233-d010-4f4e-a785-4964a3ef687f.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\0b0d643d-cacb-49a6-bd0e-43cd985c5bcb.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/0b0d643d-cacb-49a6-bd0e-43cd985c5bcb.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>yp8e8k67rk</Fingerprint>
+      <Integrity>phsFDJr3ZNteoxOGA/jmpLyAwRlLK3Rz1zUCAPOriEQ=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\0b0d643d-cacb-49a6-bd0e-43cd985c5bcb.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\0f501b95-3569-4a33-acc2-c913215a09a1.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -36,6 +90,60 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\0f501b95-3569-4a33-acc2-c913215a09a1.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\1b3f4222-a8b5-4eb0-9079-89320b28774b.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/1b3f4222-a8b5-4eb0-9079-89320b28774b.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>f2n58tk64p</Fingerprint>
+      <Integrity>B2DgnbD2pCR/nz2fL7wg+RQ7VNefqlna3NpXIju5xgQ=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\1b3f4222-a8b5-4eb0-9079-89320b28774b.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\281d9b55-4e08-4ed1-8bbc-83e26749bb99.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/281d9b55-4e08-4ed1-8bbc-83e26749bb99.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>f2n58tk64p</Fingerprint>
+      <Integrity>B2DgnbD2pCR/nz2fL7wg+RQ7VNefqlna3NpXIju5xgQ=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\281d9b55-4e08-4ed1-8bbc-83e26749bb99.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2a09c1cf-8620-4ad7-b4b3-b7bf0fdebd80.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/2a09c1cf-8620-4ad7-b4b3-b7bf0fdebd80.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>v6z1u4gjoi</Fingerprint>
+      <Integrity>Z5bMbKe4tJxao6XacO4CTf4y0oAJO05rMZyEH2GfLug=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2a09c1cf-8620-4ad7-b4b3-b7bf0fdebd80.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2a594bac-c9e0-4970-b83d-d1acd9941af5.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -53,6 +161,60 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2a594bac-c9e0-4970-b83d-d1acd9941af5.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2acc72c7-cb9c-41b5-8226-3747e65bece6.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/2acc72c7-cb9c-41b5-8226-3747e65bece6.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>tq1ow905ur</Fingerprint>
+      <Integrity>1ULGtxg+NrEVRejApIQV6mjPI/kqmAvKiAiu233jOxY=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2acc72c7-cb9c-41b5-8226-3747e65bece6.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2cea8625-d221-46f9-ab74-0d859168c8e5.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/2cea8625-d221-46f9-ab74-0d859168c8e5.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>4sm4ip068o</Fingerprint>
+      <Integrity>VCIohVBiwTENBnCGkGRpxL/TjuyNUGwXjsKP5mR4F+M=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\2cea8625-d221-46f9-ab74-0d859168c8e5.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\323c0a0d-fc6c-4045-94eb-b0b5e5ffd691.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/323c0a0d-fc6c-4045-94eb-b0b5e5ffd691.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>576is367be</Fingerprint>
+      <Integrity>4ZcL7CRZYG1mMi/F6sSnJF9BaQns0U08zRUIL4V0Sfw=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\323c0a0d-fc6c-4045-94eb-b0b5e5ffd691.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\3d666387-80af-4662-96dd-9410215c42bc.jpg'))">
       <SourceType>Package</SourceType>
@@ -90,6 +252,24 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\3ff9a198-b4be-4570-a59a-fb5b20da9d4d.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\5a242829-c2b9-426c-83c3-03096faac6b3.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/5a242829-c2b9-426c-83c3-03096faac6b3.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>wim7qrjafm</Fingerprint>
+      <Integrity>yMNiRfpgzBlQiKcuUCamhGWFNCZjCijxu8EGJA8QCwA=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\5a242829-c2b9-426c-83c3-03096faac6b3.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\61238ecb-2d4f-45af-b51b-c67dc4ce8ecc.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -126,6 +306,78 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\646f0cc7-755b-4e69-b428-fa13892bb945.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\679b5a3e-6286-4a8a-a749-4660feeb4302.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/679b5a3e-6286-4a8a-a749-4660feeb4302.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>3jxibyz6ua</Fingerprint>
+      <Integrity>wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\679b5a3e-6286-4a8a-a749-4660feeb4302.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\6d8a5f6e-8757-4bc1-8747-f7a6c8d0595b.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/6d8a5f6e-8757-4bc1-8747-f7a6c8d0595b.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>wim7qrjafm</Fingerprint>
+      <Integrity>yMNiRfpgzBlQiKcuUCamhGWFNCZjCijxu8EGJA8QCwA=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\6d8a5f6e-8757-4bc1-8747-f7a6c8d0595b.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\70b46115-5c7a-4858-af85-f2a0a2094bf3.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/70b46115-5c7a-4858-af85-f2a0a2094bf3.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>3jxibyz6ua</Fingerprint>
+      <Integrity>wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\70b46115-5c7a-4858-af85-f2a0a2094bf3.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\727a52c1-57cb-4d71-af62-0c8e9ac474aa.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/727a52c1-57cb-4d71-af62-0c8e9ac474aa.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>k1eam7vwyp</Fingerprint>
+      <Integrity>aFjpGhZGTznHrlcBZzoe/AeSsLgICgbf3WqKna9TzFc=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\727a52c1-57cb-4d71-af62-0c8e9ac474aa.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\79f2b1ff-1d31-4165-ab79-543b1b049485.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -143,6 +395,42 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\79f2b1ff-1d31-4165-ab79-543b1b049485.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\7b3e1788-7f98-4c09-b715-aed8e583e8d0.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/7b3e1788-7f98-4c09-b715-aed8e583e8d0.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>pi3sxrvbj8</Fingerprint>
+      <Integrity>L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\7b3e1788-7f98-4c09-b715-aed8e583e8d0.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\7c747121-c0e2-4cb6-9c5b-b04554483243.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/7c747121-c0e2-4cb6-9c5b-b04554483243.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>k1eam7vwyp</Fingerprint>
+      <Integrity>aFjpGhZGTznHrlcBZzoe/AeSsLgICgbf3WqKna9TzFc=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\7c747121-c0e2-4cb6-9c5b-b04554483243.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\7cd99aa2-9244-4fd0-b2dd-b8a95b5f4570.jpg'))">
       <SourceType>Package</SourceType>
@@ -180,6 +468,42 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\7e6f15f2-a592-4ea5-ad9c-b506933fff9b.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\810bd230-4d12-4d16-918c-749d8c706a17.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/810bd230-4d12-4d16-918c-749d8c706a17.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>tq1ow905ur</Fingerprint>
+      <Integrity>1ULGtxg+NrEVRejApIQV6mjPI/kqmAvKiAiu233jOxY=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\810bd230-4d12-4d16-918c-749d8c706a17.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\84229dbd-7bd0-4871-b3a9-8bab36c8e7b9.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/84229dbd-7bd0-4871-b3a9-8bab36c8e7b9.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>yp8e8k67rk</Fingerprint>
+      <Integrity>phsFDJr3ZNteoxOGA/jmpLyAwRlLK3Rz1zUCAPOriEQ=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\84229dbd-7bd0-4871-b3a9-8bab36c8e7b9.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\8b0c930a-7548-4dc2-a7b0-c4ffb833d583.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -216,6 +540,96 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\9c17d2f6-b8f9-4069-8706-ec092b4f95e6.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\a160dac1-4a8e-43be-a8a0-cc376ff0d6ed.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/a160dac1-4a8e-43be-a8a0-cc376ff0d6ed.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>v6z1u4gjoi</Fingerprint>
+      <Integrity>Z5bMbKe4tJxao6XacO4CTf4y0oAJO05rMZyEH2GfLug=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\a160dac1-4a8e-43be-a8a0-cc376ff0d6ed.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\a3f66b2a-6dec-4c02-876a-4326d7c0533b.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/a3f66b2a-6dec-4c02-876a-4326d7c0533b.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>v6z1u4gjoi</Fingerprint>
+      <Integrity>Z5bMbKe4tJxao6XacO4CTf4y0oAJO05rMZyEH2GfLug=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\a3f66b2a-6dec-4c02-876a-4326d7c0533b.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\ab849162-f29c-41ca-9475-6d9b4d5c2eb8.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/ab849162-f29c-41ca-9475-6d9b4d5c2eb8.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>k1eam7vwyp</Fingerprint>
+      <Integrity>aFjpGhZGTznHrlcBZzoe/AeSsLgICgbf3WqKna9TzFc=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\ab849162-f29c-41ca-9475-6d9b4d5c2eb8.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\af9d6bce-c5f2-4d26-8c23-41645bf538f1.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/af9d6bce-c5f2-4d26-8c23-41645bf538f1.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>tq1ow905ur</Fingerprint>
+      <Integrity>1ULGtxg+NrEVRejApIQV6mjPI/kqmAvKiAiu233jOxY=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\af9d6bce-c5f2-4d26-8c23-41645bf538f1.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b1a1454e-af7a-43d7-a69d-76e82d1a2b25.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/b1a1454e-af7a-43d7-a69d-76e82d1a2b25.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>yp8e8k67rk</Fingerprint>
+      <Integrity>phsFDJr3ZNteoxOGA/jmpLyAwRlLK3Rz1zUCAPOriEQ=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b1a1454e-af7a-43d7-a69d-76e82d1a2b25.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -234,6 +648,24 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b1fde7de-b69d-4a4c-8e0c-d222204580e7.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b333f992-54d1-4f91-8880-20b55c93ace2.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/b333f992-54d1-4f91-8880-20b55c93ace2.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>boje8kyk21</Fingerprint>
+      <Integrity>G1MfZsrVyQUFX4y2UpZ/onW43DwaE7+vkfZgPBAAOoU=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b333f992-54d1-4f91-8880-20b55c93ace2.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b7afa4d5-03a5-49f9-9e7e-ae79b154b9a3.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -251,6 +683,24 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\b7afa4d5-03a5-49f9-9e7e-ae79b154b9a3.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\bbe51887-09db-4924-87b1-ad8a5c8f5853.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/bbe51887-09db-4924-87b1-ad8a5c8f5853.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>c83vtoz03h</Fingerprint>
+      <Integrity>HO/iAFHsdSRFoEmz/Y64pe/Wb/e+deHFT0/t72AS1cA=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\bbe51887-09db-4924-87b1-ad8a5c8f5853.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\c0100552-39f4-438f-b029-21a5519b4aea.jpg'))">
       <SourceType>Package</SourceType>
@@ -306,6 +756,78 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\c3d2ff07-8b1e-47df-96ed-0e722e1e4a09.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\c4c38578-7897-4683-9d69-3e2b3adadad0.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/c4c38578-7897-4683-9d69-3e2b3adadad0.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>pi3sxrvbj8</Fingerprint>
+      <Integrity>L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\c4c38578-7897-4683-9d69-3e2b3adadad0.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\c513fa4b-aad8-4fa1-abe0-3515642ed549.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/c513fa4b-aad8-4fa1-abe0-3515642ed549.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>wim7qrjafm</Fingerprint>
+      <Integrity>yMNiRfpgzBlQiKcuUCamhGWFNCZjCijxu8EGJA8QCwA=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\c513fa4b-aad8-4fa1-abe0-3515642ed549.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\cca90f62-1931-4183-8e44-72f7d87a63cf.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/cca90f62-1931-4183-8e44-72f7d87a63cf.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>yp8e8k67rk</Fingerprint>
+      <Integrity>phsFDJr3ZNteoxOGA/jmpLyAwRlLK3Rz1zUCAPOriEQ=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\cca90f62-1931-4183-8e44-72f7d87a63cf.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\cdc501c1-23c3-4239-b7a9-3e3b837465b5.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/cdc501c1-23c3-4239-b7a9-3e3b837465b5.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>c83vtoz03h</Fingerprint>
+      <Integrity>HO/iAFHsdSRFoEmz/Y64pe/Wb/e+deHFT0/t72AS1cA=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\cdc501c1-23c3-4239-b7a9-3e3b837465b5.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\d2db61fc-a4a5-4ea0-bafe-3ae9dce360e1.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -323,6 +845,42 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\d2db61fc-a4a5-4ea0-bafe-3ae9dce360e1.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\d71ba197-c770-4d2f-ae38-b36fda269647.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/d71ba197-c770-4d2f-ae38-b36fda269647.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>v6z1u4gjoi</Fingerprint>
+      <Integrity>Z5bMbKe4tJxao6XacO4CTf4y0oAJO05rMZyEH2GfLug=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\d71ba197-c770-4d2f-ae38-b36fda269647.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\dc87f051-1767-4dad-96d7-fcc7b6ac8ef3.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/dc87f051-1767-4dad-96d7-fcc7b6ac8ef3.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>pi3sxrvbj8</Fingerprint>
+      <Integrity>L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\dc87f051-1767-4dad-96d7-fcc7b6ac8ef3.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\dcdd35dc-92d9-4674-a415-e404e2743851.jpg'))">
       <SourceType>Package</SourceType>
@@ -342,6 +900,60 @@
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\dcdd35dc-92d9-4674-a415-e404e2743851.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\de3afcf6-f410-40eb-9306-15abf60fd010.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/de3afcf6-f410-40eb-9306-15abf60fd010.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>3jxibyz6ua</Fingerprint>
+      <Integrity>wSJEey/M+Ave++jJmUUebLOBi0IOKaQOzCSNF8s2rfE=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\de3afcf6-f410-40eb-9306-15abf60fd010.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\e02dd0ca-3081-4b15-84ea-180d73529377.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/e02dd0ca-3081-4b15-84ea-180d73529377.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>boje8kyk21</Fingerprint>
+      <Integrity>G1MfZsrVyQUFX4y2UpZ/onW43DwaE7+vkfZgPBAAOoU=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\e02dd0ca-3081-4b15-84ea-180d73529377.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\e350f7c8-0069-41b2-9389-b88ad1138560.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/e350f7c8-0069-41b2-9389-b88ad1138560.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>pi3sxrvbj8</Fingerprint>
+      <Integrity>L0K863AMI0/kho0geOUZYZH44i40NW83w348+eqrKdk=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\e350f7c8-0069-41b2-9389-b88ad1138560.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
     <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\f3f3d0c5-5537-45ce-adaf-5f866ca3b9a3.jpg'))">
       <SourceType>Package</SourceType>
       <SourceId>TourService</SourceId>
@@ -359,6 +971,24 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\f3f3d0c5-5537-45ce-adaf-5f866ca3b9a3.jpg'))</OriginalItemSpec>
+    </StaticWebAsset>
+    <StaticWebAsset Include="$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\f4621e85-63db-41f8-9e40-ce2df6fc0fe7.jpg'))">
+      <SourceType>Package</SourceType>
+      <SourceId>TourService</SourceId>
+      <ContentRoot>$(MSBuildThisFileDirectory)..\staticwebassets\</ContentRoot>
+      <BasePath>_content/TourService</BasePath>
+      <RelativePath>uploads/f4621e85-63db-41f8-9e40-ce2df6fc0fe7.jpg</RelativePath>
+      <AssetKind>All</AssetKind>
+      <AssetMode>All</AssetMode>
+      <AssetRole>Primary</AssetRole>
+      <RelatedAsset></RelatedAsset>
+      <AssetTraitName></AssetTraitName>
+      <AssetTraitValue></AssetTraitValue>
+      <Fingerprint>576is367be</Fingerprint>
+      <Integrity>4ZcL7CRZYG1mMi/F6sSnJF9BaQns0U08zRUIL4V0Sfw=</Integrity>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\uploads\f4621e85-63db-41f8-9e40-ce2df6fc0fe7.jpg'))</OriginalItemSpec>
     </StaticWebAsset>
   </ItemGroup>
 </Project>

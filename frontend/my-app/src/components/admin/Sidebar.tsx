@@ -29,14 +29,14 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden h-screen w-64 flex-col border-r bg-card text-card-foreground md:flex">
+    <aside className="hidden min-h-screen w-64 flex-col border-r border-border bg-card text-card-foreground md:flex">
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/" className="flex items-center gap-2 font-semibold">
           <MapPin className="h-6 w-6 text-primary" />
-          <span>VietTravel Admin</span>
+          <span>VietNature Admin</span>
         </Link>
       </div>
-      <nav className="flex-1 space-y-2 p-4">
+      <nav className="flex-1 space-y-2 px-4 py-2">
         {navItems.map((item) => (
           <Link
             key={item.href}

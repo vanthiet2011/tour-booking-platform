@@ -10,6 +10,19 @@ namespace TourService.Mappings
         {
             CreateMap<TourScheduleEntity, TourScheduleDto>();
             CreateMap<TourDepartureEntity, TourDepartureDto>();
+
+            CreateMap<CreateDestinationDto, DestinationEntity>().ForMember(dest => dest.DestinationCategories, opt => opt.Ignore());
+            CreateMap<UpdateDestinationDto, DestinationEntity>();
+
+            CreateMap<CategoryEntity, CategoryDto>();
+            CreateMap<DestinationEntity, DestinationResponseDto>()
+                .ForMember(
+                    destDto => destDto.Categories,
+                    opt => opt.MapFrom(
+                        srcEntity => srcEntity.DestinationCategories
+                                            .Select(dc => dc.Category)
+                    )
+                );
             
             CreateMap<TourDestinationEntity, DestinationSummaryDto>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Destination != null ? src.Destination.Id : Guid.Empty))

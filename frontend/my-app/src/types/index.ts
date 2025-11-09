@@ -8,6 +8,14 @@ export interface PagingResponse<T> {
   hasNextPage: boolean;
 }
 
+export interface PaginatedResponse<T> {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+  totalPages: number;
+  items: T[];
+}
+
 export interface SelectOption {
   value: string;
   label: string;

@@ -11,14 +11,27 @@ import { Destination } from "@/types/destination";
 import { useToast } from "@/hooks/use-toast";
 import { DestinationForm } from "./DestinationForm";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
+import { PaginationComponent } from "@/components/ui/PaginationComponent";
+
+const ITEMS_PER_PAGE = 10;
 
 export default function DestinationsClient() {
   const { toast } = useToast();
+  const [page, setPage] = useState(1);
+  const swrKey = ["/destinations/admin", page];
   const {
-    data: destinations,
+    data: paginatedData,
     error,
     isLoading,
-  } = useSWR("/api/destinations", destinationService.getAll);
+  } = useSWR(swrKey, ([key, pageNum]) =>
+    destinationService.getAll({
+      page: Number(pageNum),
+      limit: ITEMS_PER_PAGE,
+    })
+  );
+
+  const destinations = paginatedData?.items || [];
+  const totalPages = paginatedData?.totalPages || 1;
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -44,8 +57,11 @@ export default function DestinationsClient() {
     if (!selectedDestination) return;
     try {
       await destinationService.delete(selectedDestination.id);
-      // Tự động re-fetch data sau khi xóa
-      mutate("/api/destinations");
+      if (destinations.length === 1 && page > 1) {
+        setPage(page - 1);
+      } else {
+        mutate(swrKey);
+      }
       toast({ title: "Thành công", description: "Đã xóa điểm đến." });
     } catch (error) {
       toast({
@@ -66,14 +82,21 @@ export default function DestinationsClient() {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold tracking-tight">Quản lý Điểm đến</h2>
+      <div className="flex items-center justify-between ">
+        <h1 className="text-2xl font-bold tracking-tight">Quản lý Điểm đến</h1>
         <Button onClick={handleAdd}>
           <PlusCircle className="mr-2 h-4 w-4" /> Thêm Mới
         </Button>
       </div>
 
-      <DataTable columns={columns} data={destinations || []} />
+      <DataTable columns={columns} data={destinations} />
+      <div className="mt-6">
+        <PaginationComponent
+          totalPages={totalPages}
+          currentPage={page}
+          onPageChange={setPage}
+        />
+      </div>
 
       {/* Form Dialog (Thêm/Sửa) */}
       <DestinationForm

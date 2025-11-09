@@ -6,13 +6,10 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { mutate } from "swr";
+import { CreateTourPayload } from "@/types/tour";
+import uploadService from "@/services/upload.service";
+import tourService from "@/services/tour.service";
 
-import {
-  createTour,
-  uploadFile,
-  uploadMultipleFiles,
-  CreateTourPayload,
-} from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 
@@ -72,20 +69,22 @@ export function CreateTourForm() {
       let coverImageUrl = "";
       let galleryUrls: string[] = [];
 
-      if (values.coverImageFile && values.coverImageFile.length > 0) {
-        const coverFormData = new FormData();
-        coverFormData.append("file", values.coverImageFile[0]);
-        const result = await uploadFile(coverFormData);
-        coverImageUrl = result.filePath;
-      }
-      if (values.galleryImageFiles && values.galleryImageFiles.length > 0) {
-        const galleryFormData = new FormData();
-        Array.from(values.galleryImageFiles).forEach((file) =>
-          galleryFormData.append("files", file)
-        );
-        const result = await uploadMultipleFiles(galleryFormData);
-        galleryUrls = result.filePaths;
-      }
+      // if (values.coverImageFile && values.coverImageFile.length > 0) {
+      //   const coverFormData = new FormData();
+      //   coverFormData.append("file", values.coverImageFile[0]);
+      //   const result = await uploadService.uploadImage(coverFormData);
+      //   coverImageUrl = result.filePath;
+      // }
+      // if (values.galleryImageFiles && values.galleryImageFiles.length > 0) {
+      //   const galleryFormData = new FormData();
+      //   Array.from(values.galleryImageFiles).forEach((file) =>
+      //     galleryFormData.append("files", file)
+      //   );
+      //   const result = await uploadService.uploadMultipleImages(
+      //     galleryFormData
+      //   );
+      //   galleryUrls = result.filePaths;
+      // }
 
       const payload: CreateTourPayload = {
         name: values.name,
@@ -106,7 +105,7 @@ export function CreateTourForm() {
         },
       };
 
-      await createTour(payload);
+      await tourService.create(payload);
       mutate("/api/tours");
       toast({ title: "Thành công!", description: "Đã tạo tour mới." });
       router.push("/admin/tours");

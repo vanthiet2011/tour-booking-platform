@@ -1,109 +1,96 @@
-// src/app/destinations/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
-import { Destination } from "@/types/destination";
+import { Destination, Category } from "@/types/destination";
 import destinationService from "@/services/destination.service";
+import categoryService from "@/services/category.service"; // 1. Import
 import { DestinationCard } from "@/components/destinations/DestinationCard";
 import { DestinationFilters } from "@/components/destinations/DestinationFilters";
+import { PaginationComponent } from "@/components/ui/PaginationComponent";
 import { ChevronRight, Frown } from "lucide-react";
 import Link from "next/link";
 
-// Định nghĩa từ khóa cho logic lọc "tạm thời"
-const REGION_KEYWORDS: { [key: string]: string[] } = {
-  bắc: [
-    "bắc",
-    "hà nội",
-    "sapa",
-    "hạ long",
-    "ninh bình",
-    "mù cang chải",
-    "hà giang",
-  ],
-  trung: [
-    "trung",
-    "huế",
-    "hội an",
-    "đà nẵng",
-    "phong nha",
-    "quy nhơn",
-    "nha trang",
-  ],
-  nam: [
-    "nam",
-    "sài gòn",
-    "hồ chí minh",
-    "mekong",
-    "phú quốc",
-    "cần thơ",
-    "vũng tàu",
-  ],
-};
+const ITEMS_PER_PAGE = 12;
 
+const REGION_MAP: { [key: string]: string } = {
+  bắc: "Miền Bắc",
+  trung: "Miền Trung",
+  nam: "Miền Nam",
+};
 export default function DestinationsPage() {
-  // State
   const [allDestinations, setAllDestinations] = useState<Destination[]>([]);
   const [filteredDestinations, setFilteredDestinations] = useState<
     Destination[]
   >([]);
+  const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
 
-  // Filter states
   const [searchTerm, setSearchTerm] = useState("");
-  // Đổi tên state
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  // 1. Fetch dữ liệu (giữ nguyên)
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
-    const fetchDestinations = async () => {
+    const fetchAllData = async () => {
       setIsLoading(true);
       setFetchError(false);
       try {
-        const data = await destinationService.getAll();
-        setAllDestinations(data);
-        setFilteredDestinations(data);
+        const [destData, catData] = await Promise.all([
+          destinationService.getAll({ limit: 999 }),
+          categoryService.getAll(),
+        ]);
+
+        setAllDestinations(destData.items);
+        setFilteredDestinations(destData.items);
+        setAllCategories(catData);
       } catch (error) {
-        console.error("Không thể tải danh sách điểm đến:", error);
+        console.error("Không thể tải dữ liệu trang:", error);
         setFetchError(true);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchDestinations();
+    fetchAllData();
   }, []);
 
-  // 2. Lọc dữ liệu (CẬP NHẬT LOGIC LỌC)
   useEffect(() => {
     let destinations = [...allDestinations];
-
-    // Lọc theo Search Term (giữ nguyên)
     if (searchTerm) {
       destinations = destinations.filter(
         (d) =>
           d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          d.description!.toLowerCase().includes(searchTerm.toLowerCase())
+          (d.description &&
+            d.description.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
-    // Lọc theo Miền (logic mới)
     if (selectedRegions.length > 0) {
-      destinations = destinations.filter((d) => {
-        const content = (d.name + " " + d.description).toLowerCase();
-        // Kiểm tra xem content có chứa BẤT KỲ từ khóa nào
-        // trong CÁC MIỀN đã chọn không
-        return selectedRegions.some((regionId) =>
-          REGION_KEYWORDS[regionId]?.some((keyword) =>
-            content.includes(keyword)
-          )
-        );
-      });
+      const fullRegionNames = selectedRegions.map((key) => REGION_MAP[key]);
+      destinations = destinations.filter(
+        (d) => d.region && fullRegionNames.includes(d.region)
+      );
+    }
+
+    if (selectedCategory !== "all") {
+      destinations = destinations.filter((d) =>
+        d.categories?.some((c) => c.id === selectedCategory)
+      );
     }
 
     setFilteredDestinations(destinations);
-  }, [searchTerm, selectedRegions, allDestinations]);
+    setCurrentPage(1);
+  }, [searchTerm, selectedRegions, selectedCategory, allDestinations]);
 
-  // Hàm render nội dung chính (giữ nguyên)
+  const totalItems = filteredDestinations.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+
+  const paginatedDestinations = filteredDestinations.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -119,7 +106,7 @@ export default function DestinationsPage() {
         </div>
       );
     }
-    if (filteredDestinations.length === 0) {
+    if (paginatedDestinations.length === 0) {
       return (
         <div className="text-center col-span-full text-muted-foreground p-12 bg-muted/30 rounded-lg">
           <Frown className="h-12 w-12 mx-auto mb-4" />
@@ -131,7 +118,7 @@ export default function DestinationsPage() {
     }
     return (
       <>
-        {filteredDestinations.map((destination) => (
+        {paginatedDestinations.map((destination) => (
           <DestinationCard key={destination.id} destination={destination} />
         ))}
       </>
@@ -140,7 +127,6 @@ export default function DestinationsPage() {
 
   return (
     <main>
-      {/* 1. Hero Section (giữ nguyên) */}
       <section className="bg-gradient-to-r from-primary/10 via-accent/10 to-primary/10 py-12 md:py-8">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-4">
@@ -153,7 +139,7 @@ export default function DestinationsPage() {
         </div>
       </section>
 
-      <nav className="container mx-auto px-12 pt-6 text-sm text-muted-foreground">
+      <nav className="container mx-auto px-12 pt-6 text-base text-muted-foreground">
         <div className="flex items-center space-x-2">
           <Link href="/" className="hover:text-primary transition-colors">
             Trang chủ
@@ -163,23 +149,31 @@ export default function DestinationsPage() {
         </div>
       </nav>
 
-      {/* 2. Phần nội dung 2 cột (Lọc + Kết quả) */}
       <section className="py-6 md:py-6">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* CỘT TRÁI: BỘ LỌC */}
-            <aside className="md:col-span-1">
-              {/* Cập nhật props */}
+            <aside className="md:col-span-1 sticky top-24 h-fit">
               <DestinationFilters
+                searchTerm={searchTerm}
                 onSearchChange={setSearchTerm}
+                selectedRegions={selectedRegions}
                 onRegionChange={setSelectedRegions}
+                allCategories={allCategories}
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
               />
             </aside>
 
-            {/* CỘT PHẢI: LƯỚI KẾT QUẢ (giữ nguyên) */}
             <main className="md:col-span-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {renderContent()}
+              </div>
+              <div className="mt-12">
+                <PaginationComponent
+                  totalPages={totalPages}
+                  currentPage={currentPage}
+                  onPageChange={setCurrentPage}
+                />
               </div>
             </main>
           </div>

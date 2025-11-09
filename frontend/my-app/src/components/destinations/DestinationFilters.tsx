@@ -1,73 +1,126 @@
-// src/components/destinations/DestinationFilters.tsx
 "use client";
 
-import { useState, useEffect } from "react";
+import { Category } from "@/types/destination";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Search } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 interface DestinationFiltersProps {
-  onSearchChange: (searchTerm: string) => void;
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+
+  selectedRegions: string[];
   onRegionChange: (regions: string[]) => void;
+
+  allCategories: Category[];
+  selectedCategory: string;
+  onCategoryChange: (categoryId: string) => void;
 }
 
-const MOCK_REGIONS = [
-  { id: "bắc", name: "Miền Bắc" },
-  { id: "trung", name: "Miền Trung" },
-  { id: "nam", name: "Miền Nam" },
+const regionOptions = [
+  { id: "bắc", label: "Miền Bắc" },
+  { id: "trung", label: "Miền Trung" },
+  { id: "nam", label: "Miền Nam" },
 ];
 
 export function DestinationFilters({
+  searchTerm,
   onSearchChange,
+  selectedRegions,
   onRegionChange,
+  allCategories,
+  selectedCategory,
+  onCategoryChange,
 }: DestinationFiltersProps) {
-  const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
-
-  useEffect(() => {
-    onRegionChange(selectedRegions);
-  }, [selectedRegions, onRegionChange]);
-
-  const handleRegionChange = (regionId: string) => {
-    setSelectedRegions((prev) =>
-      prev.includes(regionId)
-        ? prev.filter((id) => id !== regionId)
-        : [...prev, regionId]
-    );
+  const handleRegionChange = (regionId: string, checked: boolean) => {
+    let newRegions: string[];
+    if (checked) {
+      newRegions = [...selectedRegions, regionId];
+    } else {
+      newRegions = selectedRegions.filter((id) => id !== regionId);
+    }
+    onRegionChange(newRegions);
+  };
+  const handleResetFilters = () => {
+    onSearchChange("");
+    onRegionChange([]);
+    onCategoryChange("all");
   };
 
   return (
-    <Card className="sticky top-20">
-      {" "}
-      <CardHeader>
-        <CardTitle className="text-lg">Tìm kiếm & Lọc</CardTitle>
-        <div className="relative mt-2">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Tìm theo tên..."
-            className="pl-10"
-            onChange={(e) => onSearchChange(e.target.value)}
-          />
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        <h3 className="font-semibold text-md">Lọc theo Miền</h3>
+    <div className="p-6 bg-card border rounded-lg shadow-sm space-y-6">
+      {/* 1. BỘ LỌC TÌM KIẾM */}
+      <div>
+        <Label htmlFor="search" className="text-lg font-semibold">
+          Tìm kiếm
+        </Label>
+        <Input
+          id="search"
+          placeholder="Nhập tên điểm đến..."
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="mt-2"
+        />
+      </div>
+
+      <Separator />
+
+      {/* 2. BỘ LỌC VÙNG MIỀN */}
+      <div>
+        <h3 className="text-lg font-semibold mb-3">Vùng miền</h3>
         <div className="space-y-3">
-          {MOCK_REGIONS.map((region) => (
+          {regionOptions.map((region) => (
             <div key={region.id} className="flex items-center space-x-2">
               <Checkbox
                 id={region.id}
-                onCheckedChange={() => handleRegionChange(region.id)}
                 checked={selectedRegions.includes(region.id)}
+                onCheckedChange={(checked) =>
+                  handleRegionChange(region.id, !!checked)
+                }
               />
-              <Label htmlFor={region.id} className="font-normal cursor-pointer">
-                {region.name}
+              <Label htmlFor={region.id} className="cursor-pointer">
+                {region.label}
               </Label>
             </div>
           ))}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      <Separator />
+
+      {/* 3. BỘ LỌC DANH MỤC */}
+      <div>
+        <h3 className="text-lg font-semibold mb-3">Danh mục</h3>
+        <Select value={selectedCategory} onValueChange={onCategoryChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Chọn danh mục" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tất cả danh mục</SelectItem>
+            {allCategories.map((category) => (
+              <SelectItem key={category.id} value={category.id}>
+                {category.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <Separator />
+
+      {/* 4. NÚT ĐẶT LẠI */}
+      <Button variant="outline" className="w-full" onClick={handleResetFilters}>
+        Đặt lại bộ lọc
+      </Button>
+    </div>
   );
 }

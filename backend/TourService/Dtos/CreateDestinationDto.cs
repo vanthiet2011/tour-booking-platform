@@ -18,5 +18,7 @@ namespace TourService.Dtos
         public string? Region { get; set; }
 
         public bool IsPopular { get; set; } = false;
+
+        public List<Guid> CategoryIds { get; set; } = new();
     }
 }

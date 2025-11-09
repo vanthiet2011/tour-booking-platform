@@ -24,6 +24,35 @@ namespace TourService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TourService.Entities.CategoryEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("TourService.Entities.DestinationCategoryEntity", b =>
+                {
+                    b.Property<Guid>("DestinationId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("DestinationId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("DestinationCategories");
+                });
+
             modelBuilder.Entity("TourService.Entities.DestinationEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -205,6 +234,25 @@ namespace TourService.Migrations
                     b.ToTable("TourSchedules");
                 });
 
+            modelBuilder.Entity("TourService.Entities.DestinationCategoryEntity", b =>
+                {
+                    b.HasOne("TourService.Entities.CategoryEntity", "Category")
+                        .WithMany("DestinationCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TourService.Entities.DestinationEntity", "Destination")
+                        .WithMany("DestinationCategories")
+                        .HasForeignKey("DestinationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Destination");
+                });
+
             modelBuilder.Entity("TourService.Entities.ReviewEntity", b =>
                 {
                     b.HasOne("TourService.Entities.TourEntity", "Tour")
@@ -257,8 +305,15 @@ namespace TourService.Migrations
                     b.Navigation("Tour");
                 });
 
+            modelBuilder.Entity("TourService.Entities.CategoryEntity", b =>
+                {
+                    b.Navigation("DestinationCategories");
+                });
+
             modelBuilder.Entity("TourService.Entities.DestinationEntity", b =>
                 {
+                    b.Navigation("DestinationCategories");
+
                     b.Navigation("TourDestinations");
                 });
 

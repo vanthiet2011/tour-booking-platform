@@ -26,7 +26,7 @@ namespace TourService.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        // Navigation property for the many-to-many relationship
+        public ICollection<DestinationCategoryEntity> DestinationCategories { get; set; } = new List<DestinationCategoryEntity>();
         public ICollection<TourDestinationEntity> TourDestinations { get; set; } = new List<TourDestinationEntity>();
     }
 }

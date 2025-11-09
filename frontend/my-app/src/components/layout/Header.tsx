@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,7 @@ import {
   Plane,
   Hotel,
   Home,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -27,21 +28,40 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { title } from "process";
+import { Destination } from "@/types/destination";
 
 const mainNav = [
   { title: "Trang chủ", href: "/", icon: Home },
-  { title: "Điểm đến", href: "/destinations", icon: MapPin },
+  // { title: "Điểm đến", href: "/destinations", icon: MapPin },
   { title: "Tour", href: "/tours", icon: Compass },
   { title: "Vé máy bay", href: "/flights", icon: Plane },
   { title: "Khách sạn", href: "/hotels", icon: Hotel },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  destinations: Destination[];
+}
+
+export default function Header({ destinations = [] }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDestMenuOpen, setIsDestMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const router = useRouter();
   const isAdmin = user?.role === 0;
+
+  const destinationsByRegion = React.useMemo(() => {
+    const regions: Record<string, Destination[]> = {
+      "Miền Bắc": [],
+      "Miền Trung": [],
+      "Miền Nam": [],
+    };
+    destinations.forEach((dest) => {
+      if (dest.region && regions.hasOwnProperty(dest.region)) {
+        regions[dest.region].push(dest);
+      }
+    });
+    return regions;
+  }, [destinations]);
 
   const handleLogout = async () => {
     const token = localStorage.getItem("accessToken");
@@ -64,7 +84,6 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <MapPin className="h-4 w-4 text-white" />
@@ -76,7 +95,76 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-1">
-          {mainNav.map((item) => (
+          <Link
+            key={mainNav[0].title}
+            href={mainNav[0].href}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-accent rounded-md"
+          >
+            {React.createElement(mainNav[0].icon, { className: "h-4 w-4" })}
+            {mainNav[0].title}
+          </Link>
+          <DropdownMenu open={isDestMenuOpen} onOpenChange={setIsDestMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground hover:bg-accent rounded-md"
+              >
+                <MapPin className="h-4 w-4" />
+                Điểm đến
+                <ChevronDown className="relative top-[1px] ml-1 h-3 w-3" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              className="max-w-[500px] w-full p-4"
+              align="start"
+            >
+              <div className="grid grid-cols-3 gap-x-6">
+                {Object.keys(destinationsByRegion).map((region) => (
+                  <div key={region} className="flex flex-col items-center">
+                    <h4 className="font-semibold text-sm mb-3 pb-2 border-b text-center w-full">
+                      {region}
+                    </h4>
+                    <div className="flex flex-col space-y-1 items-center w-full">
+                      {destinationsByRegion[region].length > 0 ? (
+                        destinationsByRegion[region].map((dest) => (
+                          <DropdownMenuItem
+                            key={dest.id}
+                            asChild
+                            className="w-full flex justify-center p-2"
+                          >
+                            <Link
+                              href={`/destinations/${dest.id}`}
+                              onClick={() => setIsDestMenuOpen(false)}
+                              className="w-full text-center"
+                            >
+                              {dest.name}
+                            </Link>
+                          </DropdownMenuItem>
+                        ))
+                      ) : (
+                        <span className="text-xs text-muted-foreground p-2 text-center w-full">
+                          Chưa có điểm đến
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <DropdownMenuSeparator className="my-3" />
+
+              <DropdownMenuItem className="w-full flex justify-center font-semibold">
+                <Link
+                  href="/destinations"
+                  className="text-center w-full"
+                  onClick={() => setIsDestMenuOpen(false)}
+                >
+                  Xem Tất Cả Điểm Đến
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          {mainNav.slice(1).map((item) => (
             <Link
               key={item.title}
               href={item.href}
@@ -90,7 +178,6 @@ export default function Header() {
 
         {/* Right Side Buttons */}
         <div className="flex items-center gap-2">
-          {/* Tìm kiếm (nếu bạn cần giữ) */}
           <Button variant="ghost" size="icon" className="hidden md:flex">
             <Search className="h-5 w-5" />
           </Button>
@@ -105,8 +192,6 @@ export default function Header() {
               >
                 {user ? (
                   <Avatar className="h-8 w-8">
-                    {/* Thay AvatarImage nếu user có ảnh */}
-                    {/* <AvatarImage src={user.avatarUrl} alt={user.fullName} /> */}
                     <AvatarFallback>
                       {user.email ? user.email[0].toUpperCase() : "U"}
                     </AvatarFallback>
@@ -202,7 +287,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile nav (dropdown khi click menu) */}
+      {/* Mobile nav */}
       {isMenuOpen && (
         <div className="md:hidden border-t px-4 pb-4 mt-2 space-y-2">
           {mainNav.map((item) => (

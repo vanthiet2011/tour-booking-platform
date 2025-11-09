@@ -4,12 +4,29 @@ import {
   CreateDestinationPayload,
   UpdateDestinationPayload,
 } from "@/types/destination";
-import { Tour } from "@/types/tour";
-import { get } from "http";
+
+import { PaginatedResponse } from "@/types";
+
+interface GetAllDestinationsParams {
+  categoryId?: string;
+  region?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
 
 const destinationService = {
-  getAll: async (): Promise<Destination[]> => {
-    const { data } = await apiClient.get<Destination[]>("/destinations");
+  getAll: async (
+    params?: GetAllDestinationsParams
+  ): Promise<PaginatedResponse<Destination>> => {
+    const apiParams = {
+      ...params,
+      pageSize: params?.limit,
+    };
+    delete (apiParams as any).limit;
+    const { data } = await apiClient.get("/destinations", {
+      params: apiParams,
+    });
     return data;
   },
 

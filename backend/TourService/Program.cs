@@ -34,11 +34,12 @@ builder.Services.AddDbContext<TourDbContext>(options =>
     options.UseNpgsql(dataSource);
 });
 
-
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IDestinationRepository, DestinationRepository>();
 builder.Services.AddScoped<ITourRepository, TourRepository>();
 builder.Services.AddScoped<ITourDepartureRepository, TourDepartureRepository>();
 builder.Services.AddScoped<ITourService, TourService.Services.TourService>();
+builder.Services.AddScoped<IDestinationService, DestinationService>();
 
 builder.Services.AddSingleton<IProducer<string, string>>(sp =>
 {

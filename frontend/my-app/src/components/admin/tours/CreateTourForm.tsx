@@ -41,11 +41,10 @@ const initialValues: MultiStepTourFormValues = {
   schedules: [{ dayNumber: 1, title: "", description: "" }],
 };
 
-// Mảng chứa tên các trường của từng bước để validate
 const stepFields = [
-  Object.keys(generalInfoSchema.shape), // Step 1
-  Object.keys(imagesSchema.shape), // Step 2
-  Object.keys(itinerarySchema.shape), // Step 3
+  Object.keys(generalInfoSchema.shape),
+  Object.keys(imagesSchema.shape),
+  Object.keys(itinerarySchema.shape),
 ];
 
 export function CreateTourForm() {
@@ -57,7 +56,6 @@ export function CreateTourForm() {
   const form = useForm<MultiStepTourFormValues>({
     resolver: zodResolver(multiStepTourSchema),
     defaultValues: initialValues,
-    // Validate khi người dùng rời khỏi một trường nhập liệu
     mode: "onBlur",
   });
 
@@ -69,22 +67,18 @@ export function CreateTourForm() {
       let coverImageUrl = "";
       let galleryUrls: string[] = [];
 
-      // if (values.coverImageFile && values.coverImageFile.length > 0) {
-      //   const coverFormData = new FormData();
-      //   coverFormData.append("file", values.coverImageFile[0]);
-      //   const result = await uploadService.uploadImage(coverFormData);
-      //   coverImageUrl = result.filePath;
-      // }
-      // if (values.galleryImageFiles && values.galleryImageFiles.length > 0) {
-      //   const galleryFormData = new FormData();
-      //   Array.from(values.galleryImageFiles).forEach((file) =>
-      //     galleryFormData.append("files", file)
-      //   );
-      //   const result = await uploadService.uploadMultipleImages(
-      //     galleryFormData
-      //   );
-      //   galleryUrls = result.filePaths;
-      // }
+      if (values.coverImageFile && values.coverImageFile.length > 0) {
+        const result = await uploadService.uploadImage(
+          values.coverImageFile[0]
+        );
+        coverImageUrl = result.filePath;
+      }
+
+      if (values.galleryImageFiles && values.galleryImageFiles.length > 0) {
+        const files = Array.from(values.galleryImageFiles);
+        const result = await uploadService.uploadMultipleImages(files);
+        galleryUrls = result.filePaths;
+      }
 
       const payload: CreateTourPayload = {
         name: values.name,
@@ -92,7 +86,7 @@ export function CreateTourForm() {
         pricePerAdult: values.pricePerAdult,
         pricePerChild: values.pricePerChild,
         duration: values.duration,
-        isBestseller: values.isBestseller,
+        isBestseller: values.isBestseller || false,
         destinationIds: values.destinationIds,
         tourDepartures: values.tourDepartures,
         imageUrl: coverImageUrl,
@@ -121,7 +115,6 @@ export function CreateTourForm() {
   };
 
   const handleNextStep = async () => {
-    // Kích hoạt validation cho các trường của bước hiện tại
     console.log("Attempting to go to next step...");
     const fields = stepFields[currentStep - 1];
     const isValid = await trigger(fields as (keyof MultiStepTourFormValues)[]);
@@ -130,16 +123,13 @@ export function CreateTourForm() {
     if (isValid) {
       setCurrentStep(currentStep + 1);
     } else {
-      // BÁO CÁO 3: In ra lỗi cụ thể nếu validate thất bại
       console.log("Validation failed. Errors:", form.formState.errors);
     }
   };
 
   return (
     <FormProvider {...form}>
-      {/* Không cần onSubmit ở đây nữa */}
       <form onSubmit={(e) => e.preventDefault()}>
-        {/* Progress Bar (không đổi) */}
         <div className="mb-8">
           <div className="flex justify-between">
             <div
@@ -188,7 +178,6 @@ export function CreateTourForm() {
             Quay lại
           </Button>
 
-          {/* Logic nút bấm được thay đổi */}
           {currentStep < 3 ? (
             <Button type="button" onClick={handleNextStep}>
               Tiếp tục

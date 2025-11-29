@@ -297,7 +297,7 @@ export function DestinationForm({
                   <FormControl>
                     <MultiSelect
                       options={categoryOptions}
-                      selected={field.value}
+                      value={field.value || []}
                       onChange={field.onChange}
                       placeholder="Chọn danh mục..."
                       // disabled={

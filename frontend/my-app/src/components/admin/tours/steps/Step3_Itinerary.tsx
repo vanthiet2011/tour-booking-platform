@@ -14,7 +14,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { MultiStepTourFormValues } from "../CreateTourForm";
 
-// Zod schema cho riêng bước này
 export const itinerarySchema = z.object({
   schedules: z
     .array(

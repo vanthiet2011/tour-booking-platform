@@ -24,16 +24,16 @@ namespace TourService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTours()
+        public async Task<IActionResult> GetAllTours([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
         {
-            var tours = await _tourService.GetAllAsync();
+            var tours = await _tourService.GetAllToursAsync(page, pageSize, search);
             return Ok(tours);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<TourDetailDto>> GetTourById(Guid id)
         {
-            var tour = await _tourService.GetByIdAsync(id);
+            var tour = await _tourService.GetTourByIdAsync(id);
             if (tour == null)
             {
                 return NotFound();
@@ -49,7 +49,7 @@ namespace TourService.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var newTour = await _tourService.CreateAsync(createTourDto);
+            var newTour = await _tourService.CreateTourAsync(createTourDto);
             return CreatedAtAction(nameof(GetTourById), new { id = newTour.Id }, newTour);
         }
 
@@ -61,10 +61,10 @@ namespace TourService.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var updatedTour = await _tourService.UpdateAsync(id, updateTourDto);
-            if (updatedTour == null)
+            var success = await _tourService.UpdateTourAsync(id, updateTourDto);
+            if (!success)
             {
-                return NotFound();
+                return NotFound("Không tìm thấy tour để cập nhật.");
             }
             return NoContent();
         }
@@ -73,7 +73,7 @@ namespace TourService.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteTour(Guid id)
         {
-            var success = await _tourService.DeleteAsync(id);
+            var success = await _tourService.DeleteTourAsync(id);
             if (!success)
             {
                 return NotFound();

@@ -16,6 +16,8 @@ using TourService.Kafka.Producers;
 using TourService.Repositories;
 using TourService.Services;
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     WebRootPath = "wwwroot"
@@ -40,6 +42,7 @@ builder.Services.AddScoped<ITourRepository, TourRepository>();
 builder.Services.AddScoped<ITourDepartureRepository, TourDepartureRepository>();
 builder.Services.AddScoped<ITourService, TourService.Services.TourService>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
+builder.Services.AddScoped<ICachingService, CachingService>();
 
 builder.Services.AddSingleton<IProducer<string, string>>(sp =>
 {

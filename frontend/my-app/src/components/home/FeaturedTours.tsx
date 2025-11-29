@@ -1,13 +1,17 @@
-// src/components/tours/FeaturedTours.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Tour } from "@/types/tour";
 import { TourCard } from "@/components/tours/TourCard";
-import { ArrowRight } from "lucide-react";
 import tourService from "@/services/tour.service";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 export function FeaturedTours() {
   const [tours, setTours] = useState<Tour[]>([]);
@@ -17,10 +21,12 @@ export function FeaturedTours() {
     const fetchFeaturedTours = async () => {
       setIsLoading(true);
       try {
-        const allTours = await tourService.getAll();
-        setTours(allTours.slice(0, 8)); // Lấy 8 tour đầu tiên làm "nổi bật"
+        const params = new URLSearchParams();
+        params.set("page", "1");
+        params.set("pageSize", "10");
+        const paginatedResponse = await tourService.getPaginatedTours(params);
+        setTours(paginatedResponse.items);
       } catch (error) {
-        console.error("Lỗi khi tải tour nổi bật:", error);
       } finally {
         setIsLoading(false);
       }
@@ -29,7 +35,6 @@ export function FeaturedTours() {
     fetchFeaturedTours();
   }, []);
 
-  // 🕒 Trạng thái tải dữ liệu
   if (isLoading) {
     return (
       <section className="py-8 bg-muted/40 text-center">
@@ -43,7 +48,6 @@ export function FeaturedTours() {
     );
   }
 
-  // ❌ Khi không có tour
   if (tours.length === 0) {
     return (
       <section className="py-8 bg-muted/40 text-center">
@@ -65,7 +69,6 @@ export function FeaturedTours() {
   return (
     <section className="py-8 bg-muted/40">
       <div className="container px-4 md:px-6 lg:px-8">
-        {/* Tiêu đề Section */}
         <div className="text-center mb-12">
           <span className="inline-block text-primary text-sm font-semibold tracking-wider uppercase mb-3">
             Tours phổ biến
@@ -78,11 +81,30 @@ export function FeaturedTours() {
           </p>
         </div>
 
-        {/* Lưới các Tour */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {tours.map((tour) => (
-            <TourCard key={tour.id} tour={tour} />
-          ))}
+        <div className="relative px-4 md:px-12">
+          <Carousel
+            opts={{
+              align: "start",
+              loop: true,
+            }}
+            className="w-full"
+          >
+            <CarouselContent className="-ml-4">
+              {tours.map((tour) => (
+                <CarouselItem
+                  key={tour.id}
+                  className="pl-4 md:basis-1/2 lg:basis-1/4"
+                >
+                  <div className="h-full">
+                    <TourCard tour={tour} />
+                  </div>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+
+            <CarouselPrevious className="hidden md:flex -left-2 lg:-left-12 h-10 w-10 border-2 border-primary/20 hover:border-primary hover:bg-primary hover:text-white transition" />
+            <CarouselNext className="hidden md:flex -right-2 lg:-right-12 h-10 w-10 border-2 border-primary/20 hover:border-primary hover:bg-primary hover:text-white transition" />
+          </Carousel>
         </div>
 
         <div className="text-center mt-12">

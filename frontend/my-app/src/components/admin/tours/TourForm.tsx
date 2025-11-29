@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import useSWR, { mutate } from "swr";
 import Cookies from "js-cookie";
-import Image from "next/image"; // Import Image component
+import Image from "next/image";
 
 import {
   Dialog,
@@ -83,12 +83,17 @@ interface TourFormProps {
 
 export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
   const { toast } = useToast();
-  const { data: destinations } = useSWR(
-    "/api/destinations",
-    destinationService.getAll
-  );
-  const [isUploading, setIsUploading] = useState(false);
 
+  const { data: destinationsData } = useSWR(
+    "/api/destinations?page=1&pageSize=999",
+    () => {
+      const params = { page: 1, limit: 999 };
+      return destinationService.getAll(params);
+    }
+  );
+  const destinationOptions = destinationsData?.items || [];
+
+  const [isUploading, setIsUploading] = useState(false);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [galleryPreviews, setGalleryPreviews] = useState<(string | File)[]>([]);
 
@@ -202,7 +207,6 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
         tourDepartures: values.tourDepartures || [],
       };
 
-      // 4. Gửi request tạo mới hoặc cập nhật (logic này đã đúng)
       if (isEditing && tour) {
         await tourService.update(tour.id, payload);
       } else {
@@ -226,7 +230,6 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
     }
   };
 
-  // Các hàm xử lý UI cho việc chọn và xóa ảnh
   const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -252,9 +255,6 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
       prev.filter((_, index) => index !== indexToRemove)
     );
   };
-
-  const destinationOptions =
-    destinations?.map((d) => ({ value: d.id, label: d.name })) || [];
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -351,9 +351,11 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                       <FormControl>
                         <MultiSelect
                           options={destinationOptions}
-                          selected={field.value}
+                          value={field.value}
                           onChange={field.onChange}
                           placeholder="Chọn các điểm đến..."
+                          valueKey="id"
+                          labelKey="name"
                         />
                       </FormControl>
                       <FormMessage />
@@ -511,7 +513,6 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                 </div>
               )}
 
-              {/* Thư viện ảnh */}
               <FormField
                 control={form.control}
                 name="galleryImageFiles"
@@ -539,9 +540,9 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                         src={
                           typeof p === "string"
                             ? p.startsWith("http")
-                              ? p // Giữ nguyên
-                              : `${API_BASE_URL}/${p}` // Ghép nếu là đường dẫn tương đối
-                            : URL.createObjectURL(p) // Xử lý ảnh mới
+                              ? p
+                              : `${API_BASE_URL}/${p}`
+                            : URL.createObjectURL(p)
                         }
                         alt={`Preview ${index}`}
                         fill
@@ -590,7 +591,7 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                       <FormLabel>Không bao gồm</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Mỗi mục trên một dòng..."
+                          placeholder="MDù mỗi mục trên một dòng..."
                           rows={5}
                           onChange={(e) =>
                             field.onChange(e.target.value.split("\n"))

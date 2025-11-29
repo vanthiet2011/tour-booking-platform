@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TourService.Data;
 using TourService.Entities;
+using TourService.Models;
 
 namespace TourService.Repositories
 {
@@ -29,15 +30,49 @@ namespace TourService.Repositories
             return true;
         }
 
-        public async Task<IEnumerable<TourEntity>> GetAllAsync()
+        public async Task<PaginatedResponse<TourEntity>> GetAllAsync(
+            int page, 
+            int pageSize, 
+            string? search = null)
         {
-            return await _context.Tours
+            var query = _context.Tours
                 .Include(t => t.TourDestinations).ThenInclude(td => td.Destination)
                 .Include(t => t.TourSchedules)
                 .Include(t => t.TourDepartures)
-                .AsNoTracking()
+                .AsNoTracking();
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var searchPattern = $"%{search.Trim()}%";
+
+                query = query.Where(t =>
+                    EF.Functions.ILike(t.Name!, searchPattern) ||
+                    t.TourDestinations.Any(td =>
+                        EF.Functions.ILike(td.Destination!.Name!, searchPattern)
+                    )
+                );
+            }
+
+            query = query.OrderByDescending(t => t.CreatedAt);
+
+            int totalCount = await query.CountAsync();
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            int totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PaginatedResponse<TourEntity>
+            {
+                Items = items,
+                Page = page,
+                PageSize = pageSize,
+                TotalCount = totalCount,
+                TotalPages = totalPages
+            };
         }
+
 
         public async Task<TourEntity?> GetByIdAsync(Guid id)
         {

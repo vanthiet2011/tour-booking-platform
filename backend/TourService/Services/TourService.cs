@@ -3,6 +3,7 @@ using TourService.Dtos;
 using TourService.Entities;
 using TourService.Events;
 using TourService.Kafka.Producers;
+using TourService.Models;
 using TourService.Repositories;
 
 namespace TourService.Services
@@ -12,32 +13,57 @@ namespace TourService.Services
     private readonly ITourRepository _tourRepository;
     private readonly ITourDepartureRepository _tourDepartureRepository;
     private readonly ITourKafkaProducerService _kafkaProducer;
+    private readonly ICachingService _cachingService;
     private readonly IMapper _mapper;
     private readonly ILogger<TourService> _logger;
 
-    public TourService(ITourRepository tourRepository, IMapper mapper, ILogger<TourService> logger, ITourDepartureRepository tourDepartureRepository,ITourKafkaProducerService kafkaProducer)
+    public TourService(
+      ITourRepository tourRepository,
+      IMapper mapper, ILogger<TourService> logger,
+      ITourDepartureRepository tourDepartureRepository,
+      ICachingService cachingService,
+      ITourKafkaProducerService kafkaProducer)
     {
       _tourRepository = tourRepository;
       _mapper = mapper;
       _logger = logger;
+      _cachingService = cachingService;
       _tourDepartureRepository = tourDepartureRepository;
       _kafkaProducer = kafkaProducer;
     }
 
-    public async Task<IEnumerable<TourDetailDto>> GetAllAsync()
+    public async Task<PaginatedResponse<TourDetailDto>> GetAllToursAsync(
+      int page, 
+      int pageSize, 
+      string? search = null)
     {
-      var tourEntitties = await _tourRepository.GetAllAsync();
-        return _mapper.Map<IEnumerable<TourDetailDto>>(tourEntitties);
+      string normalizedSearch = search?.Trim().ToLower() ?? "";
+      string cacheKey = $"tours:{page}:{pageSize}:{normalizedSearch}";
+
+      var cachedTours = await _cachingService.GetAsync<PaginatedResponse<TourDetailDto>>(cacheKey);
+      if (cachedTours != null)
+          return cachedTours;
+
+      var toursFromDb = await _tourRepository.GetAllAsync(page, pageSize, search);
+      var toursDto = _mapper.Map<PaginatedResponse<TourDetailDto>>(toursFromDb);
+
+      await _cachingService.SetAsync(cacheKey, toursDto, TimeSpan.FromMinutes(10));
+      return toursDto;
     }
 
-    public async Task<TourDetailDto?> GetByIdAsync(Guid id)
+
+    public async Task<TourDetailDto> GetTourByIdAsync(Guid id)
     {
-      var tourEntity = await _tourRepository.GetByIdAsync(id);
-      if (tourEntity == null)
-      {
-          return null;
-      }
-      return _mapper.Map<TourDetailDto>(tourEntity);
+      string cacheKey = string.Format(CacheKeys.TourById, id);
+
+      var cachedTour = await _cachingService.GetAsync<TourDetailDto>(cacheKey);
+      if (cachedTour != null) return cachedTour;
+
+      var tourFromDb = await _tourRepository.GetByIdAsync(id);
+      var tourDto = _mapper.Map<TourDetailDto>(tourFromDb);
+
+      await _cachingService.SetAsync(cacheKey, tourDto, TimeSpan.FromHours(1));
+      return tourDto;
     }
     
     public async Task<IEnumerable<TourDetailDto>> GetByDestinationIdAsync(Guid destinationId)
@@ -55,39 +81,33 @@ namespace TourService.Services
       }
     }
 
-    public async Task<TourEntity> CreateAsync(CreateTourDto createTourDto)
+    public async Task<TourDetailDto> CreateTourAsync(CreateTourDto createTourDto)
     {
       var tourEntity = _mapper.Map<TourEntity>(createTourDto);
-      foreach (var departure in tourEntity.TourDepartures)
-      {
-          departure.StartDate = DateTime.SpecifyKind(departure.StartDate, DateTimeKind.Utc);
-          departure.EndDate = DateTime.SpecifyKind(departure.EndDate, DateTimeKind.Utc);
-      }
-      return await _tourRepository.CreateAsync(tourEntity);
+      await _tourRepository.CreateAsync(tourEntity);
+
+      await _cachingService.RemoveAsync(CacheKeys.TourPrefix);
+      return _mapper.Map<TourDetailDto>(tourEntity);
     }
     
-    public async Task<TourEntity?> UpdateAsync(Guid id, UpdateTourDto updateTourDto)
+    public async Task<bool> UpdateTourAsync(Guid id, UpdateTourDto updateTourDto)
     {
-      var tourToUpdate = _mapper.Map<TourEntity>(updateTourDto);
-      tourToUpdate.Id = id;
-      foreach (var departure in tourToUpdate.TourDepartures)
-      {
-        departure.StartDate = DateTime.SpecifyKind(departure.StartDate, DateTimeKind.Utc);
-        departure.EndDate = DateTime.SpecifyKind(departure.EndDate, DateTimeKind.Utc);
-      }
-      try
-      {
-        return await _tourRepository.UpdateAsync(tourToUpdate);
-      }
-      catch (KeyNotFoundException)
-      {
-        return null;
-      }
+      var tourEntity = await _tourRepository.GetByIdAsync(id);
+      if (tourEntity == null) return false;
+
+      _mapper.Map(updateTourDto, tourEntity);
+
+      await _tourRepository.UpdateAsync(tourEntity);
+      await _cachingService.RemoveAsync(CacheKeys.TourPrefix);
+
+      return true;
     }
 
-    public Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteTourAsync(Guid id)
     {
-        return _tourRepository.DeleteAsync(id);
+      var result = await _tourRepository.DeleteAsync(id);
+      if (result) await _cachingService.RemoveAsync(CacheKeys.TourPrefix);
+      return result;
     }
 
     public async Task HandleBookingRequestAsync(BookingRequestedEvent bookingEvent)

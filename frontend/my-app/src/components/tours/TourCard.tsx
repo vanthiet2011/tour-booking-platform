@@ -53,7 +53,6 @@ export function TourCard({ tour }: TourCardProps) {
         </div>
       </Link>
 
-      {/* 🚀 1. Giảm padding tổng thể từ p-4 thành p-3 */}
       <CardContent className="py-2 px-4 flex flex-col flex-grow gap-2">
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <MapPin className="h-4 w-4 flex-shrink-0" />

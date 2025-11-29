@@ -1,10 +1,10 @@
-// src/components/tours/TourFilters.tsx
-
 "use client";
 
 import { useState } from "react";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
@@ -15,7 +15,12 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
 
-export function TourFilters() {
+interface TourFiltersProps {
+  searchTerm: string;
+  onSearchChange: (term: string) => void;
+}
+
+export function TourFilters({ searchTerm, onSearchChange }: TourFiltersProps) {
   const [budget, setBudget] = useState([500000, 20000000]);
 
   const formatCurrency = (value: number) => {
@@ -23,10 +28,22 @@ export function TourFilters() {
   };
 
   return (
-    <aside className="w-full space-y-6">
-      <h3 className="text-xl font-bold">Bộ lọc tìm kiếm</h3>
+    <div className="p-6 bg-card border rounded-lg shadow-sm space-y-6">
+      <div>
+        <Label htmlFor="search" className="text-lg font-semibold">
+          Tìm kiếm
+        </Label>
+        <Input
+          id="search"
+          placeholder="Tìm kiếm tour..."
+          value={searchTerm}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="mt-2"
+        />
+      </div>
 
-      {/* Loại tour */}
+      <Separator />
+
       <div className="space-y-3">
         <h4 className="font-semibold text-sm">Loại tour</h4>
         <RadioGroup defaultValue="domestic" className="space-y-2">
@@ -51,7 +68,6 @@ export function TourFilters() {
         </RadioGroup>
       </div>
 
-      {/* Điểm đến */}
       <div className="space-y-2">
         <Label className="font-semibold text-sm">Điểm đến</Label>
         <Select defaultValue="danang">
@@ -66,7 +82,6 @@ export function TourFilters() {
         </Select>
       </div>
 
-      {/* Số ngày */}
       <div className="space-y-2">
         <Label className="font-semibold text-sm">Số ngày</Label>
         <Select>
@@ -81,7 +96,6 @@ export function TourFilters() {
         </Select>
       </div>
 
-      {/* Ngân sách */}
       <div className="space-y-3">
         <Label className="font-semibold text-sm">Ngân sách</Label>
         <Slider
@@ -97,13 +111,12 @@ export function TourFilters() {
         </div>
       </div>
 
-      {/* Buttons */}
       <div className="flex flex-col gap-3 pt-4 border-t">
         <Button className="w-full">Áp dụng</Button>
         <Button variant="outline" className="w-full">
           Xóa bộ lọc
         </Button>
       </div>
-    </aside>
+    </div>
   );
 }

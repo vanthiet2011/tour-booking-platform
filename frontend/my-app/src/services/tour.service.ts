@@ -9,10 +9,15 @@ import {
 } from "@/types/tour";
 
 const tourService = {
-  getAll: async (params?: URLSearchParams): Promise<Tour[]> => {
-    const { data } = await apiClient.get<Tour[]>("/tours", {
-      params: params instanceof URLSearchParams ? params : undefined,
-    });
+  getPaginatedTours: async (
+    params: URLSearchParams
+  ): Promise<TourPagingResponse> => {
+    if (!params.has("pageSize")) {
+      params.set("pageSize", "9");
+    }
+    const { data } = await apiClient.get<TourPagingResponse>(
+      `/tours?${params.toString()}`
+    );
     return data;
   },
 

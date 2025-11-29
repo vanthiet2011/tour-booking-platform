@@ -32,7 +32,6 @@ import { Destination } from "@/types/destination";
 
 const mainNav = [
   { title: "Trang chủ", href: "/", icon: Home },
-  // { title: "Điểm đến", href: "/destinations", icon: MapPin },
   { title: "Tour", href: "/tours", icon: Compass },
   { title: "Vé máy bay", href: "/flights", icon: Plane },
   { title: "Khách sạn", href: "/hotels", icon: Hotel },

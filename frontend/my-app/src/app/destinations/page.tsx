@@ -1,9 +1,8 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { Destination, Category } from "@/types/destination";
 import destinationService from "@/services/destination.service";
-import categoryService from "@/services/category.service"; // 1. Import
+import categoryService from "@/services/category.service";
 import { DestinationCard } from "@/components/destinations/DestinationCard";
 import { DestinationFilters } from "@/components/destinations/DestinationFilters";
 import { PaginationComponent } from "@/components/ui/PaginationComponent";
@@ -11,12 +10,12 @@ import { ChevronRight, Frown } from "lucide-react";
 import Link from "next/link";
 
 const ITEMS_PER_PAGE = 12;
-
 const REGION_MAP: { [key: string]: string } = {
   bắc: "Miền Bắc",
   trung: "Miền Trung",
   nam: "Miền Nam",
 };
+
 export default function DestinationsPage() {
   const [allDestinations, setAllDestinations] = useState<Destination[]>([]);
   const [filteredDestinations, setFilteredDestinations] = useState<
@@ -25,11 +24,9 @@ export default function DestinationsPage() {
   const [allCategories, setAllCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [fetchError, setFetchError] = useState(false);
-
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegions, setSelectedRegions] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
-
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -41,7 +38,6 @@ export default function DestinationsPage() {
           destinationService.getAll({ limit: 999 }),
           categoryService.getAll(),
         ]);
-
         setAllDestinations(destData.items);
         setFilteredDestinations(destData.items);
         setAllCategories(catData);
@@ -65,27 +61,23 @@ export default function DestinationsPage() {
             d.description.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
-
     if (selectedRegions.length > 0) {
       const fullRegionNames = selectedRegions.map((key) => REGION_MAP[key]);
       destinations = destinations.filter(
         (d) => d.region && fullRegionNames.includes(d.region)
       );
     }
-
     if (selectedCategory !== "all") {
       destinations = destinations.filter((d) =>
         d.categories?.some((c) => c.id === selectedCategory)
       );
     }
-
     setFilteredDestinations(destinations);
     setCurrentPage(1);
   }, [searchTerm, selectedRegions, selectedCategory, allDestinations]);
 
   const totalItems = filteredDestinations.length;
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-
   const paginatedDestinations = filteredDestinations.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE

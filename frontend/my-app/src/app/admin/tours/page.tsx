@@ -1,4 +1,4 @@
-import TourClient from "@/components/admin/tours/TourClient";
+import { TourClient } from "@/components/admin/tours/TourClient";
 
 export default function ToursPage() {
   return (

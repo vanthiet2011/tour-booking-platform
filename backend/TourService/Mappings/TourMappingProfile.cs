@@ -1,6 +1,7 @@
 using AutoMapper;
 using TourService.Dtos;
 using TourService.Entities;
+using TourService.Models;
 
 namespace TourService.Mappings
 {
@@ -8,6 +9,7 @@ namespace TourService.Mappings
     {
         public TourMappingProfile()
         {
+            CreateMap<PaginatedResponse<TourEntity>, PaginatedResponse<TourDetailDto>>();
             CreateMap<TourScheduleEntity, TourScheduleDto>();
             CreateMap<TourDepartureEntity, TourDepartureDto>();
 

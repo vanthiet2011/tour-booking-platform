@@ -6,7 +6,7 @@ import categoryService from "@/services/category.service";
 import { DestinationCard } from "@/components/destinations/DestinationCard";
 import { DestinationFilters } from "@/components/destinations/DestinationFilters";
 import { PaginationComponent } from "@/components/ui/PaginationComponent";
-import { ChevronRight, Frown } from "lucide-react";
+import { ChevronRight, Frown, Home } from "lucide-react";
 import Link from "next/link";
 
 const ITEMS_PER_PAGE = 12;
@@ -131,10 +131,13 @@ export default function DestinationsPage() {
         </div>
       </section>
 
-      <nav className="container mx-auto px-12 pt-6 text-base text-muted-foreground">
+      <nav className="container mx-auto px-6 pt-6 text-base text-muted-foreground">
         <div className="flex items-center space-x-2">
-          <Link href="/" className="hover:text-primary transition-colors">
-            Trang chủ
+          <Link
+            href="/"
+            className="hover:text-primary transition-colors flex items-center gap-1"
+          >
+            <Home className="w-4 h-4" /> Trang chủ
           </Link>
           <ChevronRight className="w-4 h-4" />
           <span className="text-foreground font-semibold">Điểm đến</span>

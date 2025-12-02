@@ -25,22 +25,17 @@ export function TourCard({ tour }: TourCardProps) {
       ?.slice(0, 3)
       .map((td) => td.name)
       .join(" – ") || "Nhiều điểm đến";
-  const totalAvailableSlots =
-    tour.tourDepartures?.reduce(
-      (sum, departure) => sum + departure.availableSlots,
-      0
-    ) || 0;
 
   return (
-    <Card className="group w-full overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col">
+    <Card className="group w-full h-full overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 flex flex-col">
       <Link href={`/tours/${tour.id}`} passHref className="block">
-        <div className="relative h-40 w-full">
+        {/* Fix chiều cao ảnh bằng aspect ratio */}
+        <div className="relative w-full aspect-[16/10]">
           <Image
             src={tour.imageUrl || "/placeholder.svg"}
             alt={tour.name}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
           {tour.isBestseller && (
             <Badge
@@ -53,34 +48,39 @@ export function TourCard({ tour }: TourCardProps) {
         </div>
       </Link>
 
-      <CardContent className="py-2 px-4 flex flex-col flex-grow gap-2">
+      <CardContent className=" px-4 flex flex-col flex-grow gap-3">
+        {/* Địa điểm */}
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           <MapPin className="h-4 w-4 flex-shrink-0" />
           <p className="truncate font-medium">{displayDestinations}</p>
         </div>
 
-        <h3 className="text-sm font-semibold text-foreground line-clamp-2">
+        {/* Tiêu đề*/}
+        <h3 className="text-sm font-semibold text-foreground line-clamp-2 min-h-[40px]">
           {tour.name}
         </h3>
 
-        <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+        {/* Khoảng cách và slot */}
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center gap-2">
             <Clock className="h-4 w-4" />
             <span>{tour.duration}</span>
           </div>
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4" />
-            <span>Còn {totalAvailableSlots} chỗ</span>
+            <span>Còn {tour.availableSlots} chỗ</span>
           </div>
         </div>
 
-        <div className="mt-2 border-t pt-1 flex items-center justify-between">
+        {/* Phần giá & nút */}
+        <div className="mt-auto border-t pt-2 flex items-center justify-between">
           <div>
             <p className="text-xs text-muted-foreground">Giá chỉ từ</p>
             <p className="text-base font-bold text-primary">
               {formatCurrency(tour.pricePerAdult)}
             </p>
           </div>
+
           <Link href={`/tours/${tour.id}`} passHref>
             <Button size="sm">Xem chi tiết</Button>
           </Link>

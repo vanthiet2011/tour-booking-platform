@@ -1,7 +1,36 @@
-// src/components/home/DestinationJourney.tsx
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
 
 export function DestinationJourney() {
+  const regions = [
+    {
+      region: "Miền Bắc",
+      description:
+        "Nơi có Hà Nội cổ kính, Hạ Long Bay huyền ảo, và Sapa với những ruộng bậc thang tuyệt đẹp",
+      highlights: ["Hà Nội", "Hạ Long", "Sapa", "Ninh Bình"],
+      image: "/images/vietnam-northern-mountains-hanoi.jpg",
+      regionParam: "north",
+    },
+    {
+      region: "Miền Trung",
+      description:
+        "Nơi gặp gỡ di sản, văn hóa truyền thống, và những bãi biển hoang sơ",
+      highlights: ["Huế", "Hội An", "Đà Nẵng", "Phong Nha"],
+      image: "/images/hoi-an-danang-vietnam-central.jpg",
+      regionParam: "central",
+    },
+    {
+      region: "Miền Nam",
+      description:
+        "Nơi Sài Gòn sôi động, Mekong Delta yên tĩnh, và những hòn đảo thiên đường",
+      highlights: ["Sài Gòn", "Cần Thơ", "Phú Quốc", "Bến Tre"],
+      image: "/images/ho-chi-minh-mekong-delta.jpg",
+      regionParam: "south",
+    },
+  ];
+
   return (
     <section className="py-8 bg-secondary/20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,44 +44,28 @@ export function DestinationJourney() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          {[
-            {
-              region: "Miền Bắc",
-              description:
-                "Nơi có Hà Nội cổ kính, Hạ Long Bay huyền ảo, và Sapa với những ruộng bậc thang tuyệt đẹp",
-              highlights: ["Hà Nội", "Hạ Long", "Sapa", "Ninh Bình"],
-              image: "/images/vietnam-northern-mountains-hanoi.jpg",
-            },
-            {
-              region: "Miền Trung",
-              description:
-                "Nơi gặp gỡ di sản, văn hóa truyền thống, và những bãi biển hoang sơ",
-              highlights: ["Huế", "Hội An", "Đà Nẵng", "Phong Nha"],
-              image: "/images/hoi-an-danang-vietnam-central.jpg",
-            },
-            {
-              region: "Miền Nam",
-              description:
-                "Nơi Sài Gòn sôi động, Mekong Delta yên tĩnh, và những hòn đảo thiên đường",
-              highlights: ["Sài Gòn", "Cần Thơ", "Phú Quốc", "Bến Tre"],
-              image: "/images/ho-chi-minh-mekong-delta.jpg",
-            },
-          ].map((region) => (
-            <div key={region.region} className="group cursor-pointer">
+          {regions.map((region) => (
+            <Link
+              key={region.region}
+              href={`/tours?region=${region.regionParam}`}
+              className="group cursor-pointer block"
+            >
               <div className="relative overflow-hidden rounded-xl h-72 mb-4 shadow-lg">
                 <Image
-                  src={region.image || "/placeholder.svg"}
+                  src={region.image}
                   alt={region.region}
-                  layout="fill"
-                  objectFit="cover"
-                  className="group-hover:scale-105 transition duration-300"
+                  fill
+                  className="object-cover group-hover:scale-105 transition duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent group-hover:from-black/70 transition"></div>
               </div>
+
               <h3 className="text-2xl font-bold mb-2">{region.region}</h3>
+
               <p className="text-muted-foreground mb-4 leading-relaxed">
                 {region.description}
               </p>
+
               <div className="flex flex-wrap gap-2">
                 {region.highlights.map((h) => (
                   <span
@@ -63,7 +76,7 @@ export function DestinationJourney() {
                   </span>
                 ))}
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

@@ -24,9 +24,19 @@ namespace TourService.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllTours([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? search = null)
+        public async Task<IActionResult> GetAllTours(
+            [FromQuery] int page = 1, 
+            [FromQuery] int pageSize = 10, 
+            [FromQuery] string? search = null, 
+            [FromQuery] decimal? minPrice = null, 
+            [FromQuery] decimal? maxPrice = null,
+            [FromQuery] int ? minDurationDays = null,
+            [FromQuery] int ? maxDurationDays = null,
+            [FromQuery] string? region = null,
+            [FromQuery] Guid? destinationId = null)
         {
-            var tours = await _tourService.GetAllToursAsync(page, pageSize, search);
+            var tours = await _tourService.GetAllToursAsync(
+                page, pageSize, search, minPrice, maxPrice,minDurationDays,maxDurationDays,region, destinationId);
             return Ok(tours);
         }
 

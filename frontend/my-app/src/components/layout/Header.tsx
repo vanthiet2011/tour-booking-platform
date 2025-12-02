@@ -113,41 +113,61 @@ export default function Header({ destinations = [] }: HeaderProps) {
                 <ChevronDown className="relative top-[1px] ml-1 h-3 w-3" />
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent
               className="max-w-[500px] w-full p-4"
               align="start"
             >
               <div className="grid grid-cols-3 gap-x-6">
-                {Object.keys(destinationsByRegion).map((region) => (
-                  <div key={region} className="flex flex-col items-center">
-                    <h4 className="font-semibold text-sm mb-3 pb-2 border-b text-center w-full">
-                      {region}
-                    </h4>
-                    <div className="flex flex-col space-y-1 items-center w-full">
-                      {destinationsByRegion[region].length > 0 ? (
-                        destinationsByRegion[region].map((dest) => (
-                          <DropdownMenuItem
-                            key={dest.id}
-                            asChild
-                            className="w-full flex justify-center p-2"
-                          >
-                            <Link
-                              href={`/destinations/${dest.id}`}
-                              onClick={() => setIsDestMenuOpen(false)}
-                              className="w-full text-center"
+                {/* Mapping miền → param */}
+                {Object.keys(destinationsByRegion).map((region) => {
+                  const regionParam = {
+                    "Miền Bắc": "north",
+                    "Miền Trung": "central",
+                    "Miền Nam": "south",
+                  }[region];
+
+                  return (
+                    <div key={region} className="flex flex-col items-center">
+                      <h4 className="font-semibold text-sm mb-3 pb-2 border-b text-center w-full">
+                        {region}
+                      </h4>
+
+                      <div className="flex flex-col space-y-1 items-center w-full">
+                        {destinationsByRegion[region].length > 0 ? (
+                          destinationsByRegion[region].map((dest) => (
+                            <DropdownMenuItem
+                              key={dest.id}
+                              asChild
+                              className="w-full flex justify-center p-2"
                             >
-                              {dest.name}
-                            </Link>
-                          </DropdownMenuItem>
-                        ))
-                      ) : (
-                        <span className="text-xs text-muted-foreground p-2 text-center w-full">
-                          Chưa có điểm đến
-                        </span>
-                      )}
+                              <Link
+                                href={`/destinations/${dest.id}`}
+                                onClick={() => setIsDestMenuOpen(false)}
+                                className="w-full text-center"
+                              >
+                                {dest.name}
+                              </Link>
+                            </DropdownMenuItem>
+                          ))
+                        ) : (
+                          <span className="text-xs text-muted-foreground p-2 text-center w-full">
+                            Chưa có điểm đến
+                          </span>
+                        )}
+                      </div>
+
+                      {/* ❗ Nút Xem tất cả các tour theo miền */}
+                      <Link
+                        href={`/tours?region=${regionParam}`}
+                        onClick={() => setIsDestMenuOpen(false)}
+                        className="mt-3 text-sm font-semibold text-primary underline underline-offset-2 text-center"
+                      >
+                        Xem tất cả →
+                      </Link>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <DropdownMenuSeparator className="my-3" />
@@ -163,6 +183,7 @@ export default function Header({ destinations = [] }: HeaderProps) {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+
           {mainNav.slice(1).map((item) => (
             <Link
               key={item.title}

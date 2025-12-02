@@ -5,7 +5,16 @@ namespace TourService.Repositories
 {
     public interface ITourRepository
     {
-        Task<PaginatedResponse<TourEntity>> GetAllAsync(int page, int pageSize, string? search = null);
+        Task<PaginatedResponse<TourEntity>> GetAllAsync(
+            int page, 
+            int pageSize, 
+            string? search = null,
+            decimal? minPrice = null, 
+            decimal? maxPrice = null,
+            int ? minDurationDays = null,
+            int ? maxDurationDays = null,
+            string? region = null,
+            Guid? destinationId = null);
         Task<TourEntity?> GetByIdAsync(Guid id);
         Task<List<TourEntity>> GetByDestinationIdAsync(Guid destinationId);
         Task<TourEntity> CreateAsync(TourEntity tour);

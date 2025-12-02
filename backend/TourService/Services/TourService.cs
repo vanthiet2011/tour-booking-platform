@@ -32,20 +32,26 @@ namespace TourService.Services
       _kafkaProducer = kafkaProducer;
     }
 
-    public async Task<PaginatedResponse<TourDetailDto>> GetAllToursAsync(
+    public async Task<PaginatedResponse<TourListDto>> GetAllToursAsync(
       int page, 
       int pageSize, 
-      string? search = null)
+      string? search = null,
+      decimal? minPrice = null,
+      decimal? maxPrice = null,
+      int ? minDurationDays = null,
+      int ? maxDurationDays = null,
+      string? region = null,
+      Guid? destinationId = null)
     {
       string normalizedSearch = search?.Trim().ToLower() ?? "";
-      string cacheKey = $"tours:{page}:{pageSize}:{normalizedSearch}";
-
-      var cachedTours = await _cachingService.GetAsync<PaginatedResponse<TourDetailDto>>(cacheKey);
+      string cacheKey = $"tours:list:{page}:{pageSize}:{search}:{minPrice}:{maxPrice}:{minDurationDays}:{maxDurationDays}:{region}:{destinationId}";
+      var cachedTours = await _cachingService.GetAsync<PaginatedResponse<TourListDto>>(cacheKey);
       if (cachedTours != null)
           return cachedTours;
 
-      var toursFromDb = await _tourRepository.GetAllAsync(page, pageSize, search);
-      var toursDto = _mapper.Map<PaginatedResponse<TourDetailDto>>(toursFromDb);
+      var toursFromDb = await _tourRepository.GetAllAsync(
+        page, pageSize, search, minPrice, maxPrice,minDurationDays,maxDurationDays,region, destinationId);
+      var toursDto = _mapper.Map<PaginatedResponse<TourListDto>>(toursFromDb);
 
       await _cachingService.SetAsync(cacheKey, toursDto, TimeSpan.FromMinutes(10));
       return toursDto;

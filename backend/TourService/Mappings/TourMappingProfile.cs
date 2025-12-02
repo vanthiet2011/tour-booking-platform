@@ -9,7 +9,15 @@ namespace TourService.Mappings
     {
         public TourMappingProfile()
         {
-            CreateMap<PaginatedResponse<TourEntity>, PaginatedResponse<TourDetailDto>>();
+            CreateMap<TourEntity, TourListDto>()
+                .ForMember(dest => dest.PricePerAdult, opt => opt.MapFrom(src => src.PricePerAdult))
+                .ForMember(dest => dest.Destinations, opt => opt.MapFrom(src => src.TourDestinations))
+                .ForMember(dest => dest.AvailableSlots, opt => opt.MapFrom(src => 
+                    src.TourDepartures
+                        .Where(d => d.StartDate > DateTime.UtcNow)
+                        .Sum(d => d.AvailableSlots)));
+            CreateMap(typeof(PaginatedResponse<>), typeof(PaginatedResponse<>));
+            // CreateMap<PaginatedResponse<TourEntity>, PaginatedResponse<TourDetailDto>>();
             CreateMap<TourScheduleEntity, TourScheduleDto>();
             CreateMap<TourDepartureEntity, TourDepartureDto>();
 

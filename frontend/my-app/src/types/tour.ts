@@ -11,6 +11,7 @@ export interface Tour {
   isBestseller: boolean;
   imageUrl?: string;
   destinations: { id: string; name: string }[];
+  availableSlots: number;
   schedules: TourSchedule[];
   tourDepartures: TourDeparture[];
   highlights: string[];

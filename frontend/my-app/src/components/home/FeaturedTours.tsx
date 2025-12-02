@@ -95,7 +95,7 @@ export function FeaturedTours() {
                   key={tour.id}
                   className="pl-4 md:basis-1/2 lg:basis-1/4"
                 >
-                  <div className="h-full">
+                  <div className="h-full w-full flex flex-col">
                     <TourCard tour={tour} />
                   </div>
                 </CarouselItem>

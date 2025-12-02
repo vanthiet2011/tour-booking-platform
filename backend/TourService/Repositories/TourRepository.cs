@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using TourService.Data;
 using TourService.Entities;
@@ -33,11 +34,16 @@ namespace TourService.Repositories
         public async Task<PaginatedResponse<TourEntity>> GetAllAsync(
             int page, 
             int pageSize, 
-            string? search = null)
+            string? search = null,
+            decimal? minPrice = null,
+            decimal? maxPrice = null,
+            int ? minDurationDays = null,
+            int ? maxDurationDays = null,
+            string? region = null,
+            Guid? destinationId = null)
         {
             var query = _context.Tours
                 .Include(t => t.TourDestinations).ThenInclude(td => td.Destination)
-                .Include(t => t.TourSchedules)
                 .Include(t => t.TourDepartures)
                 .AsNoTracking();
 
@@ -51,6 +57,53 @@ namespace TourService.Repositories
                         EF.Functions.ILike(td.Destination!.Name!, searchPattern)
                     )
                 );
+            }
+
+            if (minPrice.HasValue)
+            {
+                query = query.Where(t => t.PricePerAdult >= minPrice.Value);
+            }
+            
+            if (maxPrice.HasValue)
+            {
+                query = query.Where(t => t.PricePerAdult <= maxPrice.Value);
+            }
+
+            if (minDurationDays.HasValue || maxDurationDays.HasValue)
+            {
+                int minDays = minDurationDays ?? 1;
+                int maxDays = maxDurationDays ?? 30; 
+
+                var numbers = Enumerable.Range(minDays, maxDays - minDays + 1)
+                    .Select(n => n.ToString())
+                    .ToList();
+
+                query = query.Where(t =>
+                    !string.IsNullOrEmpty(t.Duration) &&
+                    numbers.Any(num => t.Duration.StartsWith(num))
+                );
+            }
+
+            if (!string.IsNullOrWhiteSpace(region))
+            {
+                string dbRegionValue = "";
+                switch (region.ToLower())
+                {
+                    case "north": dbRegionValue = "Miền Bắc"; break;
+                    case "central": dbRegionValue = "Miền Trung"; break;
+                    case "south": dbRegionValue = "Miền Nam"; break;
+                }
+
+                if (!string.IsNullOrEmpty(dbRegionValue))
+                {
+                    query = query.Where(t => t.TourDestinations.Any(td => 
+                        td.Destination!.Region == dbRegionValue));
+                }
+            }
+
+            if (destinationId.HasValue)
+            {
+                query = query.Where(t => t.TourDestinations.Any(td => td.DestinationId == destinationId.Value));
             }
 
             query = query.OrderByDescending(t => t.CreatedAt);

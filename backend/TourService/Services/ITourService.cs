@@ -7,7 +7,16 @@ namespace TourService.Services
 {
   public interface ITourService
   {
-      Task<PaginatedResponse<TourDetailDto>> GetAllToursAsync(int page, int pageSize, string? search = null);
+      Task<PaginatedResponse<TourListDto>> GetAllToursAsync(
+        int page, 
+        int pageSize, 
+        string? search = null, 
+        decimal? minPrice = null, 
+        decimal? maxPrice = null,
+        int ? minDurationDays = null,
+        int ? maxDurationDays = null,
+        string? region = null,
+        Guid? destinationId = null);
       Task<TourDetailDto> GetTourByIdAsync(Guid id);
       Task<IEnumerable<TourDetailDto>> GetByDestinationIdAsync(Guid destinationId);
       Task<TourDetailDto> CreateTourAsync(CreateTourDto createTourDto);

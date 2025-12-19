@@ -8,8 +8,8 @@ import { getCookie } from "cookies-next";
 const isServer = typeof window === "undefined";
 
 const baseURL = isServer
-  ? process.env.INTERNAL_API_URL
-  : process.env.NEXT_PUBLIC_API_BASE_URL;
+  ? process.env.INTERNAL_API_URL || "http://localhost:8000/api"
+  : process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
 
 const apiClient: AxiosInstance = axios.create({
   baseURL,

@@ -163,20 +163,20 @@ services:
   #---------------------------------
   # APPLICATION SERVICES
   #---------------------------------
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: frontend
-  #   ports:
-  #     - "3000:3000"
-  #   volumes:
-  #     - ./frontend:/app
-  #     - node_modules_cache:/app/node_modules
-  #   environment:
-  #     - NODE_ENV=development
-  #   networks:
-  #     - app-net
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - node_modules_cache:/app/node_modules
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app-net
   auth-service:
     build:
       context: ./backend/AuthService

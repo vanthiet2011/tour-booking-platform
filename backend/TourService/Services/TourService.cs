@@ -43,7 +43,6 @@ namespace TourService.Services
       string? region = null,
       Guid? destinationId = null)
     {
-      string normalizedSearch = search?.Trim().ToLower() ?? "";
       string cacheKey = $"tours:list:{page}:{pageSize}:{search}:{minPrice}:{maxPrice}:{minDurationDays}:{maxDurationDays}:{region}:{destinationId}";
       var cachedTours = await _cachingService.GetAsync<PaginatedResponse<TourListDto>>(cacheKey);
       if (cachedTours != null)

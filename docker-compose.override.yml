@@ -5,12 +5,14 @@ services:
     build:
       context: ./frontend/my-app
       dockerfile: Dockerfile
-      target: dev # dùng dev stage
+      target: dev
     volumes:
-      - ./frontend/my-app:/app # mount source code
+      - ./frontend/my-app:/app
       - node_modules_cache:/app/node_modules
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_API_BASE_URL=http://localhost:8000/api
+      - INTERNAL_API_URL=http://gateway:8080/api
     ports:
       - "3000:3000"
     command: sh -c "npm install && npm run dev"
@@ -19,14 +21,14 @@ services:
     build:
       context: ./backend/ApiGateway
       dockerfile: Dockerfile
-      target: dev # Sử dụng dev stage
+      target: dev
     volumes:
-      - ./backend/ApiGateway:/src # Mount source code
+      - ./backend/ApiGateway:/src
       - ~/.nuget/packages:/root/.nuget/packages:ro
       - /src/bin
       - /src/obj
     ports:
-      - "8000:8080" # Cổng 8000 (local) -> 8080 (container)
+      - "8000:8080"
 
   auth-service:
     build:

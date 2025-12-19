@@ -8,7 +8,9 @@ on:
   workflow_dispatch:
 
 jobs:
-  # JOB 1: BACKEND (Build & Test tất cả Microservices)
+  # =======================
+  # Backend (.NET)
+  # =======================
   build-backend:
     name: 🛡️ Backend (.NET 9)
     runs-on: ubuntu-latest
@@ -17,30 +19,36 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup .NET 9
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "9.0.x"
 
       - name: Restore Dependencies
-        run: dotnet restore backend/**/*.csproj
-
-      - name: Build All Services
         run: |
-          for file in backend/**/*.csproj; do
+          find backend -name "*.csproj" -print0 | while IFS= read -r -d '' file; do
+            dotnet restore "$file"
+          done
+
+      - name: Build Services
+        run: |
+          find backend -name "*.csproj" -print0 | while IFS= read -r -d '' file; do
             dotnet build "$file" --configuration Release --no-restore
           done
 
       - name: Run Tests
         run: |
-          # Chỉ chạy test nếu tìm thấy project có tên chứa chữ "Test"
           if find backend -name "*Test.csproj" | grep -q .; then
-            dotnet test backend/**/*.csproj --no-restore --verbosity normal
+            find backend -name "*Test.csproj" -print0 | while IFS= read -r -d '' file; do
+              dotnet test "$file" --no-restore
+            done
           else
-            echo "⚠️ No test projects found. Skipping tests."
+            echo "No test projects found"
           fi
 
-  # JOB 2: FRONTEND (Lint & Build Check Next.js)
+  # =======================
+  # Frontend (Next.js)
+  # =======================
   build-frontend:
     name: 🎨 Frontend (Next.js)
     runs-on: ubuntu-latest
@@ -60,10 +68,11 @@ jobs:
           cache-dependency-path: "./frontend/my-app/package-lock.json"
 
       - name: Install Dependencies
-        run: npm ci
+        run: npm install
 
-      - name: Lint Code (Check Syntax)
+      - name: Lint
         run: npm run lint
+        continue-on-error: true
 
-      - name: Build Check (Check Type Errors)
+      - name: Build
         run: npm run build

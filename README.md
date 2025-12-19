@@ -74,7 +74,7 @@ Bạn cần **tạo chúng từ các file mẫu (Example)** trước khi chạy 
 
 ---
 
-### 1. Cấu hình Backend
+### Cấu hình Backend
 
 Truy cập vào từng thư mục Service  
 (ví dụ: `backend/AuthService`, `backend/TourService`, ...), sau đó thực hiện:
@@ -85,7 +85,7 @@ Truy cập vào từng thư mục Service
 
 ---
 
-### 2. Cấu hình Frontend
+### Cấu hình Frontend
 
 Truy cập thư mục: frontend/my-app
 
@@ -96,7 +96,7 @@ Thực hiện các bước sau:
 
 ---
 
-### 3. Khởi chạy hệ thống
+### Khởi chạy hệ thống
 
 Tại **thư mục gốc của dự án** (nơi chứa file `docker-compose.yml`), chạy lệnh:
 
@@ -112,7 +112,7 @@ Lệnh này sẽ:
 
 ---
 
-### 4. Truy cập hệ thống
+### Truy cập hệ thống
 
 Sau khi Docker chạy xong (đợi khoảng **1–2 phút**), bạn có thể truy cập:
 

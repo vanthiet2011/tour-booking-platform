@@ -58,23 +58,23 @@ Hệ thống bao gồm các services chính sau đây:
 
 Để chạy dự án này trên máy cục bộ, bạn cần cài đặt [Docker Desktop](https://www.docker.com/products/docker-desktop).
 
-### 1. Clone dự án
+## 1. Clone dự án
 
 ```bash
 git clone [https://github.com/your-username/tour-booking-platform.git](https://github.com/your-username/tour-booking-platform.git)
 cd tour-booking-platform
 ```
 
-### 2. Thiết lập Biến môi trường (Environment Variables)
+## 2. Thiết lập Biến môi trường (Environment Variables)
 
-## ⚠️ Lưu ý quan trọng
+### ⚠️ Lưu ý quan trọng
 
 Vì lý do bảo mật, các file chứa mật khẩu (**`appsettings.json`**, **`.env`**) **không được đưa lên Git**.  
 Bạn cần **tạo chúng từ các file mẫu (Example)** trước khi chạy hệ thống.
 
 ---
 
-## 1. Cấu hình Backend
+### 1. Cấu hình Backend
 
 Truy cập vào từng thư mục Service  
 (ví dụ: `backend/AuthService`, `backend/TourService`, ...), sau đó thực hiện:
@@ -85,7 +85,7 @@ Truy cập vào từng thư mục Service
 
 ---
 
-## 2. Cấu hình Frontend
+### 2. Cấu hình Frontend
 
 Truy cập thư mục: frontend/my-app
 
@@ -96,7 +96,7 @@ Thực hiện các bước sau:
 
 ---
 
-## 3. Khởi chạy hệ thống
+### 3. Khởi chạy hệ thống
 
 Tại **thư mục gốc của dự án** (nơi chứa file `docker-compose.yml`), chạy lệnh:
 
@@ -112,7 +112,7 @@ Lệnh này sẽ:
 
 ---
 
-## 4. Truy cập hệ thống
+### 4. Truy cập hệ thống
 
 Sau khi Docker chạy xong (đợi khoảng **1–2 phút**), bạn có thể truy cập:
 

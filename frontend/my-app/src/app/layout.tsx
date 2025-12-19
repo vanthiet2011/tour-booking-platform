@@ -11,16 +11,6 @@ import { Toaster } from "@/components/ui/toaster";
 import destinationService from "@/services/destination.service";
 import { Destination } from "@/types/destination";
 
-const inter = Inter({
-  subsets: ["latin", "vietnamese"],
-  variable: "--font-inter",
-});
-
-const lora = Lora({
-  subsets: ["latin", "vietnamese"],
-  variable: "--font-lora",
-});
-
 export const metadata: Metadata = {
   title: "VietNature - Khám phá Việt Nam",
   description: "Nền tảng đặt tour du lịch hàng đầu Việt Nam.",

@@ -58,26 +58,21 @@ const CheckoutPageContent = () => {
 
         const departures = await tourService.getTourDeparturesById(tourId);
 
-        // --- LOG DEBUG ---
-        // Log 1: In ra giá trị và kiểu dữ liệu của ID từ URL
         console.log(
           "ĐANG TÌM ID (từ URL):",
           departureId,
           `(Kiểu: ${typeof departureId})`
         );
 
-        // Log 2: In ra toàn bộ mảng data trả về từ API (để so sánh)
         console.log(
           "DANH SÁCH DEPARTURES (từ API):",
           JSON.stringify(departures, null, 2)
         );
-        // --- HẾT LOG DEBUG ---
 
         const selectedDeparture = departures.find(
           (dep) => dep.id === departureId
         );
 
-        // Log 3: Kết quả cuối cùng
         console.log("KẾT QUẢ TÌM THẤY:", selectedDeparture);
 
         if (selectedDeparture) {

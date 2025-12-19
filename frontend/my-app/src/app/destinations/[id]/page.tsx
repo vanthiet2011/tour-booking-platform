@@ -16,15 +16,15 @@ export default async function DestinationDetailPage({
 }) {
   const destinationId = params.id;
 
-  // 1. Lấy thông tin điểm đến
+  // Lấy thông tin điểm đến
   let destination;
   try {
     destination = await destinationService.getById(destinationId);
-  } catch (error) {
+  } catch {
     notFound();
   }
 
-  // 2. Gọi API Tour
+  // Gọi API Tour
   const apiParams = new URLSearchParams();
   if (searchParams.page) apiParams.set("page", searchParams.page as string);
   if (searchParams.search)
@@ -38,7 +38,6 @@ export default async function DestinationDetailPage({
   if (searchParams.maxDurationDays)
     apiParams.set("maxDurationDays", searchParams.maxDurationDays as string);
 
-  // Khóa destinationId
   apiParams.set("destinationId", destinationId);
 
   const tourData = await tourService.getPaginatedTours(apiParams);
@@ -47,7 +46,6 @@ export default async function DestinationDetailPage({
     <div className="min-h-screen bg-slate-50/50">
       {/* --- PHẦN 1: HERO BANNER & BREADCRUMB --- */}
       <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden group">
-        {/* Ảnh nền có lớp phủ tối để nổi bật chữ */}
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
           style={{
@@ -104,7 +102,6 @@ export default async function DestinationDetailPage({
       {/* --- PHẦN 2: NỘI DUNG CHÍNH --- */}
       <div className="container mx-auto py-6 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* SIDEBAR: Truyền prop hideRegion={true} */}
           <aside className="lg:col-span-1 h-fit sticky top-24 space-y-6">
             <aside className="md:col-span-1 sticky top-24 h-fit">
               <TourFilters
@@ -120,7 +117,6 @@ export default async function DestinationDetailPage({
               <h2 className="text-2xl font-bold text-gray-800">
                 Danh sách Tour ({tourData.totalCount})
               </h2>
-              {/* Có thể thêm dropdown sắp xếp ở đây nếu muốn */}
             </div>
 
             {tourData.items.length > 0 ? (

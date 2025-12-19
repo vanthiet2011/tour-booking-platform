@@ -1,10 +1,4 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plane, CalendarCheck, Users, CircleDollarSign } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -71,7 +65,6 @@ export default function AdminDashboardPage() {
         </Card>
       </div>
 
-      {/* Bạn có thể thêm Bảng dữ liệu (DataGrid), Biểu đồ (Chart) và các Form vào đây */}
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card>
           <CardHeader>

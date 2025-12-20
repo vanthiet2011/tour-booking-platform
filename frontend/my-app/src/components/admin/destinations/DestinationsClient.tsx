@@ -23,7 +23,7 @@ export default function DestinationsClient() {
     data: paginatedData,
     error,
     isLoading,
-  } = useSWR(swrKey, ([key, pageNum]) =>
+  } = useSWR(swrKey, ([pageNum]) =>
     destinationService.getAll({
       page: Number(pageNum),
       limit: ITEMS_PER_PAGE,
@@ -63,7 +63,7 @@ export default function DestinationsClient() {
         mutate(swrKey);
       }
       toast({ title: "Thành công", description: "Đã xóa điểm đến." });
-    } catch (error) {
+    } catch {
       toast({
         title: "Lỗi",
         description: "Không thể xóa điểm đến.",

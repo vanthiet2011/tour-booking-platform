@@ -47,6 +47,8 @@ const profileSchema = z.object({
   avatarUrl: z.string().url().nullable().or(z.literal("")),
 });
 
+type Gender = "Male" | "Female" | "Other";
+
 type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function ProfilePage() {
@@ -72,9 +74,7 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (isAuthLoading) {
-      return;
-    }
+    if (isAuthLoading) return;
 
     if (!user) {
       router.push("/login");
@@ -89,28 +89,26 @@ export default function ProfilePage() {
           fullName: data.fullName,
           phoneNumber: data.phoneNumber,
           address: data.address,
-          gender: data.gender as "Male" | "Female" | "Other" | null,
+          gender: data.gender as Gender | null,
           dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : null,
           avatarUrl: data.avatarUrl,
         });
         if (data.avatarUrl) {
           setAvatarPreview(data.avatarUrl);
         }
-      } catch (error) {
-        console.error("Không thể tải hồ sơ", error);
+      } catch (err) {
         toast({
           title: "Lỗi",
           description: "Không thể tải thông tin hồ sơ của bạn.",
           variant: "destructive",
         });
       } finally {
-        // Hoàn tất tải profile
         setIsProfileLoading(false);
       }
     };
 
     loadProfile();
-  }, [user, isAuthLoading, router]);
+  }, [user, isAuthLoading, router, form, toast]);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -143,7 +141,7 @@ export default function ProfilePage() {
         title: "Thành công",
         description: "Hồ sơ của bạn đã được cập nhật.",
       });
-    } catch (error) {
+    } catch {
       toast({
         title: "Lỗi",
         description: "Không thể cập nhật hồ sơ.",
@@ -261,8 +259,8 @@ export default function ProfilePage() {
                   name="gender"
                   render={({ field }) => (
                     <Select
-                      value={field.value || ""}
-                      onValueChange={(value) => field.onChange(value as any)}
+                      value={field.value ?? ""}
+                      onValueChange={(value: Gender) => field.onChange(value)}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Chọn giới tính" />

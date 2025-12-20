@@ -24,6 +24,6 @@ export interface CreateDestinationPayload {
   categoryIds: string[];
 }
 
-export interface UpdateDestinationPayload extends CreateDestinationPayload {}
+export type UpdateDestinationPayload = CreateDestinationPayload;
 
 export type DestinationPagingResponse = PagingResponse<Destination>;

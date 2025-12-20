@@ -31,9 +31,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         try {
           const userData = await authService.getMe();
           setUser(userData);
-        } catch (error) {
+        } catch {
           console.log("AuthContext: Invalid or expired token. Logging out.");
-          // Nếu lỗi, token không hợp lệ -> đăng xuất
           setUser(null);
           Cookies.remove("accessToken");
         }

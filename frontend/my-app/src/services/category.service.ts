@@ -1,4 +1,3 @@
-// src/services/category.service.ts
 import apiClient from "./api-client";
 import { Category } from "@/types/destination";
 
@@ -9,4 +8,5 @@ class CategoryService {
   }
 }
 
-export default new CategoryService();
+const categoryService = new CategoryService();
+export default categoryService;

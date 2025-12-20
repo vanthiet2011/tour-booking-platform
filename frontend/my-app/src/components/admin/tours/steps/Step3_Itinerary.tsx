@@ -7,7 +7,6 @@ import {
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,14 +25,13 @@ export const itinerarySchema = z.object({
     .optional(),
 });
 
-interface Step3Props {
-  form: any;
-}
-
 export function Step3_Itinerary() {
   const { control } = useFormContext<MultiStepTourFormValues>();
-  const { fields, append, remove } = useFieldArray({
-    control: control,
+  const { fields, append, remove } = useFieldArray<
+    MultiStepTourFormValues,
+    "schedules"
+  >({
+    control,
     name: "schedules",
   });
 

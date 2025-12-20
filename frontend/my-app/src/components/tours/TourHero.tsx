@@ -1,7 +1,7 @@
 import { Tour } from "@/types/tour";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Clock, MapPin, Users, Tag, Star } from "lucide-react";
+import { Clock, MapPin, Tag, Star } from "lucide-react";
 import Link from "next/link";
 
 // Hàm helper định dạng tiền tệ

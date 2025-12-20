@@ -27,7 +27,7 @@ export function BookingForm({ tour, departures = [] }: BookingFormProps) {
   const { toast } = useToast();
   const [selectedDeparture, setSelectedDeparture] =
     useState<TourDepartureInfo | null>(null);
-  const [endDate, setEndDate] = useState("");
+  const [, setEndDate] = useState<string>("");
 
   const availableDateStrings = new Set(
     departures.map((dep) => format(parseISO(dep.startDate), "yyyy-MM-dd"))
@@ -39,11 +39,15 @@ export function BookingForm({ tour, departures = [] }: BookingFormProps) {
 
   const handleDateSelect = (date: Date | undefined) => {
     if (!date) return;
+
     const dateString = format(date, "yyyy-MM-dd");
+
     const departure = departures.find(
       (d) => format(parseISO(d.startDate), "yyyy-MM-dd") === dateString
     );
+
     setSelectedDeparture(departure || null);
+
     if (departure) {
       setEndDate(format(parseISO(departure.endDate), "dd/MM/yyyy"));
     } else {

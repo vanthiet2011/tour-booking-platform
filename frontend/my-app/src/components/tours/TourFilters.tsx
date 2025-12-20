@@ -37,10 +37,7 @@ const DURATION_OPTIONS = [
   { label: "6 ngày 5 đêm", value: "6" },
 ];
 
-export function TourFilters({
-  className,
-  hideRegion = false,
-}: TourFiltersProps) {
+export function TourFilters({ hideRegion = false }: TourFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 

@@ -26,7 +26,7 @@ export function FeaturedTours() {
         params.set("pageSize", "10");
         const paginatedResponse = await tourService.getPaginatedTours(params);
         setTours(paginatedResponse.items);
-      } catch (error) {
+      } catch {
       } finally {
         setIsLoading(false);
       }

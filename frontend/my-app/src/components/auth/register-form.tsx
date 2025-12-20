@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import authService from "@/services/auth.service";
 import { useToast } from "@/hooks/use-toast";
+import type { AxiosError } from "axios";
 
 const registerSchema = z
   .object({
@@ -33,6 +34,14 @@ const registerSchema = z
   });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
+
+type ApiError = AxiosError<{
+  message?: string;
+}>;
+
+type FacebookProfile = {
+  accessToken?: string;
+};
 
 export function RegisterForm() {
   const router = useRouter();
@@ -64,12 +73,14 @@ export function RegisterForm() {
     router.push("/login");
   };
 
-  const handleRegisterError = (error: any, provider: string) => {
-    console.error(`❗ Đăng ký ${provider} thất bại:`, error);
+  const handleRegisterError = (error: unknown, provider: string) => {
+    const apiError = error as ApiError;
+
+    console.error(`❗ Đăng ký ${provider} thất bại:`, apiError);
     toast({
       title: "Đăng ký thất bại",
       description:
-        error.response?.data?.message ||
+        apiError.response?.data?.message ||
         `Đã có lỗi xảy ra khi đăng ký bằng ${provider}.`,
       variant: "destructive",
     });
@@ -82,7 +93,7 @@ export function RegisterForm() {
         password: values.password,
       });
       handleRegisterSuccess();
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleRegisterError(error, "Email");
     }
   };
@@ -91,7 +102,7 @@ export function RegisterForm() {
     flow: "auth-code",
     onSuccess: async (tokenResponse) => {
       try {
-        const response = await authService.loginWithGoogle(tokenResponse.code);
+        await authService.loginWithGoogle(tokenResponse.code);
         handleRegisterSuccess();
       } catch (error) {
         handleRegisterError(error, "Google");
@@ -101,7 +112,7 @@ export function RegisterForm() {
       handleRegisterError({ message: "Google register failed" }, "Google"),
   });
 
-  const responseFacebook = async (profile: any) => {
+  const responseFacebook = async (profile: FacebookProfile) => {
     const accessToken = profile?.accessToken;
     if (accessToken) {
       try {
@@ -118,7 +129,7 @@ export function RegisterForm() {
     }
   };
 
-  const handleFacebookLoginFail = (error: any) => {
+  const handleFacebookLoginFail = () => {
     handleRegisterError(
       { message: "Người dùng hủy hoặc lỗi xảy ra." },
       "Facebook"

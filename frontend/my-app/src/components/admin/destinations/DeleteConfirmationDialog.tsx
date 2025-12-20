@@ -29,8 +29,8 @@ export function DeleteConfirmationDialog({
         <AlertDialogHeader>
           <AlertDialogTitle>Bạn có chắc chắn muốn xóa?</AlertDialogTitle>
           <AlertDialogDescription>
-            Hành động này không thể được hoàn tác. Dữ liệu của "{itemName}" sẽ
-            bị xóa vĩnh viễn khỏi máy chủ.
+            Hành động này không thể được hoàn tác. Dữ liệu của{" "}
+            <strong>{itemName}</strong> sẽ bị xóa vĩnh viễn khỏi máy chủ.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

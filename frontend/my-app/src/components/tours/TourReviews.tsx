@@ -1,5 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Star } from "lucide-react";
+import Image from "next/image";
 
 export function TourReviews() {
   const reviews = [
@@ -55,10 +56,12 @@ export function TourReviews() {
             <Card key={index} className="border-border/50 bg-card p-6">
               <div className="mb-4 flex items-start justify-between">
                 <div className="flex gap-3">
-                  <img
+                  <Image
                     src={review.avatar || "/placeholder.svg"}
                     alt={review.name}
-                    className="h-12 w-12 rounded-full object-cover"
+                    width={48}
+                    height={48}
+                    className="rounded-full object-cover"
                   />
                   <div>
                     <div className="font-semibold text-card-foreground">

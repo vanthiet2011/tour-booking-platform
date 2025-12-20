@@ -26,7 +26,7 @@ export default function MyBookingsPage() {
     if (!isAuthLoading && token) {
       setIsLoading(true);
       bookingService
-        .getMyBookings({ token } as any)
+        .getMyBookings()
         .then((response) => {
           setBookings(response);
           setError(null);

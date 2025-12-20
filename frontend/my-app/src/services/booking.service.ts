@@ -8,7 +8,7 @@ const bookingService = {
     return data;
   },
 
-  getMyBookings: async (payload: BookingPayload): Promise<Booking[]> => {
+  getMyBookings: async (): Promise<Booking[]> => {
     const { data } = await apiClient.get<Booking[]>("/bookings/my-bookings");
     return data;
   },

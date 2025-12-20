@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
       if (roleClaim !== "Admin") {
         return NextResponse.redirect(new URL("/", request.url));
       }
-    } catch (error) {
+    } catch {
       return NextResponse.redirect(new URL("/login", request.url));
     }
   }

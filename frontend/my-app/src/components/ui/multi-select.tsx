@@ -7,149 +7,132 @@ import { Badge } from "@/components/ui/badge";
 import { Command, CommandGroup, CommandItem } from "@/components/ui/command";
 import { Command as CommandPrimitive } from "cmdk";
 
-// 1. ĐỊNH NGHĨA KIỂU (TYPE) MỚI
-// Kiểu 'Option' chung, chấp nhận bất kỳ đối tượng nào
-type Option = Record<string, any>;
-
-export interface MultiSelectProps {
-  options: Option[];
-  value: string[];
+export interface MultiSelectProps<T extends object> {
+  options: T[];
+  value: string[]; // các value đã chọn
   onChange: (value: string[]) => void;
-  // 2. THÊM 2 PROPS MỚI
-  valueKey?: string; // Tên thuộc tính để làm value (ví dụ: 'id')
-  labelKey?: string; // Tên thuộc tính để làm label (ví dụ: 'name')
+  valueKey: keyof T; // key dùng làm value
+  labelKey: keyof T; // key dùng làm hiển thị
   placeholder?: string;
   className?: string;
+  disabled?: boolean;
 }
 
-export const MultiSelect = React.forwardRef<
-  React.ElementRef<typeof CommandPrimitive>,
-  MultiSelectProps
->(
-  (
-    {
-      options,
-      value = [],
-      onChange,
-      // 3. ĐẶT GIÁ TRỊ MẶC ĐỊNH
-      valueKey = "value", // Mặc định là 'value'
-      labelKey = "label", // Mặc định là 'label'
-      placeholder = "Chọn...",
-      className,
-      ...props
-    },
-    ref
-  ) => {
-    const [open, setOpen] = React.useState(false);
-    const [inputValue, setInputValue] = React.useState("");
+export const MultiSelect = <T extends object>({
+  options,
+  value = [],
+  onChange,
+  valueKey,
+  labelKey,
+  placeholder = "Chọn...",
+  className,
+  disabled = false,
+}: MultiSelectProps<T>) => {
+  const [open, setOpen] = React.useState(false);
+  const [inputValue, setInputValue] = React.useState("");
 
-    const selectedOptions = React.useMemo(
-      () =>
-        options.filter((option) => value.includes(option[valueKey] as string)),
-      [options, value, valueKey]
-    );
+  const selectedOptions = React.useMemo(
+    () => options.filter((option) => value.includes(String(option[valueKey]))),
+    [options, value, valueKey]
+  );
 
-    const selectableOptions = React.useMemo(
-      () =>
-        options.filter((option) => !value.includes(option[valueKey] as string)),
-      [options, value, valueKey]
-    );
+  const selectableOptions = React.useMemo(
+    () => options.filter((option) => !value.includes(String(option[valueKey]))),
+    [options, value, valueKey]
+  );
 
-    const handleSelect = (optionValue: string) => {
-      onChange([...value, optionValue]);
-    };
+  const handleSelect = (optionValue: string) => {
+    if (disabled) return;
+    onChange([...value, optionValue]);
+  };
 
-    const handleDeselect = (optionValue: string) => {
-      onChange(value.filter((v) => v !== optionValue));
-    };
+  const handleDeselect = (optionValue: string) => {
+    if (disabled) return;
+    onChange(value.filter((v) => v !== optionValue));
+  };
 
-    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (e.key === "Enter" || e.key === " ") {
-        setOpen(true);
-      } else if (e.key === "Backspace" && !inputValue) {
-        if (value.length > 0) {
-          handleDeselect(value[value.length - 1]);
-        }
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (disabled) return;
+    if (e.key === "Enter" || e.key === " ") {
+      setOpen(true);
+    } else if (e.key === "Backspace" && !inputValue) {
+      if (value.length > 0) {
+        handleDeselect(value[value.length - 1]);
       }
-    };
+    }
+  };
 
-    return (
-      <Command
-        onKeyDown={handleInputKeyDown}
-        className={`overflow-visible bg-transparent ${className}`}
-        ref={ref}
-        {...props}
-      >
-        <div className="group border border-input px-3 py-2 text-sm ring-offset-background rounded-md focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
-          <div className="flex gap-1 flex-wrap">
-            {/* 4. SỬA LOGIC HIỂN THỊ BADGE (PILL) */}
-            {selectedOptions.map((option) => {
-              return (
-                <Badge
-                  key={option[valueKey]}
-                  variant="secondary"
-                  className="rounded-sm"
+  return (
+    <Command
+      onKeyDown={handleInputKeyDown}
+      className={`overflow-visible bg-transparent ${
+        disabled ? "opacity-50 pointer-events-none" : ""
+      } ${className ?? ""}`}
+    >
+      <div className="group border border-input px-3 py-2 text-sm rounded-md ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2">
+        <div className="flex gap-1 flex-wrap">
+          {selectedOptions.map((option) => {
+            const optionValue = String(option[valueKey]);
+            return (
+              <Badge
+                key={optionValue}
+                variant="secondary"
+                className="rounded-sm"
+              >
+                {String(option[labelKey])}
+                <button
+                  type="button"
+                  className="ml-1 rounded-full outline-none ring-offset-background focus:ring-2 focus:ring-ring focus:ring-offset-2"
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={() => handleDeselect(optionValue)}
                 >
-                  {/* Sử dụng 'labelKey' thay vì 'label' hard-coded */}
-                  {option[labelKey]}
-                  <button
-                    className="ml-1 ring-offset-background rounded-full outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        handleDeselect(option[valueKey]);
-                      }
-                    }}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onClick={() => handleDeselect(option[valueKey])}
-                  >
-                    <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
-                  </button>
-                </Badge>
-              );
-            })}
+                  <X className="h-3 w-3 text-muted-foreground hover:text-foreground" />
+                </button>
+              </Badge>
+            );
+          })}
 
-            {/* Input */}
-            <CommandPrimitive.Input
-              value={inputValue}
-              onValueChange={setInputValue}
-              onBlur={() => setOpen(false)}
-              onFocus={() => setOpen(true)}
-              placeholder={placeholder}
-              className="ml-2 bg-transparent outline-none placeholder:text-muted-foreground flex-1"
-            />
+          <CommandPrimitive.Input
+            value={inputValue}
+            onValueChange={setInputValue}
+            onBlur={() => setOpen(false)}
+            onFocus={() => setOpen(true)}
+            placeholder={placeholder}
+            disabled={disabled}
+            className="ml-2 flex-1 bg-transparent outline-none placeholder:text-muted-foreground"
+          />
+        </div>
+      </div>
+
+      {open && selectableOptions.length > 0 && (
+        <div className="relative mt-2">
+          <div className="absolute top-0 z-10 w-full rounded-md border bg-popover text-popover-foreground shadow-md animate-in">
+            <CommandGroup className="max-h-60 overflow-auto">
+              {selectableOptions.map((option) => {
+                const optionValue = String(option[valueKey]);
+                return (
+                  <CommandItem
+                    key={optionValue}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    onSelect={() => {
+                      handleSelect(optionValue);
+                      setInputValue("");
+                    }}
+                    className="cursor-pointer"
+                  >
+                    {String(option[labelKey])}
+                  </CommandItem>
+                );
+              })}
+            </CommandGroup>
           </div>
         </div>
-        <div className="relative mt-2">
-          {open && selectableOptions.length > 0 ? (
-            <div className="absolute w-full z-10 top-0 rounded-md border bg-popover text-popover-foreground shadow-md outline-none animate-in">
-              <CommandGroup className="h-full overflow-auto">
-                {/* 5. SỬA LOGIC HIỂN THỊ DANH SÁCH */}
-                {selectableOptions.map((option) => {
-                  return (
-                    <CommandItem
-                      key={option[valueKey]}
-                      onMouseDown={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                      }}
-                      onSelect={() => {
-                        handleSelect(option[valueKey]);
-                        setInputValue("");
-                      }}
-                      className={"cursor-pointer"}
-                    >
-                      {/* Sử dụng 'labelKey' thay vì 'label' hard-coded */}
-                      {option[labelKey]}
-                    </CommandItem>
-                  );
-                })}
-              </CommandGroup>
-            </div>
-          ) : null}
-        </div>
-      </Command>
-    );
-  }
-);
+      )}
+    </Command>
+  );
+};
 
 MultiSelect.displayName = "MultiSelect";

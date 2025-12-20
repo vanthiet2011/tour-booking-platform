@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 
 export default function StorySection() {
   return (
@@ -45,10 +46,12 @@ export default function StorySection() {
           </div>
 
           <div className="relative h-96 rounded-xl overflow-hidden shadow-xl">
-            <img
+            <Image
               src="/images/sapa-terraced-rice-fields.jpg"
               alt="Sapa"
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              priority
             />
           </div>
         </div>

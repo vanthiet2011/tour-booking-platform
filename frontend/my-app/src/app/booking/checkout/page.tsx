@@ -243,15 +243,15 @@ const CheckoutPageContent = () => {
   );
 };
 
+const LoadingFallback = () => (
+  <div className="min-h-screen flex items-center justify-center bg-background">
+    <Loader2 className="h-12 w-12 animate-spin text-primary" />
+  </div>
+);
+
 const Index = () => {
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center bg-background">
-          <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
-      }
-    >
+    <Suspense fallback={<LoadingFallback />}>
       <CheckoutPageContent />
     </Suspense>
   );

@@ -1,5 +1,4 @@
 import { PagingResponse } from ".";
-import { Destination } from "./destination";
 
 export interface Tour {
   id: string;
@@ -65,6 +64,13 @@ export interface CreateTourPayload {
   inclusions: Inclusions;
 }
 
-export interface UpdateTourPayload extends CreateTourPayload {}
+export type UpdateTourPayload = CreateTourPayload;
 
 export type TourPagingResponse = PagingResponse<Tour>;
+
+export type TourFormValues = Omit<CreateTourPayload, "galleryImages"> & {
+  galleryImages?: string[];
+  coverImageFile?: FileList;
+  galleryImageFiles?: FileList;
+  imageUrl?: string;
+};

@@ -103,7 +103,7 @@ export function CreateTourForm() {
       mutate("/api/tours");
       toast({ title: "Thành công!", description: "Đã tạo tour mới." });
       router.push("/admin/tours");
-    } catch (error) {
+    } catch {
       toast({
         title: "Lỗi!",
         description: "Tạo tour thất bại.",

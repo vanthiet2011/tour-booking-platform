@@ -1,8 +1,6 @@
-// src/components/home/Testimonials.tsx
 import Image from "next/image";
 import { Star } from "lucide-react";
 
-// Tech Lead: Thêm dữ liệu mẫu vì 'stories' chưa được định nghĩa
 const stories = [
   {
     name: "Trần Văn An",
@@ -10,7 +8,7 @@ const stories = [
     story:
       "Chuyến đi thật tuyệt vời! Du thuyền sang trọng, đồ ăn ngon và hướng dẫn viên rất nhiệt tình. Vịnh Hạ Long đẹp ngoài sức tưởng tượng.",
     rating: 5,
-    image: "/images/halong-bay-limestone-boats.jpg", // (Bạn cần thêm ảnh này vào /public/testimonials/avatar-1.jpg)
+    image: "/images/halong-bay-limestone-boats.jpg",
   },
   {
     name: "Lê Thị Bích",
@@ -18,7 +16,7 @@ const stories = [
     story:
       "Tôi rất thích trải nghiệm trekking và ở homestay. Không khí trong lành, cảnh vật hùng vĩ. Một chuyến đi đáng nhớ để thoát khỏi thành phố.",
     rating: 5,
-    image: "/images/mekong-delta-floating-market.jpg", // (Bạn cần thêm ảnh này vào /public/testimonials/avatar-2.jpg)
+    image: "/images/mekong-delta-floating-market.jpg",
   },
   {
     name: "Nguyễn Hoàng Minh",
@@ -26,7 +24,7 @@ const stories = [
     story:
       "Hội An thật huyền ảo vào ban đêm. Dịch vụ của công ty rất tốt, sắp xếp xe đưa đón và khách sạn rất chu đáo. Sẽ quay lại!",
     rating: 4,
-    image: "/images/sapa-rice-terraces-mountains.jpg", // (Bạn cần thêm ảnh này vào /public/testimonials/avatar-3.jpg)
+    image: "/images/sapa-rice-terraces-mountains.jpg",
   },
 ];
 
@@ -49,25 +47,16 @@ export function Testimonials() {
               key={idx}
               className="bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition"
             >
-              {/* Tech Lead Refactor: 
-                - Dùng <Image> của Next.js
-                - Đặt nền gradient làm overlay
-              */}
               <div className="relative h-40">
                 <Image
                   src={story.image || "/placeholder.svg"}
                   alt={story.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="opacity-50"
+                  fill
+                  className="object-cover opacity-50"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10"></div>
               </div>
               <div className="p-6">
-                {/* Tech Lead Refactor: 
-                  - Dùng icon <Star> của lucide-react
-                  - Thêm logic hiển thị sao trống
-                */}
                 <div className="flex gap-1 mb-4">
                   {[...Array(story.rating)].map((_, i) => (
                     <Star
@@ -83,7 +72,7 @@ export function Testimonials() {
                   ))}
                 </div>
                 <p className="text-foreground mb-6 leading-relaxed italic">
-                  "{story.story}"
+                  &ldquo;{story.story}&rdquo;
                 </p>
                 <div className="border-t border-border pt-4">
                   <p className="font-bold text-sm">{story.name}</p>

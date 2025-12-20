@@ -1,6 +1,7 @@
 // src/components/admin/tours/steps/Step2_Images.tsx
 import { useState, useEffect } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
+import { TourFormValues } from "@/types/tour";
 import * as z from "zod";
 import Image from "next/image";
 import { Trash2, Image as ImageIcon } from "lucide-react";
@@ -22,7 +23,7 @@ export const imagesSchema = z.object({
 });
 
 export function Step2_Images() {
-  const { control, setValue, getValues } = useFormContext<any>();
+  const { control, setValue } = useFormContext<TourFormValues>();
 
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [galleryPreviews, setGalleryPreviews] = useState<string[]>([]);
@@ -77,14 +78,15 @@ export function Step2_Images() {
       updatedFiles.forEach((file) => dataTransfer.items.add(file as File));
       setValue(
         "galleryImageFiles",
-        dataTransfer.files.length > 0 ? dataTransfer.files : undefined
+        dataTransfer.files.length > 0 ? dataTransfer.files : undefined,
+        { shouldDirty: true }
       );
     } else {
       const currentUrls = existingGalleryUrls || [];
       const updatedUrls = currentUrls.filter(
         (_: string, index: number) => index !== indexToRemove
       );
-      setValue("galleryImages", updatedUrls);
+      setValue("galleryImages", updatedUrls, { shouldDirty: true });
     }
   };
 

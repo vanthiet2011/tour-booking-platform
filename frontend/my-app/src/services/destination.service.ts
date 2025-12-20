@@ -19,14 +19,18 @@ const destinationService = {
   getAll: async (
     params?: GetAllDestinationsParams
   ): Promise<PaginatedResponse<Destination>> => {
+    const { limit, ...rest } = params || {};
+
     const apiParams = {
-      ...params,
-      pageSize: params?.limit,
+      ...rest,
+      pageSize: limit,
     };
-    delete (apiParams as any).limit;
-    const { data } = await apiClient.get("/destinations", {
-      params: apiParams,
-    });
+
+    const { data } = await apiClient.get<PaginatedResponse<Destination>>(
+      "/destinations",
+      { params: apiParams }
+    );
+
     return data;
   },
 

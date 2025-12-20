@@ -148,32 +148,22 @@ export function Step1_GeneralInfo() {
       <FormField
         control={control}
         name="destinationIds"
-        render={({ field }) => {
-          const selectedValues = destinationOptions.filter((option) =>
-            (field.value || []).includes(option.value)
-          );
-
-          return (
-            <FormField
-              control={control}
-              name="destinationIds"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Các điểm đến</FormLabel>
-                  <FormControl>
-                    <MultiSelect
-                      options={destinationOptions}
-                      value={field.value || []}
-                      onChange={field.onChange}
-                      placeholder="Chọn các điểm đến..."
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          );
-        }}
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Các điểm đến</FormLabel>
+            <FormControl>
+              <MultiSelect
+                options={destinationOptions}
+                value={field.value || []}
+                onChange={field.onChange}
+                placeholder="Chọn các điểm đến..."
+                valueKey="value"
+                labelKey="label"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
       />
 
       <FormField

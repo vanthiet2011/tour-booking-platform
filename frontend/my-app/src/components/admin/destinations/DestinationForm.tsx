@@ -1,11 +1,8 @@
-// src/components/admin/destinations/DestinationForm.tsx
-
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { mutate } from "swr";
-import Cookies from "js-cookie";
 
 import {
   Dialog,
@@ -43,6 +40,7 @@ import { useToast } from "@/hooks/use-toast";
 import categoryService from "@/services/category.service";
 import { MultiSelect } from "@/components/ui/multi-select";
 import uploadService from "@/services/upload.service";
+import Image from "next/image";
 
 interface DestinationFormProps {
   isOpen: boolean;
@@ -68,7 +66,8 @@ export function DestinationForm({
   const [imageUrl, setImageUrl] = useState<string | undefined>("");
   const [isUploading, setIsUploading] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [loadingCategories, setLoadingCategories] = useState(false);
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -107,24 +106,25 @@ export function DestinationForm({
   }, [destination, isEditing, isOpen, form]);
 
   useEffect(() => {
-    if (isOpen) {
-      setLoadingCategories(true);
-      categoryService
-        .getAll()
-        .then((data) => setCategories(data))
-        .catch((err) => {
-          console.error("Lỗi tải danh mục:", err);
-          if (err?.response?.status !== 204) {
-            toast({
-              title: "Lỗi",
-              description: "Không thể tải danh sách danh mục.",
-              variant: "destructive",
-            });
-          }
-        })
-        .finally(() => setLoadingCategories(false));
-    }
-  }, [isOpen]);
+    if (!isOpen) return;
+
+    setLoadingCategories(true);
+
+    categoryService
+      .getAll()
+      .then((data) => setCategories(data))
+      .catch((err) => {
+        console.error("Lỗi tải danh mục:", err);
+        if (err?.response?.status !== 204) {
+          toast({
+            title: "Lỗi",
+            description: "Không thể tải danh sách danh mục.",
+            variant: "destructive",
+          });
+        }
+      })
+      .finally(() => setLoadingCategories(false));
+  }, [isOpen, toast]);
 
   const categoryOptions = categories.map((c) => ({
     value: c.id,
@@ -249,12 +249,13 @@ export function DestinationForm({
                           Đang tải lên...
                         </p>
                       )}
-                      {field.value && (
-                        <div className="mt-2 relative">
-                          <img
+                      {field.value && imageUrl && (
+                        <div className="mt-2 relative w-full h-48">
+                          <Image
                             src={imageUrl}
                             alt="Preview"
-                            className="w-full h-auto rounded-md border"
+                            fill
+                            className="object-cover rounded-md border"
                           />
                         </div>
                       )}
@@ -294,21 +295,28 @@ export function DestinationForm({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Danh mục</FormLabel>
+
                   <FormControl>
                     <MultiSelect
                       options={categoryOptions}
                       value={field.value || []}
                       onChange={field.onChange}
+                      valueKey="value"
+                      labelKey="label"
                       placeholder="Chọn danh mục..."
-                      // disabled={
-                      //   loadingCategories || form.formState.isSubmitting
-                      // }
+                      disabled={loadingCategories}
                     />
                   </FormControl>
-                  <FormMessage />
+
+                  {loadingCategories && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Đang tải danh mục...
+                    </p>
+                  )}
                 </FormItem>
               )}
             />
+
             <FormField
               control={form.control}
               name="isPopular"

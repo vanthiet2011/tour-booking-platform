@@ -9,7 +9,7 @@ import * as z from "zod";
 import FacebookLogin from "@greatsumini/react-facebook-login";
 import { jwtDecode } from "jwt-decode";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
-import { useGoogleLogin, CredentialResponse } from "@react-oauth/google";
+import { useGoogleLogin } from "@react-oauth/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import authService from "@/services/auth.service";
 import { ApiUser, LoginResponse, DecodedToken } from "@/types/auth";
+import type { AxiosError } from "axios";
 
 const loginSchema = z.object({
   email: z.string().email("Địa chỉ email không hợp lệ."),
@@ -25,6 +26,14 @@ const loginSchema = z.object({
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
+
+type ApiError = AxiosError<{
+  message?: string;
+}>;
+
+type FacebookProfile = {
+  accessToken?: string;
+};
 
 export function LoginForm() {
   const router = useRouter();
@@ -81,12 +90,14 @@ export function LoginForm() {
     router.refresh();
   };
 
-  const handleLoginError = (error: any, provider: string) => {
-    console.error(`❗ Đăng nhập ${provider} thất bại:`, error);
+  const handleLoginError = (error: unknown, provider: string) => {
+    const apiError = error as ApiError;
+
+    console.error(`❗ Đăng nhập ${provider} thất bại:`, apiError);
     toast({
       title: "Đăng nhập thất bại",
       description:
-        error.response?.data?.message ||
+        apiError.response?.data?.message ||
         `Đã có lỗi xảy ra khi đăng nhập bằng ${provider}.`,
       variant: "destructive",
     });
@@ -96,7 +107,7 @@ export function LoginForm() {
     try {
       const response = await authService.login(values);
       handleLoginSuccess(response, values.rememberMe);
-    } catch (error: any) {
+    } catch (error: unknown) {
       handleLoginError(error, "Email");
     }
   };
@@ -115,8 +126,8 @@ export function LoginForm() {
       handleLoginError({ message: "Google login failed" }, "Google"),
   });
 
-  const responseFacebook = async (profile: any) => {
-    const accessToken = (profile as any)?.accessToken;
+  const responseFacebook = async (profile: FacebookProfile) => {
+    const accessToken = profile?.accessToken;
     if (accessToken) {
       try {
         const apiResponse = await authService.loginWithFacebook(accessToken);
@@ -132,7 +143,7 @@ export function LoginForm() {
     }
   };
 
-  const handleFacebookLoginFail = (error: any) => {
+  const handleFacebookLoginFail = (error: unknown) => {
     console.error("Facebook login failed:", error);
     handleLoginError(
       { message: "Người dùng đã hủy hoặc có lỗi xảy ra." },

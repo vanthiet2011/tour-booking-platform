@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { getColumns } from "./columns";
 import tourService from "@/services/tour.service";
-import { Tour } from "@/types/tour";
 import { PaginationComponent } from "@/components/ui/PaginationComponent";
 
 const ITEMS_PER_PAGE = 10;
@@ -20,7 +19,7 @@ export const TourClient: React.FC = () => {
     data: paginatedData,
     error,
     isLoading,
-  } = useSWR(swrKey, ([_, pageNum]) =>
+  } = useSWR(swrKey, ([pageNum]) =>
     tourService.getPaginatedTours(
       new URLSearchParams({
         page: pageNum.toString(),

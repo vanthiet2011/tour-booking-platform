@@ -1,6 +1,4 @@
-// src/components/Categories.tsx - NỘI DUNG ĐÃ SỬA LỖI
-
-"use client"; // Thêm dòng này để biến component thành Client Component
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -38,6 +36,8 @@ const profileSchema = z.object({
 
 type ProfileForm = z.infer<typeof profileSchema>;
 
+type Gender = "male" | "female" | "other";
+
 interface Profile {
   id: string;
   userId: string;
@@ -48,13 +48,17 @@ interface Profile {
   avatarUrl: string | null;
 }
 
-// Đổi tên component để phù hợp với chức năng (ví dụ: ProfileForm)
-// Lưu ý: Tên file là Categories.tsx nhưng nội dung lại là trang Profile, bạn nên đổi tên file thành `ProfilePage.tsx` hoặc tương tự cho dễ quản lý
+interface AuthUser {
+  id: string;
+  email: string;
+  role?: string;
+}
+
 const ProfilePage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [user, setUser] = useState<any>(null);
-  const router = useRouter(); // ✅ Khởi tạo router
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const router = useRouter();
   const { toast } = useToast();
 
   const form = useForm<ProfileForm>({
@@ -69,17 +73,13 @@ const ProfilePage = () => {
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
-
-  // Lấy thông tin user + profile
   useEffect(() => {
     const checkUserAndLoadProfile = async () => {
       if (!token) {
-        router.push("/auth"); // ✅ Dùng router.push để điều hướng
+        router.push("/auth");
         return;
       }
-
       try {
-        // Lấy user từ session
         const resUser = await fetch("http://localhost:5000/api/auth/session", {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -87,7 +87,7 @@ const ProfilePage = () => {
         });
 
         if (!resUser.ok) {
-          router.push("/auth"); // ✅ Dùng router.push
+          router.push("/auth");
           return;
         }
 
@@ -180,7 +180,7 @@ const ProfilePage = () => {
       console.error("Logout error:", err);
     } finally {
       localStorage.removeItem("token");
-      router.push("/"); // ✅ Dùng router.push
+      router.push("/");
     }
   };
 
@@ -268,9 +268,9 @@ const ProfilePage = () => {
               <div className="space-y-2">
                 <Label htmlFor="gender">Giới tính</Label>
                 <Select
-                  value={form.watch("gender") || ""}
-                  onValueChange={(value: string) =>
-                    form.setValue("gender", value as any)
+                  value={form.watch("gender") ?? ""}
+                  onValueChange={(value: Gender) =>
+                    form.setValue("gender", value)
                   }
                 >
                   <SelectTrigger>

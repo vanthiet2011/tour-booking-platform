@@ -4,9 +4,9 @@ import { PlusCircle, Trash, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type { Destination } from "@/types/destination";
 import * as z from "zod";
 import useSWR, { mutate } from "swr";
-import Cookies from "js-cookie";
 import Image from "next/image";
 
 import {
@@ -30,8 +30,7 @@ import {
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import uploadService from "@/services/upload.service";
-import type { Tour, CreateTourPayload, UpdateTourPayload } from "@/types/tour";
-import type { Destination } from "@/types/destination";
+import type { Tour, CreateTourPayload } from "@/types/tour";
 import { MultiSelect } from "@/components/ui/multi-select";
 import destinationService from "@/services/destination.service";
 import tourService from "@/services/tour.service";
@@ -169,7 +168,7 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
     setIsUploading(true);
     try {
       let coverImageUrl = tour?.imageUrl || "";
-      let finalGalleryUrls = galleryPreviews.filter(
+      const finalGalleryUrls = galleryPreviews.filter(
         (p) => typeof p === "string"
       ) as string[];
 
@@ -219,7 +218,7 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
         description: `Đã ${isEditing ? "cập nhật" : "tạo mới"} tour.`,
       });
       onClose();
-    } catch (error) {
+    } catch {
       toast({
         title: "Lỗi!",
         description: "Thao tác thất bại. Vui lòng thử lại.",
@@ -353,15 +352,16 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                           options={destinationOptions}
                           value={field.value}
                           onChange={field.onChange}
-                          placeholder="Chọn các điểm đến..."
                           valueKey="id"
                           labelKey="name"
+                          placeholder="Chọn các điểm đến..."
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+
                 <FormField
                   control={form.control}
                   name="isBestseller"

@@ -232,7 +232,7 @@ const CheckoutPageContent = () => {
               infantPrice={0}
               roomPrice={0}
               adults={tourists.adults}
-              children={tourists.children}
+              numChildren={tourists.children}
               infants={tourists.infants}
               isSubmitting={isSubmitting}
             />

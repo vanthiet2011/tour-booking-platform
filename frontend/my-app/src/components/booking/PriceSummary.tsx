@@ -13,7 +13,7 @@ interface PriceSummaryProps {
   infantPrice: number;
   roomPrice: number;
   adults: number;
-  children: number;
+  numChildren: number;
   infants: number;
   isSubmitting?: boolean;
 }
@@ -28,12 +28,12 @@ export const PriceSummary = ({
   infantPrice,
   roomPrice,
   adults,
-  children,
+  numChildren,
   infants,
   isSubmitting = false,
 }: PriceSummaryProps) => {
   const totalAdultPrice = adults * adultPrice;
-  const totalChildPrice = children * childPrice;
+  const totalChildPrice = numChildren * childPrice;
   const totalInfantPrice = infants * infantPrice;
   const totalPrice =
     totalAdultPrice + totalChildPrice + totalInfantPrice + roomPrice;
@@ -75,7 +75,7 @@ export const PriceSummary = ({
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Trẻ em :</span>
             <span className="font-medium">
-              {children} x {formatPrice(childPrice)} ={" "}
+              {numChildren} x {formatPrice(childPrice)} ={" "}
               {formatPrice(totalChildPrice)} VNĐ
             </span>
           </div>

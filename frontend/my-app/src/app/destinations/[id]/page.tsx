@@ -5,19 +5,15 @@ import destinationService from "@/services/destination.service";
 import { TourCard } from "@/components/tours/TourCard";
 import { TourFilters } from "@/components/tours/TourFilters";
 import { TourPagination } from "@/components/tours/TourPagination";
-import { ChevronRight, Home, MapPin } from "lucide-react"; // Import icon
-
-interface DestinationPageProps {
-  params: { id: string };
-  searchParams: {
-    [key: string]: string | string[] | undefined;
-  };
-}
+import { ChevronRight, Home, MapPin } from "lucide-react";
 
 export default async function DestinationDetailPage({
   params,
   searchParams,
-}: DestinationPageProps) {
+}: {
+  params: { id: string };
+  searchParams: Record<string, string | string[] | undefined>;
+}) {
   const destinationId = params.id;
 
   let destination;
@@ -26,7 +22,6 @@ export default async function DestinationDetailPage({
   } catch {
     notFound();
   }
-
   const apiParams = new URLSearchParams();
   if (searchParams.page) apiParams.set("page", searchParams.page as string);
   if (searchParams.search)

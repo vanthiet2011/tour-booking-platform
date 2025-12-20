@@ -7,13 +7,15 @@ import { TourFilters } from "@/components/tours/TourFilters";
 import { TourPagination } from "@/components/tours/TourPagination";
 import { ChevronRight, Home, MapPin } from "lucide-react";
 
-export default async function DestinationDetailPage({
-  params,
-  searchParams,
-}: {
-  params: { id: string };
-  searchParams: Record<string, string | string[] | undefined>;
-}) {
+interface PageProps {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function DestinationDetailPage(props: PageProps) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+
   const destinationId = params.id;
 
   let destination;
@@ -22,6 +24,7 @@ export default async function DestinationDetailPage({
   } catch {
     notFound();
   }
+
   const apiParams = new URLSearchParams();
   if (searchParams.page) apiParams.set("page", searchParams.page as string);
   if (searchParams.search)
@@ -41,7 +44,6 @@ export default async function DestinationDetailPage({
 
   return (
     <div className="min-h-screen bg-slate-50/50">
-      {/* --- PHẦN 1: HERO BANNER & BREADCRUMB --- */}
       <div className="relative w-full h-[400px] md:h-[500px] overflow-hidden group">
         <div
           className="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105"
@@ -53,14 +55,11 @@ export default async function DestinationDetailPage({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
 
-        {/* Nội dung Banner */}
         <div className="absolute inset-0 container mx-auto px-4 flex flex-col justify-end pb-12">
-          {/* Tiêu đề lớn */}
           <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight drop-shadow-lg">
             {destination.name}
           </h1>
 
-          {/* Mô tả */}
           <p className="text-lg md:text-xl text-white/90 max-w-3xl leading-relaxed drop-shadow-md flex items-start gap-2">
             <MapPin className="w-6 h-6 mt-1 shrink-0 text-primary" />
             {destination.description ||
@@ -69,7 +68,6 @@ export default async function DestinationDetailPage({
         </div>
       </div>
 
-      {/* Breadcrumb */}
       <nav className="container mx-auto px-6 pt-6 text-base text-muted-foreground">
         <div className="flex items-center space-x-2">
           <Link
@@ -96,7 +94,6 @@ export default async function DestinationDetailPage({
         </div>
       </nav>
 
-      {/* --- PHẦN 2: NỘI DUNG CHÍNH --- */}
       <div className="container mx-auto py-6 px-4">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           <aside className="lg:col-span-1 h-fit sticky top-24 space-y-6">
@@ -108,7 +105,6 @@ export default async function DestinationDetailPage({
             </aside>
           </aside>
 
-          {/* DANH SÁCH TOUR */}
           <div className="lg:col-span-3 space-y-8">
             <div className="flex items-center justify-between pb-4 border-b">
               <h2 className="text-2xl font-bold text-gray-800">

@@ -7,6 +7,8 @@ import { DestinationJourney } from "@/components/home/DestinationJourney";
 import { TrustSignals } from "@/components/home/TrustSignals";
 import { Testimonials } from "@/components/home/Testimonials";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const popularDestinations = await destinationService.getPopular();
 

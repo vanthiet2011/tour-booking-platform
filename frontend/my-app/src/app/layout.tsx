@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: "Nền tảng đặt tour du lịch hàng đầu Việt Nam.",
 };
 
+export const dynamic = "force-dynamic";
+
 export default async function RootLayout({
   children,
 }: {
@@ -25,8 +27,11 @@ export default async function RootLayout({
   try {
     const paginatedData = await destinationService.getAll({ limit: 999 });
     destinations = paginatedData.items;
-  } catch (error) {
-    console.error("Lỗi không thể tải điểm đến cho Header:", error);
+  } catch {
+    console.warn(
+      "⚠️ Build warning: Could not fetch destinations for layout. Ignoring."
+    );
+    destinations = [];
   }
   return (
     <html lang="vi" suppressHydrationWarning>

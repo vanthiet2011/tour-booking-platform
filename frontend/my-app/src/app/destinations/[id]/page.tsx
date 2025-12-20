@@ -7,16 +7,19 @@ import { TourFilters } from "@/components/tours/TourFilters";
 import { TourPagination } from "@/components/tours/TourPagination";
 import { ChevronRight, Home, MapPin } from "lucide-react"; // Import icon
 
+interface DestinationPageProps {
+  params: { id: string };
+  searchParams: {
+    [key: string]: string | string[] | undefined;
+  };
+}
+
 export default async function DestinationDetailPage({
   params,
   searchParams,
-}: {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+}: DestinationPageProps) {
   const destinationId = params.id;
 
-  // Lấy thông tin điểm đến
   let destination;
   try {
     destination = await destinationService.getById(destinationId);
@@ -24,7 +27,6 @@ export default async function DestinationDetailPage({
     notFound();
   }
 
-  // Gọi API Tour
   const apiParams = new URLSearchParams();
   if (searchParams.page) apiParams.set("page", searchParams.page as string);
   if (searchParams.search)

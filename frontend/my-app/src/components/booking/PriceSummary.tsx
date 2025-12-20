@@ -1,7 +1,7 @@
 // src/components/booking/PriceSummary.tsx
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Ticket, Loader2 } from "lucide-react"; // Thêm Loader2
+import { ArrowRight, Ticket, Loader2 } from "lucide-react";
 
 interface PriceSummaryProps {
   tourCode: string;
@@ -15,7 +15,7 @@ interface PriceSummaryProps {
   adults: number;
   children: number;
   infants: number;
-  isSubmitting?: boolean; // Thêm prop này
+  isSubmitting?: boolean;
 }
 
 export const PriceSummary = ({
@@ -30,7 +30,7 @@ export const PriceSummary = ({
   adults,
   children,
   infants,
-  isSubmitting = false, // Giá trị mặc định
+  isSubmitting = false,
 }: PriceSummaryProps) => {
   const totalAdultPrice = adults * adultPrice;
   const totalChildPrice = children * childPrice;
@@ -65,7 +65,6 @@ export const PriceSummary = ({
 
         {/* Price Breakdown */}
         <div className="space-y-3">
-          {/* ... (phần chi tiết giá không đổi) ... */}
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Người lớn :</span>
             <span className="font-medium">
@@ -104,9 +103,9 @@ export const PriceSummary = ({
         {/* Book Button */}
         <Button
           type="submit"
-          form="booking-form" // ID này giờ sẽ trỏ đúng vào <form> trong BookingForm
+          form="booking-form"
           className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-semibold text-lg py-6 mt-4"
-          disabled={isSubmitting} // Vô hiệu hóa khi đang submit
+          disabled={isSubmitting}
         >
           {isSubmitting ? (
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />

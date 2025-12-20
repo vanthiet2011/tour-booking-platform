@@ -219,7 +219,7 @@ const CheckoutPageContent = () => {
 
           <div className="lg:col-span-1">
             <PriceSummary
-              tourCode={tourData.id.substring(0, 8).toUpperCase()}
+              tourCode={tourData.id.slice(0, 8).toUpperCase()}
               tourTitle={tourData.name}
               startDate={new Date(departureData.startDate).toLocaleDateString(
                 "vi-VN"

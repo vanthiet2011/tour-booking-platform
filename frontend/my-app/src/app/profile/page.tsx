@@ -96,7 +96,7 @@ export default function ProfilePage() {
         if (data.avatarUrl) {
           setAvatarPreview(data.avatarUrl);
         }
-      } catch (err) {
+      } catch {
         toast({
           title: "Lỗi",
           description: "Không thể tải thông tin hồ sơ của bạn.",

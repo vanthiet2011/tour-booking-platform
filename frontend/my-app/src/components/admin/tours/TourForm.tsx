@@ -4,7 +4,6 @@ import { PlusCircle, Trash, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import type { Destination } from "@/types/destination";
 import * as z from "zod";
 import useSWR, { mutate } from "swr";
 import Image from "next/image";

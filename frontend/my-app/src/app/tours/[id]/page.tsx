@@ -14,11 +14,13 @@ import { TourFAQ } from "@/components/tours/TourFAQ";
 import { BookingForm } from "@/components/tours/BookingForm";
 
 interface TourDetailPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function TourDetailPage(props: TourDetailPageProps) {
-  const { id } = await props.params;
+  const params = await props.params;
+  const { id } = params;
+
   const [tour, departures] = await Promise.all([
     tourService.getById(id),
     tourService.getTourDeparturesById(id),

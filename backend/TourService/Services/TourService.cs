@@ -5,6 +5,7 @@ using TourService.Events;
 using TourService.Kafka.Producers;
 using TourService.Models;
 using TourService.Repositories;
+using TourService.Constants;
 
 namespace TourService.Services
 {
@@ -43,10 +44,14 @@ namespace TourService.Services
       string? region = null,
       Guid? destinationId = null)
     {
-      string cacheKey = $"tours:list:{page}:{pageSize}:{search}:{minPrice}:{maxPrice}:{minDurationDays}:{maxDurationDays}:{region}:{destinationId}";
-      var cachedTours = await _cachingService.GetAsync<PaginatedResponse<TourListDto>>(cacheKey);
-      if (cachedTours != null)
-          return cachedTours;
+      string cacheKey = CacheKeys.GetTourListKey(page, pageSize, search, minPrice, maxPrice, minDurationDays, maxDurationDays, region, destinationId);
+
+      try {
+          var cachedTours = await _cachingService.GetAsync<PaginatedResponse<TourListDto>>(cacheKey);
+          if (cachedTours != null) return cachedTours;
+      } catch (Exception ex) {
+          _logger.LogError(ex, "Redis connection failed while fetching tours list");
+      }
 
       var toursFromDb = await _tourRepository.GetAllAsync(
         page, pageSize, search, minPrice, maxPrice,minDurationDays,maxDurationDays,region, destinationId);
@@ -59,7 +64,7 @@ namespace TourService.Services
 
     public async Task<TourDetailDto> GetTourByIdAsync(Guid id)
     {
-      string cacheKey = string.Format(CacheKeys.TourById, id);
+      string cacheKey = CacheKeys.GetTourByIdKey(id);
 
       var cachedTour = await _cachingService.GetAsync<TourDetailDto>(cacheKey);
       if (cachedTour != null) return cachedTour;
@@ -91,7 +96,7 @@ namespace TourService.Services
       var tourEntity = _mapper.Map<TourEntity>(createTourDto);
       await _tourRepository.CreateAsync(tourEntity);
 
-      await _cachingService.RemoveAsync(CacheKeys.TourPrefix);
+      await _cachingService.InvalidateTourCacheAsync(tourEntity.Id);
       return _mapper.Map<TourDetailDto>(tourEntity);
     }
     
@@ -103,7 +108,7 @@ namespace TourService.Services
       _mapper.Map(updateTourDto, tourEntity);
 
       await _tourRepository.UpdateAsync(tourEntity);
-      await _cachingService.RemoveAsync(CacheKeys.TourPrefix);
+      await _cachingService.InvalidateTourCacheAsync(id);
 
       return true;
     }
@@ -111,7 +116,7 @@ namespace TourService.Services
     public async Task<bool> DeleteTourAsync(Guid id)
     {
       var result = await _tourRepository.DeleteAsync(id);
-      if (result) await _cachingService.RemoveAsync(CacheKeys.TourPrefix);
+      if (result) await _cachingService.InvalidateTourCacheAsync(id);
       return result;
     }
 

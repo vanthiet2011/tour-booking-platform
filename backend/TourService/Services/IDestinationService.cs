@@ -15,9 +15,9 @@ namespace TourService.Services
             string? search, 
             PaginationParams paginationParams
         );
-        Task<DestinationEntity?> GetDestinationByIdAsync(Guid id);
+        Task<DestinationResponseDto?> GetDestinationByIdAsync(Guid id);
         Task<IEnumerable<DestinationResponseDto>> GetPopularDestinationsAsync(int count);
-        Task<DestinationEntity> CreateDestinationAsync(DestinationEntity destination, List<Guid> categoryIds);
+        Task<DestinationResponseDto> CreateDestinationAsync(DestinationEntity destination, List<Guid> categoryIds);
         Task UpdateDestinationAsync(DestinationEntity destination, List<Guid> categoryIds);
         Task DeleteDestinationAsync(Guid id);
     }

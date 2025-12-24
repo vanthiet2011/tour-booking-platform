@@ -26,7 +26,7 @@ export default function DestinationsClient() {
   } = useSWR(swrKey, ([pageNum]) =>
     destinationService.getAll({
       page: Number(pageNum),
-      limit: ITEMS_PER_PAGE,
+      pageSize: ITEMS_PER_PAGE,
     })
   );
 

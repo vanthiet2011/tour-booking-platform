@@ -21,7 +21,7 @@ async function EditTourPageContent({ id }: { id: string }) {
     const tourDataPromise = tourService.getById(id);
     const destinationsDataPromise = destinationService.getAll({
       page: 1,
-      limit: 999,
+      pageSize: 999,
     });
 
     [tourData, destinationsData] = await Promise.all([

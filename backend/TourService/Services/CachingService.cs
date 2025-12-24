@@ -61,5 +61,12 @@ namespace TourService.Services
             if (destId.HasValue)
                 await RemoveAsync(CacheKeys.GetDestByIdKey(destId.Value));
         }
+
+        public async Task InvalidateCategoryCacheAsync(Guid? catId = null)
+        {
+            await RemoveAsync(CacheKeys.CategoryList);
+            if (catId.HasValue)
+                await RemoveAsync(CacheKeys.GetCategoryByIdKey(catId.Value));
+        }
     }
 }

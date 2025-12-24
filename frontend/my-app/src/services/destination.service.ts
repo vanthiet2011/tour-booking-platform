@@ -3,27 +3,20 @@ import {
   Destination,
   CreateDestinationPayload,
   UpdateDestinationPayload,
+  GetAllDestinationsParams,
 } from "@/types/destination";
 
 import { PaginatedResponse } from "@/types";
-
-interface GetAllDestinationsParams {
-  categoryId?: string;
-  region?: string;
-  search?: string;
-  page?: number;
-  limit?: number;
-}
 
 const destinationService = {
   getAll: async (
     params?: GetAllDestinationsParams
   ): Promise<PaginatedResponse<Destination>> => {
-    const { limit, ...rest } = params || {};
+    const { pageSize, ...rest } = params || {};
 
     const apiParams = {
       ...rest,
-      pageSize: limit,
+      pageSize: pageSize,
     };
 
     const { data } = await apiClient.get<PaginatedResponse<Destination>>(

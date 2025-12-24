@@ -43,10 +43,26 @@ namespace TourService.Repositories
                 query = query.Where(d => d.DestinationCategories.Any(c => c.CategoryId == categoryId.Value));
 
             if (!string.IsNullOrEmpty(region))
-                query = query.Where(d => d.Region == region);
+            {
+                string dbRegionValue = "";
+                switch (region.ToLower())
+                {
+                    case "north": dbRegionValue = "Miền Bắc"; break;
+                    case "central": dbRegionValue = "Miền Trung"; break;
+                    case "south": dbRegionValue = "Miền Nam"; break;
+                }
+
+                if (!string.IsNullOrEmpty(dbRegionValue))
+                {
+                    query = query.Where(d => d.Region!.ToLower() == dbRegionValue.ToLower());  
+                }
+            }
 
             if (!string.IsNullOrEmpty(search))
-                query = query.Where(d => d.Name!.Contains(search) || d.Description!.Contains(search));
+            {
+                var s = search.ToLower();
+                query = query.Where(d => d.Name!.ToLower().Contains(s) || d.Description!.ToLower().Contains(s));
+            }
 
             var totalCount = await query.CountAsync();
 

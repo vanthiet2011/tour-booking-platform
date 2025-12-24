@@ -8,6 +8,6 @@ namespace TourService.Repositories
         Task<CategoryEntity> GetByIdAsync(Guid id);
         Task<CategoryEntity> CreateAsync(CategoryEntity category);
         Task UpdateAsync(CategoryEntity category);
-        Task DeleteAsync(Guid id);
+        Task<bool> DeleteAsync(Guid id);
     }
 }

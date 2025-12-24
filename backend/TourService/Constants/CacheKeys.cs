@@ -2,6 +2,10 @@ namespace TourService.Constants
 {
     public static class CacheKeys
     {
+        // CATEGORY KEYS
+        public const string CategoryList = "cats:all";
+        public static string GetCategoryByIdKey(Guid id) => $"cats:obj:{id}";
+
         // DESTINATION KEYS 
         public const string DestListPrefix = "dest:list";
         public const string DestPopular = "dest:popular";

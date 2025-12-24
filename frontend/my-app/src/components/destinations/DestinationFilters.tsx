@@ -17,48 +17,37 @@ import { Button } from "@/components/ui/button";
 interface DestinationFiltersProps {
   searchTerm: string;
   onSearchChange: (term: string) => void;
-
   selectedRegions: string[];
   onRegionChange: (regions: string[]) => void;
-
   allCategories: Category[];
   selectedCategory: string;
   onCategoryChange: (categoryId: string) => void;
 }
 
 const regionOptions = [
-  { id: "bắc", label: "Miền Bắc" },
-  { id: "trung", label: "Miền Trung" },
-  { id: "nam", label: "Miền Nam" },
+  { id: "north", label: "Miền Bắc" },
+  { id: "central", label: "Miền Trung" },
+  { id: "south", label: "Miền Nam" },
 ];
 
 export function DestinationFilters({
   searchTerm,
   onSearchChange,
   selectedRegions,
-  onRegionChange,
   allCategories,
   selectedCategory,
   onCategoryChange,
+  onRegionChange,
 }: DestinationFiltersProps) {
-  const handleRegionChange = (regionId: string, checked: boolean) => {
-    let newRegions: string[];
-    if (checked) {
-      newRegions = [...selectedRegions, regionId];
-    } else {
-      newRegions = selectedRegions.filter((id) => id !== regionId);
-    }
+  const handleRegionToggle = (regionId: string, checked: boolean) => {
+    const newRegions = checked
+      ? [...selectedRegions, regionId]
+      : selectedRegions.filter((r) => r !== regionId);
     onRegionChange(newRegions);
-  };
-  const handleResetFilters = () => {
-    onSearchChange("");
-    onRegionChange([]);
-    onCategoryChange("all");
   };
 
   return (
     <div className="p-6 bg-card border rounded-lg shadow-sm space-y-6">
-      {/* 1. BỘ LỌC TÌM KIẾM */}
       <div>
         <Label htmlFor="search" className="text-lg font-semibold">
           Tìm kiếm
@@ -74,7 +63,6 @@ export function DestinationFilters({
 
       <Separator />
 
-      {/* 2. BỘ LỌC VÙNG MIỀN */}
       <div>
         <h3 className="text-lg font-semibold mb-3">Vùng miền</h3>
         <div className="space-y-3">
@@ -84,7 +72,7 @@ export function DestinationFilters({
                 id={region.id}
                 checked={selectedRegions.includes(region.id)}
                 onCheckedChange={(checked) =>
-                  handleRegionChange(region.id, !!checked)
+                  handleRegionToggle(region.id, !!checked)
                 }
               />
               <Label htmlFor={region.id} className="cursor-pointer">
@@ -97,7 +85,6 @@ export function DestinationFilters({
 
       <Separator />
 
-      {/* 3. BỘ LỌC DANH MỤC */}
       <div>
         <h3 className="text-lg font-semibold mb-3">Danh mục</h3>
         <Select value={selectedCategory} onValueChange={onCategoryChange}>
@@ -117,8 +104,15 @@ export function DestinationFilters({
 
       <Separator />
 
-      {/* 4. NÚT ĐẶT LẠI */}
-      <Button variant="outline" className="w-full" onClick={handleResetFilters}>
+      <Button
+        variant="outline"
+        className="w-full"
+        onClick={() => {
+          onSearchChange("");
+          onRegionChange([]);
+          onCategoryChange("all");
+        }}
+      >
         Đặt lại bộ lọc
       </Button>
     </div>

@@ -8,5 +8,6 @@ namespace TourService.Services
         Task RemoveByPrefixAsync(string prefix);
         Task InvalidateTourCacheAsync(Guid? tourId = null);
         Task InvalidateDestinationCacheAsync(Guid? destId = null);
+        Task InvalidateCategoryCacheAsync(Guid? catId = null);
     }
 }

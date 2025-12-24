@@ -25,7 +25,7 @@ export default async function RootLayout({
   const googleClientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || "";
   let destinations: Destination[] = [];
   try {
-    const paginatedData = await destinationService.getAll({ limit: 999 });
+    const paginatedData = await destinationService.getAll({ pageSize: 999 });
     destinations = paginatedData.items;
   } catch {
     console.warn(

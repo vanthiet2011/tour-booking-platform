@@ -24,6 +24,14 @@ export interface CreateDestinationPayload {
   categoryIds: string[];
 }
 
+export interface GetAllDestinationsParams {
+  categoryId?: string;
+  region?: string;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}
+
 export type UpdateDestinationPayload = CreateDestinationPayload;
 
 export type DestinationPagingResponse = PagingResponse<Destination>;

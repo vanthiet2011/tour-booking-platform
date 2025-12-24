@@ -64,7 +64,7 @@ export function Step1_GeneralInfo() {
   const { control } = useFormContext<MultiStepTourFormValues>();
 
   const { data: destinations } = useSWR("/api/destinations?limit=1000", () =>
-    destinationService.getAll({ limit: 1000 })
+    destinationService.getAll({ pageSize: 1000 })
   );
   const destinationOptions =
     destinations?.items?.map((d) => ({ value: d.id, label: d.name })) || [];

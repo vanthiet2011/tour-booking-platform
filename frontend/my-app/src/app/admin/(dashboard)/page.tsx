@@ -243,7 +243,7 @@ function ChartCard({ title, data, colors }: { title: string; data: { name: strin
           </div>
 
           <div className="w-1/2 space-y-4">
-            {data.map((entry: any, index: number) => (
+            {data.map((entry: { name: string; value: number; color?: string }, index: number) => (
               <div
                 key={index}
                 className="flex items-center justify-between text-sm"

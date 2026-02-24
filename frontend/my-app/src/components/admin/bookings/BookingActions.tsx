@@ -43,8 +43,8 @@ export default function BookingActions({ booking }: BookingActionsProps) {
       });
       toast.success("Xác nhận thanh toán thành công!");
       window.location.reload();
-    } catch (error: any) {
-      toast.error(error?.message || "Có lỗi xảy ra khi xác nhận thanh toán.");
+    } catch (error: unknown) {
+      toast.error((error as { message?: string })?.message || "Có lỗi xảy ra khi xác nhận thanh toán.");
     } finally {
       setLoading(false);
       setShowPaymentDialog(false);
@@ -60,11 +60,12 @@ export default function BookingActions({ booking }: BookingActionsProps) {
       );
       toast.success("Đã hủy đơn hàng thành công!");
       window.location.reload();
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Cancel Error:", error);
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
       const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
+        err?.response?.data?.message ||
+        err?.message ||
         "Có lỗi xảy ra khi hủy đơn.";
       toast.error(errorMessage);
     } finally {

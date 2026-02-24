@@ -1,6 +1,5 @@
 import {
-  InitiatePaymentRequest,
-  InitiatePaymentResponse,
+
   PaymentStatus,
 } from "@/types/payment";
 import apiClient from "./api-client";

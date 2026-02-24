@@ -26,7 +26,6 @@ import {
   Cell,
   ResponsiveContainer,
   Tooltip,
-  Legend,
 } from "recharts";
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
@@ -177,7 +176,7 @@ export default function AdminDashboard() {
 
 // --- Các Component hỗ trợ ---
 
-function StatCard({ title, value, icon, trend, color, bgColor, isMoney }: any) {
+function StatCard({ title, value, icon, trend, color, bgColor, isMoney }: { title: string; value: string | number; icon: React.ReactNode; trend?: React.ReactNode; color?: string; bgColor?: string; isMoney?: boolean }) {
   return (
     <Card className="border-none shadow-sm overflow-hidden group hover:shadow-md transition-all dark:bg-slate-900 dark:border dark:border-slate-800">
       <CardContent className="p-6">
@@ -206,7 +205,7 @@ function StatCard({ title, value, icon, trend, color, bgColor, isMoney }: any) {
   );
 }
 
-function ChartCard({ title, data, colors }: any) {
+function ChartCard({ title, data, colors }: { title: string; data: { name: string; value: number; color?: string }[]; colors?: Record<string, string> }) {
   return (
     <Card className="border-none shadow-sm bg-white dark:bg-slate-900 dark:border dark:border-slate-800">
       <CardHeader className="pb-2">
@@ -228,7 +227,7 @@ function ChartCard({ title, data, colors }: any) {
                   nameKey="name"
                   stroke="none"
                 >
-                  {data.map((entry: any, index: number) => (
+                  {data.map((entry: { name: string; value: number; color?: string }, index: number) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={entry.color || colors?.[entry.name] || "#cbd5e1"}
@@ -272,7 +271,7 @@ function ChartCard({ title, data, colors }: any) {
   );
 }
 
-function RecentBookingsTable({ data }: { data: any[] }) {
+function RecentBookingsTable({ data }: { data: { bookingId: string; customerName: string; totalPrice: number; status: string }[] }) {
   return (
     <Card className="border-none shadow-sm dark:bg-slate-900 dark:border dark:border-slate-800">
       <CardHeader className="flex flex-row items-center justify-between">

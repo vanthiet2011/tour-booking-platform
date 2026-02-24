@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Card } from "@/components/ui/card";
 import { Star, User } from "lucide-react";
 import Image from "next/image";
@@ -19,7 +19,7 @@ export function TourReviews({ tourId }: TourReviewsProps) {
   const [canReview, setCanReview] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [reviewsData, eligibility] = await Promise.all([
         reviewService.getReviewsByTourId(tourId),
@@ -32,11 +32,11 @@ export function TourReviews({ tourId }: TourReviewsProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tourId]);
 
   useEffect(() => {
     fetchData();
-  }, [tourId]);
+  }, [fetchData]);
 
   const averageRating =
     reviews.length > 0

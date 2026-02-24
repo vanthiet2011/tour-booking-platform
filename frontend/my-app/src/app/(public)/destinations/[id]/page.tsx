@@ -1,11 +1,11 @@
-import Link from "next/link";
+
 import { notFound } from "next/navigation";
 import tourService from "@/services/tour.service";
 import destinationService from "@/services/destination.service";
 import { TourCard } from "@/components/tours/TourCard";
 import { TourFilters } from "@/components/tours/TourFilters";
 import { TourPagination } from "@/components/tours/TourPagination";
-import { ChevronRight, Home, MapPin, Ticket } from "lucide-react";
+import { Home, MapPin } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 
 interface PageProps {

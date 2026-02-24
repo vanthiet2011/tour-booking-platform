@@ -51,7 +51,7 @@ export const PriceSummary = ({
 
   const formatPrice = (price: number) => price.toLocaleString("vi-VN");
 
-  const isCancel = actionLabel === "Hủy tour";
+
 
   return (
     <Card className="p-6 sticky top-6">

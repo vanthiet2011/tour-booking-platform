@@ -81,8 +81,8 @@ export default function AdminProfilePage() {
         });
         if (data.avatarUrl) setAvatarPreview(data.avatarUrl);
       }
-    } catch (error: any) {
-      if (error.response?.status === 404) {
+    } catch (error: unknown) {
+      if ((error as { response?: { status?: number } }).response?.status === 404) {
         toast({
           title: "Thông tin trống",
           description: "Vui lòng cập nhật thông tin hồ sơ Quản trị viên.",
@@ -97,7 +97,7 @@ export default function AdminProfilePage() {
     } finally {
       setIsProfileLoading(false);
     }
-  }, []);
+  }, [form, toast]);
 
   useEffect(() => {
     if (isAuthLoading) return;

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense, useCallback } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   CheckCircle,
@@ -61,7 +61,7 @@ function PaymentResultContent() {
             return;
         }
     
-        let timeoutId: NodeJS.Timeout;
+
         let currentRetry = 0;
     
         const checkPaymentStatus = async () => {
@@ -95,13 +95,13 @@ function PaymentResultContent() {
               default:
                 currentRetry++;
                 setRetryCount(currentRetry);
-                timeoutId = setTimeout(checkPaymentStatus, 3000);
+                setTimeout(checkPaymentStatus, 3000);
                 break;
             }
-          } catch (err) {
+          } catch {
             currentRetry++;
             setRetryCount(currentRetry);
-            timeoutId = setTimeout(checkPaymentStatus, 3000);
+            setTimeout(checkPaymentStatus, 3000);
           }
         };
     

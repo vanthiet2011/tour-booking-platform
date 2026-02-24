@@ -34,10 +34,10 @@ export function ReviewForm({ tourId, onSuccess }: ReviewFormProps) {
       });
       reset();
       onSuccess();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Lỗi",
-        description: error.response?.data?.message || "Không thể gửi đánh giá. Vui lòng thử lại.",
+        description: (error as { response?: { data?: { message?: string } } }).response?.data?.message || "Không thể gửi đánh giá. Vui lòng thử lại.",
         variant: "destructive",
       });
     }

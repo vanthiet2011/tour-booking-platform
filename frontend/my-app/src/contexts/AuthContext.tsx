@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
               fullName: profileData.fullName,
               avatarUrl: profileData.avatarUrl,
             };
-          } catch (profileError) {
+          } catch {
             console.log("Profile chưa tồn tại hoặc không tải được.");
             fullUserData.fullName = null;
             fullUserData.avatarUrl = null;

@@ -7,9 +7,7 @@ import { PaginationComponent } from "@/components/ui/PaginationComponent";
 import tourService from "@/services/tour.service";
 import type { TourPagingResponse, Tour } from "@/types/tour";
 import { TourFilters } from "@/components/tours/TourFilters";
-import Link from "next/link";
-import { ChevronRight, Home, MapPin } from "lucide-react";
-import Image from "next/image";
+import { Home, MapPin } from "lucide-react";
 import { PageHeader } from "@/components/layout/PageHeader";
 
 function ToursPageContent() {

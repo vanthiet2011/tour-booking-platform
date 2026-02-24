@@ -27,7 +27,7 @@ import authService from "@/services/auth.service";
 interface DecodedToken {
   sub: string;
   email: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface ApiUser {
@@ -108,7 +108,7 @@ export function AdminLoginForm() {
   const onFormSubmit = async (values: LoginFormValues) => {
     try {
       const response = await authService.login(values);
-      handleLoginSuccess(response as any, values.rememberMe);
+      handleLoginSuccess(response as LoginResponse, values.rememberMe);
     } catch (error: unknown) {
       const apiError = error as ApiError;
       toast({

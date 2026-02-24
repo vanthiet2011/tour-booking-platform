@@ -108,7 +108,7 @@ export default function ProfilePage() {
     };
 
     loadProfile();
-  }, [user, isAuthLoading]);
+  }, [user, isAuthLoading, form, router, toast]);
 
   const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

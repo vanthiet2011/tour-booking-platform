@@ -8,10 +8,8 @@ import categoryService from "@/services/category.service";
 import { DestinationCard } from "@/components/destinations/DestinationCard";
 import { DestinationFilters } from "@/components/destinations/DestinationFilters";
 import { PaginationComponent } from "@/components/ui/PaginationComponent";
-import { ChevronRight, Frown, Home, Loader2 } from "lucide-react";
-import Link from "next/link";
+import { Frown, Home, Loader2 } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
-import Image from "next/image";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { MapPin } from "lucide-react";
 

@@ -23,7 +23,7 @@ const CheckoutPageContent = () => {
   const { user } = useAuth();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [sagaStatus, setSagaStatus] = useState<
+  const [, setSagaStatus] = useState<
     "idle" | "creating" | "confirming" | "ready"
   >("idle");
   const [isLoadingData, setIsLoadingData] = useState(true);
@@ -34,7 +34,7 @@ const CheckoutPageContent = () => {
   );
 
   // Booking & Payment states
-  const [bookingId, setBookingId] = useState<string | null>(null);
+  const [, setBookingId] = useState<string | null>(null);
   const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(
     null,
   );
@@ -144,7 +144,7 @@ const CheckoutPageContent = () => {
         contactAddress: formData.address,
         note: formData.note,
         paymentMethod: PaymentMethod[selectedMethod!], // Send string name (e.g. "PayPal") not number
-        bookingDetails: payloadDetails as any, // Cast to avoid TS error with strict types if needed, or update types
+        bookingDetails: payloadDetails as unknown as BookingDetail[], // Cast to avoid TS error with strict types if needed, or update types
       });
 
       const newBookingId = booking.id;
@@ -182,7 +182,7 @@ const CheckoutPageContent = () => {
 
       return { paymentLink, paymentId }; // Trả về cấu trúc tương tự để logic dưới dùng được
     } catch (error: unknown) {
-      const err = error as any;
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
       const errorMsg =
         err.response?.data?.message || err.message || "Lỗi khởi tạo";
       console.error("❌ Lỗi PayPal:", errorMsg);

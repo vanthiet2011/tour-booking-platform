@@ -33,10 +33,7 @@ export const BookingFormReadOnly = ({
     },
   ];
 
-  // Logic to find the mathing option based on the string name returned from backend
-  const selectedOption = paymentOptions.find(
-    (opt) => PaymentMethod[opt.id] === paymentMethod || opt.id.toString() === paymentMethod
-  );
+
   return (
     <div className="space-y-6">
       <div>

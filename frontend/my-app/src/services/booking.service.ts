@@ -1,5 +1,5 @@
 // src/services/booking.service.ts
-import { PaginatedResponse } from "@/types";
+
 import apiClient from "./api-client";
 import { Booking, BookingPayload, BookingPaginationResponse } from "@/types/booking";
 

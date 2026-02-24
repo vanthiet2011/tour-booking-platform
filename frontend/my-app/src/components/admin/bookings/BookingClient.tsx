@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from "react";
 import bookingService from "@/services/booking.service"; // Import service mới
-import { Booking, BookingPaginationResponse } from "@/types/booking";
+import { BookingPaginationResponse } from "@/types/booking";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
 import { PaginationComponent } from "@/components/ui/PaginationComponent";
@@ -13,7 +13,7 @@ export default function BookingClient() {
     null
   );
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [, setLoading] = useState(true);
 
   useEffect(() => {
     const loadData = async () => {

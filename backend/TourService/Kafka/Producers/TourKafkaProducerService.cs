@@ -8,22 +8,32 @@ namespace TourService.Kafka.Producers
     {
         private readonly IProducer<string, string> _producer;
         private readonly ILogger<TourKafkaProducerService> _logger;
+        IConfiguration _configuration;
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
-        public TourKafkaProducerService(IProducer<string, string> producer, ILogger<TourKafkaProducerService> logger)
+        private const string Domain = "vietnature";
+        private const string Service = "tour-service";
+        public TourKafkaProducerService(IProducer<string, string> producer, ILogger<TourKafkaProducerService> logger, IConfiguration configuration)
         {
             _producer = producer;
             _logger = logger;
+            _configuration = configuration;
+        }
+        public async Task ProduceTourCreatedAsync(TourCreatedEvent eventData, CancellationToken cancellationToken = default)
+        {
+            string topic = GetTopicName("tour", "created"); 
+            await ProduceMessageAsync(topic, eventData.TourId.ToString(), eventData, cancellationToken);
         }
 
         public async Task ProduceSlotsReservedAsync(SlotsReservedEvent eventData, CancellationToken cancellationToken = default)
         {
-            await ProduceMessageAsync("slots.reserved", eventData.BookingId.ToString(), eventData, cancellationToken);
+            string topic = GetTopicName("booking", "slotsreserved");
+            await ProduceMessageAsync(topic, eventData.BookingId.ToString(), eventData, cancellationToken);
         }
 
         public async Task ProduceSlotsFailedAsync(SlotsFailedEvent eventData, CancellationToken cancellationToken = default)
         {
-            await ProduceMessageAsync("slots.failed", eventData.BookingId.ToString(), eventData, cancellationToken);
+            string topic = GetTopicName("booking", "slotsfailed");
+            await ProduceMessageAsync(topic, eventData.BookingId.ToString(), eventData, cancellationToken);
         }
 
         // Phương thức chung để gửi message
@@ -47,6 +57,24 @@ namespace TourService.Kafka.Producers
                     typeof(T).Name, topic, key, e.Error.Reason);
                 throw;
             }
+        }
+
+        public async Task ProduceTourUpdatedAsync(TourUpdatedEvent eventData, CancellationToken cancellationToken = default)
+        {
+            string topic = GetTopicName("tour", "updated");
+            await ProduceMessageAsync(topic, eventData.TourId.ToString(), eventData, cancellationToken);
+        }
+
+        public async Task ProduceTourDeletedAsync(TourDeletedEvent eventData, CancellationToken cancellationToken = default)
+        {
+            string topic = GetTopicName("tour", "deleted");
+            await ProduceMessageAsync(topic, eventData.TourId.ToString(), eventData, cancellationToken);
+        }
+
+        private string GetTopicName(string resource, string @event)
+        {
+            var env = _configuration["Environment"]?.ToLower() ?? "dev";
+            return $"{env}.{Domain}.{Service}.{resource}.{@event}";
         }
     }
 }

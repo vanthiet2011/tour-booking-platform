@@ -10,6 +10,7 @@ namespace UserService.Data
         {
         }
         public DbSet<UserProfileEntity> UserProfiles { get; set; }
+        public DbSet<DashboardStatsEntity> DashboardStats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

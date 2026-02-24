@@ -14,21 +14,20 @@ namespace PaymentService.Entities
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Amount { get; set; }
         [Required]
-        public PaymentStatus Status { get; set; }
-        [MaxLength(50)]
-        public string PaymentGatewayName { get; set; } = string.Empty;
+        public PaymentStatus Status { get; set; } = PaymentStatus.Pending;
+        [Required]
+        public PaymentMethod PaymentMethod { get; set; }
         [MaxLength(255)]
         public string? PaymentIntentId { get; set; } 
         [Column(TypeName = "text")]
         public string? PaymentLink { get; set; }
         [MaxLength(255)]
         public string? PaymentGatewayTransactionId { get; set; }
-        [MaxLength(100)]
-        public string? ErrorCode { get; set; }
         [Column(TypeName = "text")]
         public string? ErrorMessage { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+        [MaxLength(100)]
         public DateTime? ExpiresAt { get; set; }
     }
 }

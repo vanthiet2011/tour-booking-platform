@@ -13,7 +13,7 @@ const staticHighlights: { icon: LucideIcon; title: string }[] = [
 
 export function TourOverview({ highlights = [] }: TourOverviewProps) {
   return (
-    <section className="bg-secondary/30 py-6">
+    <section className="py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="mb-4 font-sans text-3xl font-bold text-foreground sm:text-4xl lg:text-4xl">

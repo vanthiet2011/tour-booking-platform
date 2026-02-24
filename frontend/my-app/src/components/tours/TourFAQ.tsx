@@ -40,7 +40,7 @@ export function TourFAQ() {
   ];
 
   return (
-    <section className="py-16 sm:py-24">
+    <section className="bg-muted/30 py-16 sm:py-24">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="mb-4 font-serif text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">

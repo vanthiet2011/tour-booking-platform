@@ -12,7 +12,7 @@ export function TourGallery({ tour }: { tour: Tour }) {
   }
 
   return (
-    <section className="bg-secondary/30 py-6">
+    <section className="bg-muted/30 py-6">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-12 text-center">
           <h2 className="mb-4 font-sans text-3xl font-bold text-foreground sm:text-4xl lg:text-4xl">

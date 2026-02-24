@@ -19,7 +19,13 @@ namespace TourService.Mappings
             CreateMap(typeof(PaginatedResponse<>), typeof(PaginatedResponse<>));
             // CreateMap<PaginatedResponse<TourEntity>, PaginatedResponse<TourDetailDto>>();
             CreateMap<TourScheduleEntity, TourScheduleDto>();
-            CreateMap<TourDepartureEntity, TourDepartureDto>();
+            CreateMap<TourDepartureEntity, TourDepartureDto>()
+                .ForMember(dest => dest.TotalSlots, opt => opt.MapFrom(src => src.TotalSlots))
+                .ForMember(dest => dest.AvailableSlots, opt => opt.MapFrom(src => src.TotalSlots));
+
+            CreateMap<CreateTourDepartureDto, TourDepartureEntity>()
+                .ForMember(dest => dest.TotalSlots, opt => opt.MapFrom(src => src.TotalSlots))
+                .ForMember(dest => dest.AvailableSlots, opt => opt.MapFrom(src => src.TotalSlots));
 
             CreateMap<CreateDestinationDto, DestinationEntity>().ForMember(dest => dest.DestinationCategories, opt => opt.Ignore());
             CreateMap<UpdateDestinationDto, DestinationEntity>();
@@ -55,11 +61,15 @@ namespace TourService.Mappings
                 .ForMember(dest => dest.TourSchedules, opt => opt.MapFrom(src => src.Schedules))
                 .ForMember(dest => dest.TourDepartures, opt => opt.MapFrom(src => src.TourDepartures));
 
+            
+
             CreateMap<UpdateTourDto, TourEntity>()
                 .ForMember(dest => dest.TourDestinations, opt => opt.MapFrom(src =>
                     src.DestinationIds.Select(id => new TourDestinationEntity { DestinationId = id })))
                 .ForMember(dest => dest.TourSchedules, opt => opt.MapFrom(src => src.Schedules))
                 .ForMember(dest => dest.TourDepartures, opt => opt.MapFrom(src => src.TourDepartures));
+
+            CreateMap<ReviewEntity, ReviewResponseDto>();
         }
     }
 }

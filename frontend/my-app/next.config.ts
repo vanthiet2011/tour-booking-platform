@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
       {
         protocol: "http",
         hostname: "localhost",
+        port: "5003",
+        pathname: "/uploads/**",
       },
     ],
   },
@@ -19,6 +21,10 @@ const nextConfig: NextConfig = {
       {
         source: "/api/:path*",
         destination: `${internalApiBaseUrl}/:path*`,
+      },
+      {
+        source: "/uploads/:path*",
+        destination: "http://localhost:5003/uploads/:path*",
       },
     ];
   },

@@ -31,4 +31,7 @@ public class CreateBookingDto
     [Required]
     [MinLength(1, ErrorMessage = "Phải có ít nhất một chi tiết đặt tour.")]
     public List<ParticipantCountDto> BookingDetails { get; set; } = new List<ParticipantCountDto>();
+
+    [Required]
+    public string PaymentMethod { get; set; } = "AtOffice";
 }

@@ -33,4 +33,22 @@ public class TourServiceClient : ITourServiceClient
         var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         return await response.Content.ReadFromJsonAsync<TourPricingDto>(options);
     }
+
+    public async Task<Dictionary<Guid, string>> GetTourNamesAsync(IEnumerable<Guid> tourIds)
+    {
+        if (tourIds == null || !tourIds.Any()) return new Dictionary<Guid, string>();
+
+        var queryString = string.Join("&", tourIds.Select(id => $"ids={id}"));
+        
+        var response = await _httpClient.GetAsync($"/Tours/batch-names?{queryString}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadFromJsonAsync<Dictionary<Guid, string>>() 
+                ?? new Dictionary<Guid, string>();
+        }
+
+        return new Dictionary<Guid, string>();
+    }
+
 }

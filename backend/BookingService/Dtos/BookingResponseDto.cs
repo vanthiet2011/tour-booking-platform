@@ -1,5 +1,4 @@
-// File: BookingService/Dtos/BookingResponseDto.cs
-// ĐÃ SỬA LẠI:
+
 namespace BookingService.Dtos;
 
 public class BookingResponseDto
@@ -17,5 +16,5 @@ public class BookingResponseDto
     public DateTime CreatedAt { get; set; }
     public DateTime StartDate { get; set; }
     public string? PaymentLink { get; set; }
-    public List<BookingDetailResponseDto> Details { get; set; } = new();
+    public List<BookingDetailResponseDto> BookingDetails { get; set; } = new();
 }

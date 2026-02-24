@@ -190,12 +190,21 @@ namespace TourService.Repositories
             {
                 StartDate = d.StartDate,
                 EndDate = d.EndDate,
-                AvailableSlots = d.AvailableSlots,
+                TotalSlots = d.TotalSlots,
+                AvailableSlots = d.TotalSlots,
                 Tour = existingTour
             }).ToList();
             await _context.SaveChangesAsync();
             
             return existingTour;
+        }
+
+        public async Task<Dictionary<Guid, string>> GetNamesByIdsAsync(List<Guid> ids)
+        {
+            return await _context.Tours
+                .Where(t => ids.Contains(t.Id))
+                .Select(t => new { t.Id, t.Name })
+                .ToDictionaryAsync(x => x.Id, x => x.Name);
         }
     }
 }

@@ -7,10 +7,13 @@ namespace BookingService.Services;
 
 public interface IBookingService
 {
-    Task<BookingEntity> CreateBookingAsync(Guid userId, CreateBookingDto dto);
+    Task<PaginatedResponseDto<BookingSummaryResponseDto>> GetAllBookingsAsync(int page, int pageSize);
+    Task<BookingEntity> CreateBookingAsync(Guid userId, CreateBookingDto dto, string ipAddress);
     Task<BookingEntity?> GetBookingByIdAsync(Guid id);
     Task<IEnumerable<BookingResponseDto>> GetBookingsByUserIdAsync(Guid userId);
-    Task UpdateBookingPaymentLinkAsync(Guid bookingId, string paymentLink);
-    Task UpdateBookingStatusAsync(Guid bookingId, BookingStatus newStatus, string? reason = null);
+    Task UpdateBookingStatusAsync(Guid bookingId, BookingStatus newStatus, string? reason = null, string? paymentMethod = null);
+    Task CancelBookingAsync(Guid bookingId, Guid userId);
+    Task CancelBookingByAdminAsync(Guid bookingId, string reason);
     Task HandlePaymentFailureAsync(PaymentFailedEvent failureEvent);
+    Task<bool> HasCompletedBookingAsync(Guid userId, Guid tourId);
 }

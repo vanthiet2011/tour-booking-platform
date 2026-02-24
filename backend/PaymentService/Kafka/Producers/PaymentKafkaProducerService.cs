@@ -8,28 +8,31 @@ namespace PaymentService.Kafka.Producers
     {
         private readonly IProducer<string, string> _producer;
         private readonly ILogger<PaymentKafkaProducerService> _logger;
+        private readonly IConfiguration _configuration;
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
-        // Inject IProducer gốc của Confluent Kafka
-        public PaymentKafkaProducerService(IProducer<string, string> producer, ILogger<PaymentKafkaProducerService> logger)
+        private const string Domain = "vietnature";
+        private const string Service = "payment-service";
+        public PaymentKafkaProducerService(IProducer<string, string> producer, ILogger<PaymentKafkaProducerService> logger, IConfiguration configuration)
         {
             _producer = producer;
             _logger = logger;
+            _configuration = configuration;
         }
-
-        public async Task ProduceInitiatePaymentAsync(InitiatePaymentEvent eventData, CancellationToken cancellationToken = default)
+        public async Task ProducePaymentCreatedAsync(PaymentCreatedEvent eventData, CancellationToken cancellationToken = default)
         {
-            await ProduceMessageAsync("payment.initiated", eventData.BookingId.ToString(), eventData, cancellationToken);
+            string topic = GetTopicName("payment", "created");
+            await ProduceMessageAsync(topic, eventData.BookingId.ToString(), eventData, cancellationToken);
         }
-
         public async Task ProducePaymentSucceededAsync(PaymentSucceededEvent eventData, CancellationToken cancellationToken = default)
         {
-            await ProduceMessageAsync("payment.succeeded", eventData.BookingId.ToString(), eventData, cancellationToken);
+            string topic = GetTopicName("payment", "succeeded");
+            await ProduceMessageAsync(topic, eventData.BookingId.ToString(), eventData, cancellationToken);
         }
 
         public async Task ProducePaymentFailedAsync(PaymentFailedEvent eventData, CancellationToken cancellationToken = default)
         {
-            await ProduceMessageAsync("payment.failed", eventData.BookingId.ToString(), eventData, cancellationToken);
+            string topic = GetTopicName("payment", "failed");
+            await ProduceMessageAsync(topic, eventData.BookingId.ToString(), eventData, cancellationToken);
         }
         private async Task ProduceMessageAsync<T>(string topic, string key, T value, CancellationToken cancellationToken) where T : class
         {
@@ -51,6 +54,12 @@ namespace PaymentService.Kafka.Producers
                     typeof(T).Name, topic, key, e.Error.Reason);
                 throw; 
             }
+        }
+
+        private string GetTopicName(string resource, string @event)
+        {
+            var env = _configuration["Environment"]?.ToLower() ?? "dev";
+            return $"{env}.{Domain}.{Service}.{resource}.{@event}";
         }
     }
 }

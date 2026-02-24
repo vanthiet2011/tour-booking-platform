@@ -10,7 +10,7 @@ namespace TourService.Kafka.Consumers
         private readonly ILogger<SlotsReleaseConsumer> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _configuration;
-        private readonly string _topic = "slots.release.requested";
+        private readonly string _topic = "dev.vietnature.booking-service.slots.release-requested";
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         public SlotsReleaseConsumer(

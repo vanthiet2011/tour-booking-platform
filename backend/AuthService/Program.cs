@@ -1,14 +1,33 @@
 using System.Text;
 using AuthService.Data;
+using AuthService.Events;
+using AuthService.Kafka.Producers;
 using AuthService.Repositories;
 using AuthService.Services;
+using AuthService.Services.Interfaces;
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using UserService.Repositories;
+using Serilog;
+using Serilog.Exceptions;
+using AuthService.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Cấu hình Serilog
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
+    .Enrich.WithMachineName()
+    .Enrich.WithProperty("Application", "AuthService") // Tên service để lọc log
+    .WriteTo.Console()
+    .WriteTo.Http("http://logstash:5044", queueLimitBytes: null) // Gửi log tới Logstash
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
@@ -22,7 +41,13 @@ builder.Services.Configure<RouteOptions>(options =>
 
 builder.Services.AddScoped<IAuthRepository, AuthRepository>();
 builder.Services.AddScoped<IAuthService, AuthService.Services.AuthService>();
-builder.Services.AddSingleton<KafkaProducerService>();
+builder.Services.AddSingleton<IProducer<string, string>>(sp => 
+{
+    var config = new ProducerConfig { BootstrapServers = builder.Configuration["Kafka:BootstrapServers"] };
+    return new ProducerBuilder<string, string>(config).Build();
+});
+
+builder.Services.AddSingleton<IAuthKafkaProducerService, AuthKafkaProducerService>();
 builder.Services.AddSingleton<JwtService>();
 
 builder.Services.AddHttpClient();
@@ -107,6 +132,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+app.UseMiddleware<CorrelationIdMiddleware>();
 app.UseAuthentication();
 app.UseAuthorization();
 

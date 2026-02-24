@@ -3,6 +3,7 @@ using BookingService.Events;
 using BookingService.Repositories;
 using BookingService.Enums;
 using System.Text.Json;
+using BookingService.Services;
 
 namespace BookingService.Kafka.Consumers
 {
@@ -11,8 +12,7 @@ namespace BookingService.Kafka.Consumers
         private readonly ILogger<SlotsResponseConsumer> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _configuration;
-        // Chỉ lắng nghe topic 'slots.failed'
-        private readonly string _topic = "slots.failed";
+        private readonly string _topic = "dev.vietnature.tour-service.booking.slotsfailed";
 
         public SlotsResponseConsumer(
             IServiceScopeFactory scopeFactory,
@@ -92,25 +92,23 @@ namespace BookingService.Kafka.Consumers
         private async Task ProcessSlotsFailed(SlotsFailedEvent eventData)
         {
             using var scope = _scopeFactory.CreateScope();
-            var repository = scope.ServiceProvider.GetRequiredService<IBookingRepository>();
-            
-            var booking = await repository.GetByIdAsync(eventData.BookingId);
+            var bookingService = scope.ServiceProvider.GetRequiredService<IBookingService>();
+    
+            _logger.LogWarning("❌ Nhận tin nhắn thất bại slots cho Booking: {BookingId}. Đang thực hiện chuyển trạng thái Failed...", 
+                eventData.BookingId);
 
-            if (booking != null && booking.Status == BookingStatus.Pending)
+            try 
             {
-                booking.Status = BookingStatus.Failed;
-                booking.FailureReason = eventData.Reason; 
-                booking.UpdatedAt = DateTime.UtcNow;
-                
-                await repository.UpdateAsync(booking);
-                
-                _logger.LogWarning("❌ Booking {BookingId} status updated to Failed. Reason: {Reason}", 
-                    booking.Id, eventData.Reason);
+                await bookingService.UpdateBookingStatusAsync(
+                    eventData.BookingId, 
+                    BookingStatus.Failed, 
+                    eventData.Reason);
+
+                _logger.LogInformation("✅ Đã xử lý xong slots.failed cho Booking {BookingId}.", eventData.BookingId);
             }
-            else
+            catch (Exception ex)
             {
-                _logger.LogWarning("Booking {BookingId} not found or status was not Pending (status: {Status}). 'slots.failed' message ignored.", 
-                    eventData.BookingId, booking?.Status);
+                _logger.LogError(ex, "❌ Lỗi khi gọi UpdateBookingStatusAsync cho đơn hàng {BookingId}", eventData.BookingId);
             }
         }
     }

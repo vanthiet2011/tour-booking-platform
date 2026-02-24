@@ -19,7 +19,7 @@ export const TourClient: React.FC = () => {
     data: paginatedData,
     error,
     isLoading,
-  } = useSWR(swrKey, ([pageNum]) =>
+  } = useSWR(swrKey, ([, pageNum]) =>
     tourService.getPaginatedTours(
       new URLSearchParams({
         page: pageNum.toString(),
@@ -45,7 +45,7 @@ export const TourClient: React.FC = () => {
   return (
     <>
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-3xl font-bold">
+        <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
           Quản lý Tour ({paginatedData?.totalCount || 0})
         </h1>
         <Button onClick={() => (window.location.href = "/admin/tours/create")}>

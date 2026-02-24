@@ -8,8 +8,24 @@ using System.Text.Json.Serialization;
 using UserService.Kafka;
 using UserService.Services;
 using Microsoft.OpenApi.Models;
+using UserService.Kafka.Consumers;
+using Serilog;
+using Serilog.Exceptions;
+using UserService.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Cấu hình Serilog
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
+    .Enrich.WithMachineName()
+    .Enrich.WithProperty("Application", "UserService") // Tên service để lọc log
+    .WriteTo.Console()
+    .WriteTo.Http("http://logstash:5044", queueLimitBytes: null) // Gửi log tới Logstash
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 var configuration = builder.Configuration;
 
 // --- Database ---
@@ -99,6 +115,7 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddHostedService<UserCreationConsumer>();
+builder.Services.AddHostedService<DashboardStatsConsumer>();
 
 var app = builder.Build();
 
@@ -110,6 +127,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowFrontend");
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();

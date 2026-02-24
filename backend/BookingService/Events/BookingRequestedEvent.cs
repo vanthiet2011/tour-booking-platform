@@ -14,6 +14,8 @@ public class BookingRequestedEvent
     public string ContactPhone { get; set; } = default!;
     public string ContactEmail { get; set; } = default!;
     public string ContactAddress { get; set; } = default!;
+    public string PaymentMethod { get; set; } = "AtOffice";
+    public string IpAddress { get; set; } = "127.0.0.1";
 
     public List<BookingParticipantInfo> Participants { get; set; } = new();
 }

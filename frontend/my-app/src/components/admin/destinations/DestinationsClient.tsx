@@ -23,7 +23,7 @@ export default function DestinationsClient() {
     data: paginatedData,
     error,
     isLoading,
-  } = useSWR(swrKey, ([pageNum]) =>
+  } = useSWR(swrKey, ([, pageNum]) =>
     destinationService.getAll({
       page: Number(pageNum),
       pageSize: ITEMS_PER_PAGE,
@@ -83,7 +83,7 @@ export default function DestinationsClient() {
   return (
     <>
       <div className="flex items-center justify-between ">
-        <h1 className="text-2xl font-bold tracking-tight">Quản lý Điểm đến</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-100">Quản lý Điểm đến</h1>
         <Button onClick={handleAdd}>
           <PlusCircle className="mr-2 h-4 w-4" /> Thêm Mới
         </Button>

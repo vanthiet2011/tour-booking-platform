@@ -12,6 +12,7 @@ namespace TourService.Services
   public class TourService : ITourService
   {
     private readonly ITourRepository _tourRepository;
+    private readonly IDestinationRepository _destinationRepository;
     private readonly ITourDepartureRepository _tourDepartureRepository;
     private readonly ITourKafkaProducerService _kafkaProducer;
     private readonly ICachingService _cachingService;
@@ -20,12 +21,14 @@ namespace TourService.Services
 
     public TourService(
       ITourRepository tourRepository,
+      IDestinationRepository destinationRepository,
       IMapper mapper, ILogger<TourService> logger,
       ITourDepartureRepository tourDepartureRepository,
       ICachingService cachingService,
       ITourKafkaProducerService kafkaProducer)
     {
       _tourRepository = tourRepository;
+      _destinationRepository = destinationRepository;
       _mapper = mapper;
       _logger = logger;
       _cachingService = cachingService;
@@ -91,12 +94,56 @@ namespace TourService.Services
       }
     }
 
+    public async Task<Dictionary<Guid, string>> GetTourNamesByIdsAsync(List<Guid> ids)
+    {
+      return await _tourRepository.GetNamesByIdsAsync(ids);
+    }
+
     public async Task<TourDetailDto> CreateTourAsync(CreateTourDto createTourDto)
     {
       var tourEntity = _mapper.Map<TourEntity>(createTourDto);
       await _tourRepository.CreateAsync(tourEntity);
 
+      string region = "Không xác định";
+      try 
+      {
+          var firstDestinationId = tourEntity.TourDestinations?.FirstOrDefault()?.DestinationId;
+          if (firstDestinationId.HasValue)
+          {
+              var destination = await _destinationRepository.GetByIdAsync(firstDestinationId.Value);
+              if (destination != null) region = destination.Region?.ToString() ?? "Không xác định";
+          }
+      }
+      catch (Exception ex)
+      {
+          _logger.LogWarning(ex, "Không thể lấy thông tin vùng miền cho Tour {Id}", tourEntity.Id);
+      }
+
       await _cachingService.InvalidateTourCacheAsync(tourEntity.Id);
+
+      try
+      {
+        var tourCreatedEvent = new TourCreatedEvent
+        {
+            TourId = tourEntity.Id,
+            Name = tourEntity.Name,
+            Description = tourEntity.Description ?? string.Empty,
+            Region = region,
+            Price = tourEntity.PricePerAdult,
+            Duration = tourEntity.Duration ?? string.Empty,
+            ImageUrl = tourEntity.ImageUrl ?? string.Empty,
+            AvailableSlots = tourEntity.TourDepartures?.Sum(d => d.AvailableSlots) ?? 0,
+            Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList() ?? new List<string>(),
+            Tags = tourEntity.Highlights ?? new List<string>(),
+            CreatedAt = DateTime.UtcNow
+        };
+        await _kafkaProducer.ProduceTourCreatedAsync(tourCreatedEvent);
+        _logger.LogInformation("Sự kiện TourCreatedEvent đã được gửi thành công. TourId: {Id}", tourEntity.Id);
+      }
+      catch (Exception ex) 
+      {
+          _logger.LogError(ex, "Không thể gửi sự kiện tour-created lên Kafka");
+      }
       return _mapper.Map<TourDetailDto>(tourEntity);
     }
     
@@ -110,13 +157,70 @@ namespace TourService.Services
       await _tourRepository.UpdateAsync(tourEntity);
       await _cachingService.InvalidateTourCacheAsync(id);
 
+      // Get Region again if necessary
+      string region = "Không xác định";
+      try 
+      {
+          var firstDestinationId = tourEntity.TourDestinations?.FirstOrDefault()?.DestinationId;
+          if (firstDestinationId.HasValue)
+          {
+              var destination = await _destinationRepository.GetByIdAsync(firstDestinationId.Value);
+              if (destination != null) region = destination.Region?.ToString() ?? "Không xác định";
+          }
+      }
+      catch (Exception ex)
+      {
+           _logger.LogWarning(ex, "Không thể lấy thông tin vùng miền cho Tour {Id}", tourEntity.Id);
+      }
+
+      try
+      {
+          var tourUpdatedEvent = new TourUpdatedEvent
+          {
+              TourId = tourEntity.Id,
+              Name = tourEntity.Name,
+              Description = tourEntity.Description ?? string.Empty,
+              Region = region,
+              Price = tourEntity.PricePerAdult,
+              Duration = tourEntity.Duration ?? string.Empty,
+              ImageUrl = tourEntity.ImageUrl ?? string.Empty,
+              AvailableSlots = tourEntity.TourDepartures?.Sum(d => d.AvailableSlots) ?? 0,
+              Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList() ?? new List<string>(),
+              Tags = tourEntity.Highlights ?? new List<string>(),
+              UpdatedAt = DateTime.UtcNow
+          };
+          await _kafkaProducer.ProduceTourUpdatedAsync(tourUpdatedEvent);
+          _logger.LogInformation("Sự kiện TourUpdatedEvent đã được gửi thành công. TourId: {Id}", tourEntity.Id);
+      }
+      catch (Exception ex)
+      {
+          _logger.LogError(ex, "Không thể gửi sự kiện tour-updated lên Kafka");
+      }
+
       return true;
     }
 
     public async Task<bool> DeleteTourAsync(Guid id)
     {
       var result = await _tourRepository.DeleteAsync(id);
-      if (result) await _cachingService.InvalidateTourCacheAsync(id);
+      if (result) 
+      {
+          await _cachingService.InvalidateTourCacheAsync(id);
+          try
+          {
+              var tourDeletedEvent = new TourDeletedEvent
+              {
+                  TourId = id,
+                  DeletedAt = DateTime.UtcNow
+              };
+              await _kafkaProducer.ProduceTourDeletedAsync(tourDeletedEvent);
+              _logger.LogInformation("Sự kiện TourDeletedEvent đã được gửi thành công. TourId: {Id}", id);
+          }
+          catch (Exception ex)
+          {
+              _logger.LogError(ex, "Không thể gửi sự kiện tour-deleted lên Kafka");
+          }
+      }
       return result;
     }
 
@@ -135,7 +239,7 @@ namespace TourService.Services
             });
             return;
         }
-        int requestedSlots = bookingEvent.Participants.Count;
+        int requestedSlots = bookingEvent.Participants.Sum(p => p.Quantity);
         if (departure.AvailableSlots >= requestedSlots)
         {
             departure.AvailableSlots -= requestedSlots;
@@ -147,7 +251,9 @@ namespace TourService.Services
                 BookingId = bookingEvent.BookingId,
                 TourId = bookingEvent.TourId,
                 DepartureId = bookingEvent.TourDepartureId,
-                TotalPrice = bookingEvent.TotalPrice
+                TotalPrice = bookingEvent.TotalPrice,
+                PaymentMethod = bookingEvent.PaymentMethod,
+                IpAddress = bookingEvent.IpAddress
             });
         }
         else
@@ -182,6 +288,48 @@ namespace TourService.Services
         {
             _logger.LogError("Không tìm thấy TourDepartureId: {DepartureId} để trả slot. Bỏ qua.", releaseEvent.DepartureId);
         }
+    }
+
+    public async Task SyncAllToursAsync()
+    {
+        _logger.LogInformation("Bắt đầu đồng bộ tất cả tours sang SearchService...");
+        var allTours = await _tourRepository.GetAllAsync(1, 10000); // Lấy tất cả (hoặc phân trang nếu cần)
+        
+        foreach (var tourEntity in allTours.Items) // Giả sử GetAllAsync trả về PaginatedResponse
+        {
+            try 
+            {
+               string region = "Không xác định";
+               var firstDestinationId = tourEntity.TourDestinations?.FirstOrDefault()?.DestinationId;
+               if (firstDestinationId.HasValue)
+               {
+                   var destination = await _destinationRepository.GetByIdAsync(firstDestinationId.Value);
+                   if (destination != null) region = destination.Region?.ToString() ?? "Không xác định";
+               }
+
+               var tourCreatedEvent = new TourCreatedEvent
+               {
+                   TourId = tourEntity.Id,
+                   Name = tourEntity.Name,
+                   Description = tourEntity.Description ?? string.Empty,
+                   Region = region,
+                   Price = tourEntity.PricePerAdult,
+                   Duration = tourEntity.Duration ?? string.Empty,
+                   ImageUrl = tourEntity.ImageUrl ?? string.Empty,
+                   AvailableSlots = tourEntity.TourDepartures?.Sum(d => d.AvailableSlots) ?? 0,
+                   Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList() ?? new List<string>(),
+                   Tags = tourEntity.Highlights ?? new List<string>(),
+                   CreatedAt = DateTime.UtcNow
+               };
+               await _kafkaProducer.ProduceTourCreatedAsync(tourCreatedEvent);
+               _logger.LogInformation("Đã gửi sự kiện sync (created) cho TourId: {Id}", tourEntity.Id);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi sync tour {Id}", tourEntity.Id);
+            }
+        }
+        _logger.LogInformation("Hoàn tất đồng bộ tours.");
     }
   }
 }

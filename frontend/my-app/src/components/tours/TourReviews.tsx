@@ -1,37 +1,47 @@
-import { Card } from "@/components/ui/card";
-import { Star } from "lucide-react";
-import Image from "next/image";
+"use client";
 
-export function TourReviews() {
-  const reviews = [
-    {
-      name: "Nguyễn Thị Mai",
-      location: "Hà Nội",
-      rating: 5,
-      date: "Tháng 3, 2024",
-      comment:
-        "Chuyến đi tuyệt vời! Hướng dẫn viên nhiệt tình, phong cảnh đẹp không thể tả. Đặc biệt ấn tượng với bữa tối hải sản trên tàu. Chắc chắn sẽ quay lại!",
-      avatar: "/vietnamese-woman-smiling-portrait.jpg",
-    },
-    {
-      name: "Trần Văn Hùng",
-      location: "TP. Hồ Chí Minh",
-      rating: 5,
-      date: "Tháng 2, 2024",
-      comment:
-        "Tour được tổ chức rất chuyên nghiệp. Lịch trình hợp lý, không bị gấp rút. Phòng nghỉ sạch sẽ, thoải mái. Rất đáng giá tiền!",
-      avatar: "/vietnamese-man-smiling-portrait.jpg",
-    },
-    {
-      name: "Lê Thị Hương",
-      location: "Đà Nẵng",
-      rating: 5,
-      date: "Tháng 1, 2024",
-      comment:
-        "Trải nghiệm tuyệt vời cho cả gia đình. Các bạn nhỏ rất thích chèo kayak và bơi lội. Cảm ơn đội ngũ đã chăm sóc chu đáo!",
-      avatar: "/vietnamese-woman-happy-portrait.jpg",
-    },
-  ];
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Star, User } from "lucide-react";
+import Image from "next/image";
+import { Review } from "@/types/review";
+import reviewService from "@/services/review.service";
+import { ReviewForm } from "./ReviewForm";
+import { format } from "date-fns";
+import { vi } from "date-fns/locale";
+
+interface TourReviewsProps {
+  tourId: string;
+}
+
+export function TourReviews({ tourId }: TourReviewsProps) {
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [canReview, setCanReview] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchData = async () => {
+    try {
+      const [reviewsData, eligibility] = await Promise.all([
+        reviewService.getReviewsByTourId(tourId),
+        reviewService.checkEligibility(tourId).catch(() => ({ canReview: false })),
+      ]);
+      setReviews(reviewsData);
+      setCanReview(eligibility.canReview);
+    } catch (error) {
+      console.error("Failed to fetch reviews", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [tourId]);
+
+  const averageRating =
+    reviews.length > 0
+      ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
+      : "0.0";
 
   return (
     <section className="bg-muted/30 py-16 sm:py-24">
@@ -40,36 +50,61 @@ export function TourReviews() {
           <h2 className="mb-4 font-serif text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
             Đánh Giá Từ Khách Hàng
           </h2>
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground text-pretty mb-6">
+            Đánh giá thực tế từ những khách hàng đã trải nghiệm tour
+          </p>
           <div className="mx-auto flex items-center justify-center gap-2">
             <div className="flex">
               {[...Array(5)].map((_, i) => (
-                <Star key={i} className="h-6 w-6 fill-accent text-accent" />
+                <Star
+                  key={i}
+                  className={`h-6 w-6 ${
+                    i < Math.round(Number(averageRating))
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "text-muted-foreground"
+                  }`}
+                />
               ))}
             </div>
-            <span className="text-lg font-semibold text-foreground">5.0</span>
-            <span className="text-muted-foreground">(127 đánh giá)</span>
+            <span className="text-lg font-semibold text-foreground">
+              {averageRating}
+            </span>
+            <span className="text-muted-foreground">
+              ({reviews.length} đánh giá)
+            </span>
           </div>
         </div>
 
+        {canReview && (
+          <div className="mb-12 max-w-2xl mx-auto">
+            <ReviewForm tourId={tourId} onSuccess={fetchData} />
+          </div>
+        )}
+
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {reviews.map((review, index) => (
-            <Card key={index} className="border-border/50 bg-card p-6">
+          {reviews.map((review) => (
+            <Card key={review.id} className="border-border/50 bg-card p-6">
               <div className="mb-4 flex items-start justify-between">
                 <div className="flex gap-3">
-                  <Image
-                    src={review.avatar || "/placeholder.svg"}
-                    alt={review.name}
-                    width={48}
-                    height={48}
-                    className="rounded-full object-cover"
-                  />
+                    {review.avatar ? (
+                         <Image
+                         src={review.avatar}
+                         alt={review.userName || "User"}
+                         width={48}
+                         height={48}
+                         className="rounded-full object-cover"
+                       />
+                    ) : (
+                        <div className="h-12 w-12 rounded-full bg-slate-200 flex items-center justify-center">
+                            <User className="h-6 w-6 text-slate-500" />
+                        </div>
+                    )}
+                 
                   <div>
                     <div className="font-semibold text-card-foreground">
-                      {review.name}
+                      {review.userName || "Người dùng ẩn danh"}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {review.location}
-                    </div>
+                    {/* Location is not in Review entity yet, omitting or hardcoding logic if needed */}
                   </div>
                 </div>
               </div>
@@ -77,11 +112,11 @@ export function TourReviews() {
               <div className="mb-3 flex items-center gap-2">
                 <div className="flex">
                   {[...Array(review.rating)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-accent text-accent" />
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  {review.date}
+                  {format(new Date(review.createdAt), "dd/MM/yyyy", { locale: vi })}
                 </span>
               </div>
 
@@ -90,6 +125,11 @@ export function TourReviews() {
               </p>
             </Card>
           ))}
+          {reviews.length === 0 && !isLoading && (
+            <div className="col-span-full text-center text-muted-foreground">
+              Chưa có đánh giá nào cho tour này.
+            </div>
+          )}
         </div>
       </div>
     </section>

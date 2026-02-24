@@ -79,7 +79,7 @@ export function MyBookingCard({ booking }: MyBookingCardProps) {
   }, [booking.tourId]);
 
   const totalGuests =
-    booking.details?.reduce((acc, detail) => acc + detail.quantity, 0) ?? 0;
+    booking.bookingDetails?.reduce((acc, detail) => acc + detail.quantity, 0) ?? 0;
 
   return (
     <Card className="overflow-hidden shadow-md transition-all hover:shadow-lg">
@@ -173,7 +173,7 @@ export function MyBookingCard({ booking }: MyBookingCardProps) {
 
               {/* Nút xem chi tiết (quan trọng hơn "Share") */}
               <Button variant="outline" asChild>
-                <Link href={`/bookings/${booking.id}`}>
+                <Link href={`/profile/my-bookings/${booking.id}`}>
                   <FileText className="w-4 h-4 mr-2" />
                   Xem chi tiết
                 </Link>
@@ -186,7 +186,7 @@ export function MyBookingCard({ booking }: MyBookingCardProps) {
                 className="hidden md:inline-flex"
                 asChild
               >
-                <Link href={`/bookings/${booking.id}`}>
+                <Link href={`/profile/my-bookings/${booking.id}`}>
                   <ChevronRight className="w-5 h-5" />
                 </Link>
               </Button>

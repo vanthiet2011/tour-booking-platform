@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using PaymentService.Data;
 using PaymentService.Entities;
+using PaymentService.Enums;
 
 namespace PaymentService.Repositories
 {
@@ -55,10 +56,14 @@ namespace PaymentService.Repositories
 
         public async Task<IEnumerable<PaymentEntity>> GetByBookingIdAsync(Guid bookingId)
         {
-            return await _context.Payments
+            _logger.LogInformation("🔍 Repository: Finding payments for BookingId {BookingId}", bookingId);
+            var results = await _context.Payments
                 .Where(p => p.BookingId == bookingId)
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
+            
+            _logger.LogInformation("🔍 Repository: Found {Count} payments for BookingId {BookingId}", results.Count, bookingId);
+            return results;
         }
 
         public async Task<PaymentEntity?> GetByGatewayTransactionIdAsync(string transactionId)
@@ -89,6 +94,37 @@ namespace PaymentService.Repositories
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Lỗi khi cập nhật PaymentEntity với ID: {PaymentId}", payment.Id);
+                throw;
+            }
+        }
+
+        public async Task UpdateStatusAsync(Guid bookingId, PaymentStatus status)
+        {
+            try
+            {
+                var payment = await _context.Payments
+                    .OrderByDescending(p => p.CreatedAt)
+                    .FirstOrDefaultAsync(p => p.BookingId == bookingId);
+
+                if (payment != null)
+                {
+                    payment.Status = status;
+                    payment.UpdatedAt = DateTime.UtcNow;
+
+                    _context.Entry(payment).State = EntityState.Modified;
+                    await _context.SaveChangesAsync();
+                    
+                    _logger.LogInformation("✅ Đã cập nhật trạng thái Payment cho đơn #{Id} sang {Status}", 
+                        bookingId, status);
+                }
+                else
+                {
+                    _logger.LogWarning("⚠️ Không tìm thấy bản ghi thanh toán cho BookingId: {Id}", bookingId);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Lỗi khi cập nhật trạng thái cho BookingId: {Id}", bookingId);
                 throw;
             }
         }

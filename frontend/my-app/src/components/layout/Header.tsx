@@ -119,7 +119,6 @@ export default function Header({ destinations = [] }: HeaderProps) {
               align="start"
             >
               <div className="grid grid-cols-3 gap-x-6">
-                {/* Mapping miền → param */}
                 {Object.keys(destinationsByRegion).map((region) => {
                   const regionParam = {
                     "Miền Bắc": "north",
@@ -157,7 +156,6 @@ export default function Header({ destinations = [] }: HeaderProps) {
                         )}
                       </div>
 
-                      {/* ❗ Nút Xem tất cả các tour theo miền */}
                       <Link
                         href={`/tours?region=${regionParam}`}
                         onClick={() => setIsDestMenuOpen(false)}
@@ -196,13 +194,11 @@ export default function Header({ destinations = [] }: HeaderProps) {
           ))}
         </nav>
 
-        {/* Right Side Buttons */}
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon" className="hidden md:flex">
             <Search className="h-5 w-5" />
           </Button>
 
-          {/* Dropdown User */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -238,7 +234,7 @@ export default function Header({ destinations = [] }: HeaderProps) {
                   {isAdmin && (
                     <DropdownMenuItem asChild>
                       <Link
-                        href="/admin/dashboard"
+                        href="/admin"
                         className="flex items-center gap-2 px-3 py-2 hover:bg-muted/20 rounded-md transition-colors"
                       >
                         <LayoutDashboard className="w-4 h-4 text-muted-foreground" />
@@ -295,7 +291,6 @@ export default function Header({ destinations = [] }: HeaderProps) {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Mobile menu toggle */}
           <Button
             variant="ghost"
             size="icon"
@@ -307,7 +302,6 @@ export default function Header({ destinations = [] }: HeaderProps) {
         </div>
       </div>
 
-      {/* Mobile nav */}
       {isMenuOpen && (
         <div className="md:hidden border-t px-4 pb-4 mt-2 space-y-2">
           {mainNav.map((item) => (
@@ -327,7 +321,7 @@ export default function Header({ destinations = [] }: HeaderProps) {
             <>
               {isAdmin && (
                 <Link
-                  href="/admin/dashboard"
+                  href="/admin"
                   onClick={() => setIsMenuOpen(false)}
                   className="block px-2 py-2 rounded-md hover:bg-accent"
                 >

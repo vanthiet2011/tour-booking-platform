@@ -94,3 +94,16 @@ services:
       - /src/bin
       - /src/obj
     command: dotnet watch run --project PaymentService.csproj --urls http://0.0.0.0:8080 --no-launch-profile
+
+  search-service:
+    build:
+      context: ./backend/SearchService
+      dockerfile: Dockerfile
+      target: dev
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    volumes:
+      - ./backend/SearchService:/app
+      - /app/bin
+      - /app/obj
+    command: dotnet watch run --project SearchService.csproj --urls http://0.0.0.0:8080 --no-launch-profile

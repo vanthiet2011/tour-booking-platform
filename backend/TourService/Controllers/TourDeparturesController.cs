@@ -31,8 +31,10 @@ public class TourDeparturesController : ControllerBase
         {
             Id = departure.Id,
             TourId = departure.Tour.Id,
+            TourName = departure.Tour.Name,
             StartDate = departure.StartDate,
             EndDate = departure.EndDate,
+            TotalSlots = departure.TotalSlots,
             AvailableSlots = departure.AvailableSlots
         };
         return Ok(response);

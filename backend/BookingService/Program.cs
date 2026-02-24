@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models; // Thêm using cho OpenApi
+using Microsoft.OpenApi.Models;
 using BookingService.Data;
 using BookingService.Repositories;
 using BookingService.Services;
@@ -11,15 +11,35 @@ using Confluent.Kafka;
 using System.Text.Json;
 using BookingService.Kafka.Producers;
 using BookingService.Kafka.Consumers;
+using Hangfire;
+using Hangfire.PostgreSql;
+using BookingService.Filters;
+using Serilog;
+using Serilog.Exceptions;
+using BookingService.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Cấu hình Serilog
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
+    .Enrich.WithMachineName()
+    .Enrich.WithProperty("Application", "BookingService") // Tên service để lọc log
+    .WriteTo.Console()
+    .WriteTo.Http("http://logstash:5044", queueLimitBytes: null) // Gửi log tới Logstash
+    .CreateLogger();
+
+builder.Host.UseSerilog();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-        options.JsonSerializerOptions.PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 builder.Services.AddEndpointsApiExplorer();
 
@@ -41,7 +61,7 @@ builder.Services.AddSingleton<IProducer<string, string>>(sp =>
     return new ProducerBuilder<string, string>(config).Build();
 });
 
-builder.Services.AddSingleton<IKafkaProducerService, KafkaProducerService>();
+builder.Services.AddSingleton<IBookingKafkaProducerService, BookingKafkaProducerService>();
 builder.Services.AddSingleton<ConsumerConfig>(sp =>
 {
     var kafkaBootstrapServers = builder.Configuration["Kafka:BootstrapServers"];
@@ -58,12 +78,24 @@ builder.Services.AddSingleton<ConsumerConfig>(sp =>
     };
 });
 
+
+
+builder.Services.AddHangfire(config => config
+    .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+    .UseSimpleAssemblyNameTypeSerializer()
+    .UseRecommendedSerializerSettings()
+    .UsePostgreSqlStorage(options => options.UseNpgsqlConnection(connectionString)));
+
+builder.Services.AddHangfireServer();
+
 builder.Services.AddHostedService<SlotsResponseConsumer>();
-builder.Services.AddHostedService<PaymentLinkConsumer>();
 builder.Services.AddHostedService<PaymentResultConsumer>();
+// BookingCompletionWorker removed (replaced by Hangfire)
 
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 builder.Services.AddScoped<IBookingService, BookingService.Services.BookingService>();
+builder.Services.AddScoped<IBookingJobService, BookingJobService>();
+
 
 builder.Services.AddHttpClient<ITourServiceClient, TourServiceClient>(client =>
 {
@@ -128,22 +160,39 @@ builder.Services.AddSwaggerGen(c =>
     }});
 });
 
+builder.Services.AddOpenApi();
+
 
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
     app.UseSwaggerUI(c => 
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "BookingService API v1");
     });
 }
 
+
+
 app.UseRouting();
+
+app.UseMiddleware<CorrelationIdMiddleware>();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireAuthorizationFilter() }
+});
+
+// Schedule Recurring Job
+RecurringJob.AddOrUpdate<IBookingJobService>(
+    "complete-bookings-job",
+    service => service.CheckAndCompleteBookings(),
+    Cron.Hourly
+);
 
 app.MapControllers();
 

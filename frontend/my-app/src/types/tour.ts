@@ -22,6 +22,7 @@ export interface TourDeparture {
   tourId: string;
   startDate: string;
   endDate: string;
+  totalSlots: number;
   availableSlots: number;
 }
 
@@ -57,7 +58,7 @@ export interface CreateTourPayload {
   tourDepartures: {
     startDate: string;
     endDate: string;
-    availableSlots: number;
+    totalSlots: number;
   }[];
   highlights: string[];
   galleryImages: string[];

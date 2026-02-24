@@ -18,11 +18,13 @@ namespace TourService.Services
         string? region = null,
         Guid? destinationId = null);
       Task<TourDetailDto> GetTourByIdAsync(Guid id);
+      Task<Dictionary<Guid, string>> GetTourNamesByIdsAsync(List<Guid> ids);
       Task<IEnumerable<TourDetailDto>> GetByDestinationIdAsync(Guid destinationId);
       Task<TourDetailDto> CreateTourAsync(CreateTourDto createTourDto);
       Task<bool> UpdateTourAsync(Guid id, UpdateTourDto updateTourDto);
       Task<bool> DeleteTourAsync(Guid id);
       Task HandleBookingRequestAsync(BookingRequestedEvent bookingEvent);
       Task HandleReleaseSlotsAsync(ReleaseSlotsEvent releaseEvent);
+      Task SyncAllToursAsync();
   }
 }

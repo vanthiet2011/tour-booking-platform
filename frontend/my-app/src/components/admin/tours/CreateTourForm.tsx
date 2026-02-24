@@ -33,7 +33,7 @@ const initialValues: MultiStepTourFormValues = {
   description: "",
   destinationIds: [],
   isBestseller: false,
-  tourDepartures: [{ startDate: "", endDate: "", availableSlots: 10 }],
+  tourDepartures: [{ startDate: "", endDate: "", totalSlots: 10 }],
   highlights: [],
   inclusions: { included: [], notIncluded: [] },
   coverImageFile: undefined,

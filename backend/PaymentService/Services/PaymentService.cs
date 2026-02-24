@@ -4,116 +4,183 @@ using PaymentService.Entities;
 using PaymentService.Enums;
 using PaymentService.Events;
 using PaymentService.Kafka.Producers;
-using PaymentService.Repositories; // Cần tạo Repository
+using PaymentService.Repositories;
+using PaymentService.Services.Providers;
+using Hangfire; // Added for IBackgroundJobClient
 
 namespace PaymentService.Services;
 
 public class PaymentService : IPaymentService
 {
     private readonly IPaymentRepository _paymentRepository;
-    private readonly IPaymentKafkaProducerService _producerService;
     private readonly ILogger<PaymentService> _logger;
-    private readonly IConfiguration _configuration;
+    private readonly IPaymentKafkaProducerService _kafkaProducerService;
+    private readonly IEnumerable<IPaymentProvider> _paymentProviders;
+    private readonly IBackgroundJobClient _backgroundJobClient;
 
-    public PaymentService(IPaymentRepository paymentRepository, ILogger<PaymentService> logger, IConfiguration configuration, IPaymentKafkaProducerService producerService)
+    public PaymentService(
+        IPaymentRepository paymentRepository, 
+        ILogger<PaymentService> logger,
+        IPaymentKafkaProducerService kafkaProducerService,
+        IEnumerable<IPaymentProvider> paymentProviders,
+        IBackgroundJobClient backgroundJobClient)
     {
         _paymentRepository = paymentRepository;
-        _producerService = producerService;
         _logger = logger;
-        _configuration = configuration;
+        _kafkaProducerService = kafkaProducerService;
+        _paymentProviders = paymentProviders;
+        _backgroundJobClient = backgroundJobClient;
     }
 
-    public async Task<PaymentEntity> CreatePaymentSessionAsync(SlotsReservedEvent eventData)
+    public async Task<PaymentEntity> ProcessPaymentDirectlyAsync(SlotsReservedEvent eventData)
     {
-        _logger.LogInformation("Bắt đầu tạo phiên thanh toán cho BookingId: {BookingId}, Số tiền: {Amount}", eventData.BookingId, eventData.TotalPrice);
-        var returnUrlBase = _configuration["PaymentGateway:ReturnUrlBase"];
-        var successUrl = $"{returnUrlBase}?bookingId={eventData.BookingId}&status=success";
-        var cancelUrl = $"{returnUrlBase}?bookingId={eventData.BookingId}&status=cancel";
-        var paymentIntentId = $"pi_{Guid.NewGuid():N}";
-        var paymentLink = $"http://localhost:5005/mock-payment-page?intentId={paymentIntentId}&amount={eventData.TotalPrice}&successUrl={Uri.EscapeDataString(successUrl)}&cancelUrl={Uri.EscapeDataString(cancelUrl)}";
-        var expiresAt = DateTime.UtcNow.AddMinutes(15);
-
-        _logger.LogInformation("Đã tạo link thanh toán (giả lập) cho BookingId: {BookingId}", eventData.BookingId);
-
-        var paymentEntity = new PaymentEntity
+        // 1. Khởi tạo thực thể Payment với thông tin đầy đủ
+        if (!Enum.TryParse<PaymentMethod>(eventData.PaymentMethod, true, out var method))
         {
+            method = PaymentMethod.UnKnown;
+        }
+        
+        var payment = new PaymentEntity
+        {
+            Id = Guid.NewGuid(),
             BookingId = eventData.BookingId,
             Amount = eventData.TotalPrice,
-            Status = PaymentStatus.Pending,
-            PaymentGatewayName = "MockGateway",
-            PaymentIntentId = paymentIntentId,
-            PaymentLink = paymentLink,
+            PaymentMethod = method,
+            Status = method == PaymentMethod.AtOffice ? PaymentStatus.AwaitingOffice : PaymentStatus.Pending,
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = expiresAt
+            ExpiresAt = method == PaymentMethod.AtOffice ? DateTime.UtcNow.AddHours(24) : DateTime.UtcNow.AddMinutes(15)
         };
-        try
+
+        // 2. Lấy Provider tương ứng và tạo Link thanh toán ngay
+        var provider = _paymentProviders.FirstOrDefault(p => p.Method == method);
+        if (provider != null)
         {
-            await _paymentRepository.AddAsync(paymentEntity);
-            _logger.LogInformation("Đã lưu PaymentEntity vào DB với ID: {PaymentId}", paymentEntity.Id);
-            return paymentEntity;
+             string ipAddress = !string.IsNullOrEmpty(eventData.IpAddress) ? eventData.IpAddress : "127.0.0.1";
+             payment.PaymentLink = await provider.GeneratePaymentLinkAsync(payment, ipAddress);
         }
-        catch (Exception ex)
+        else
         {
-            _logger.LogError(ex, "Lỗi khi lưu PaymentEntity cho BookingId: {BookingId}", eventData.BookingId);
-            throw;
+             _logger.LogWarning("Không tìm thấy Provider cho method {Method}. PaymentLink sẽ null.", method);
         }
+
+        // 3. Lưu vào Database
+        await _paymentRepository.AddAsync(payment);
+
+        // 4. LẬP LỊCH DUY NHẤT 1 HANGFIRE JOB
+        var delay = payment.ExpiresAt.Value - DateTime.UtcNow;
+        if (delay < TimeSpan.Zero) delay = TimeSpan.Zero;
+        
+        _backgroundJobClient.Schedule<IPaymentJobService>(
+            x => x.CheckAndExpirePayment(payment.Id),
+            delay
+        );
+
+        _logger.LogInformation("✅ [Consolidated] Đã xử lý thanh toán {Method} cho Booking {BookingId}", method, payment.BookingId);
+        
+        return payment;
     }
-    
-    public async Task HandleWebhookPayloadAsync(WebhookPayloadDto payload)
+
+    public async Task<PaymentStatusDto?> GetPaymentStatusByBookingIdAsync(Guid bookingId)
+    {
+        var payments = await _paymentRepository.GetByBookingIdAsync(bookingId);
+
+        var payment = payments
+            .OrderByDescending(p => p.CreatedAt)
+            .FirstOrDefault();
+
+        if (payment == null)
+            return null;
+
+        return new PaymentStatusDto
         {
-            _logger.LogInformation("Đang xử lý Webhook cho PaymentIntentId: {PaymentIntentId}, EventType: {EventType}",
-                payload.PaymentIntentId, payload.EventType);
-            var payment = await _paymentRepository.GetByPaymentIntentIdAsync(payload.PaymentIntentId);
+            BookingId = payment.BookingId,
+            PaymentId = payment.Id,
+            Status = payment.Status.ToString(),
+            PaymentMethod = payment.PaymentMethod.ToString(),
+            Amount = payment.Amount,
+            PaymentLink = payment.PaymentLink,
+            UpdatedAt = payment.UpdatedAt
+        };
+    }
 
-            if (payment == null)
-            {
-                _logger.LogError("Không tìm thấy PaymentEntity với PaymentIntentId: {PaymentIntentId}. Webhook bị bỏ qua.", payload.PaymentIntentId);
-                return;
-            }
+    public async Task<PaymentStatusDto?> GetPaymentStatusByIdAsync(Guid paymentId)
+    {
+        var payment = await _paymentRepository.GetByIdAsync(paymentId);
 
-            if (payment.Status == PaymentStatus.Succeeded || payment.Status == PaymentStatus.Failed)
-            {
-                _logger.LogWarning("PaymentIntentId: {PaymentIntentId} đã được xử lý (Status: {Status}). Webhook bị bỏ qua.",
-                    payload.PaymentIntentId, payment.Status);
-                return;
-            }
+        if (payment == null) return null;
 
-            if (payload.EventType == "payment.succeeded")
-            {
-                payment.Status = PaymentStatus.Succeeded;
-                payment.PaymentGatewayTransactionId = payload.TransactionId;
-                payment.UpdatedAt = DateTime.UtcNow;
-                await _paymentRepository.UpdateAsync(payment);
-                _logger.LogInformation("✅ PaymentEntity {PaymentId} đã cập nhật sang Succeeded.", payment.Id);
+        return new PaymentStatusDto
+        {
+            BookingId = payment.BookingId,
+            PaymentId = payment.Id,
+            Status = payment.Status.ToString(),
+            PaymentMethod = payment.PaymentMethod.ToString(),
+            Amount = payment.Amount,
+            PaymentLink = payment.PaymentLink,
+            UpdatedAt = payment.UpdatedAt
+        };
+    }
 
-                var successEvent = new PaymentSucceededEvent
-                {
-                    BookingId = payment.BookingId,
-                    PaymentId = payment.Id,
-                    TransactionId = payment.PaymentGatewayTransactionId ?? ""
-                };
-                await _producerService.ProducePaymentSucceededAsync(successEvent);
-            }
-            else if (payload.EventType == "payment.failed")
-            {
-                payment.Status = PaymentStatus.Failed;
-                payment.ErrorCode = "GATEWAY_FAILURE";
-                payment.ErrorMessage = payload.ErrorReason;
-                payment.UpdatedAt = DateTime.UtcNow;
-                await _paymentRepository.UpdateAsync(payment);
-                _logger.LogWarning("❌ PaymentEntity {PaymentId} đã cập nhật sang Failed. Lý do: {Reason}", payment.Id, payload.ErrorReason);
-                
-                var failedEvent = new PaymentFailedEvent
-                {
-                    BookingId = payment.BookingId,
-                    PaymentId = payment.Id,
-                    Reason = payload.ErrorReason ?? "Giao dịch thất bại"
-                };
-                await _producerService.ProducePaymentFailedAsync(failedEvent);
-            }
-            else
-            {
-                _logger.LogWarning("Không nhận dạng được Webhook EventType: {EventType}. Bỏ qua.", payload.EventType);
-            }
+    public async Task<bool> CompletePaymentAsync(Guid paymentId, PaymentMethod method, object callbackData)
+    {
+        var payment = await _paymentRepository.GetByIdAsync(paymentId);
+        if (payment == null) return false;
+
+        var provider = _paymentProviders.FirstOrDefault(p => p.Method == method)
+            ?? throw new NotSupportedException($"Payment method {method} not supported");
+
+        // Idempotency Check
+        if (payment.Status == PaymentStatus.Completed)
+        {
+            _logger.LogInformation("Payment {PaymentId} đã hoàn tất trước đó.", paymentId);
+            return true;
         }
+        if (payment.Status == PaymentStatus.Failed)
+        {
+            _logger.LogInformation("Payment {PaymentId} đã thất bại trước đó.", paymentId);
+            return false;
+        }
+
+        if (payment.PaymentMethod != method)
+        {
+            payment.PaymentMethod = method;
+        }
+
+        var result = await provider.ProcessCallbackAsync(payment, callbackData);
+
+        if (!result.IsSuccess)
+        {
+            payment.Status = PaymentStatus.Failed;
+            payment.UpdatedAt = DateTime.UtcNow;
+
+            await _paymentRepository.UpdateAsync(payment);
+
+            // FIX: Publish PaymentFailedEvent so BookingService can handle logic (Cancel Booking & Release Slots)
+            await _kafkaProducerService.ProducePaymentFailedAsync(
+                new PaymentFailedEvent
+                {
+                    BookingId = payment.BookingId,
+                    PaymentId = payment.Id,
+                    Reason = result.ErrorMessage ?? PaymentFailureReason.PaymentFailed.ToString()
+                });
+
+            return false;
+        }
+
+        payment.Status = PaymentStatus.Completed;
+        payment.PaymentGatewayTransactionId = result.TransactionId;
+        payment.UpdatedAt = DateTime.UtcNow;
+
+        await _paymentRepository.UpdateAsync(payment);
+
+        await _kafkaProducerService.ProducePaymentSucceededAsync(
+            new PaymentSucceededEvent
+            {
+                BookingId = payment.BookingId,
+                PaymentId = payment.Id,
+                PaymentMethod = payment.PaymentMethod.ToString()
+            });
+
+        return true;
+    }
 }

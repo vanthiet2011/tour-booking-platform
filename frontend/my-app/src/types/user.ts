@@ -18,3 +18,10 @@ export interface UpdateProfileDto {
   phoneNumber: string | null;
   avatarUrl: string | null;
 }
+
+export interface TopTour {
+  tourId: string;
+  tourName: string;
+  bookedCount: number;
+  totalSlots: number;
+}

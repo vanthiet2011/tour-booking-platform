@@ -1,5 +1,8 @@
 // TourService/Program.cs
 
+using Serilog;
+using Serilog.Exceptions;
+
 using System.Text;
 using System.Text.Json.Serialization;
 using Confluent.Kafka;
@@ -15,6 +18,7 @@ using TourService.Kafka.Consumers;
 using TourService.Kafka.Producers;
 using TourService.Repositories;
 using TourService.Services;
+using TourService.Middleware;
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
@@ -22,9 +26,19 @@ var builder = WebApplication.CreateBuilder(new WebApplicationOptions
 {
     WebRootPath = "wwwroot"
 });
-var configuration = builder.Configuration;
 
-// --- Cấu hình Services ---
+// Cấu hình Serilog
+Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithExceptionDetails()
+    .Enrich.WithMachineName()
+    .Enrich.WithProperty("Application", "TourService") // Tên service để lọc log
+    .WriteTo.Console()
+    .WriteTo.Http("http://logstash:5044", queueLimitBytes: null) // Gửi log tới Logstash
+    .CreateLogger();
+
+builder.Host.UseSerilog();
+var configuration = builder.Configuration;
 
 // 1. Kết nối DB và Repositories
 var connectionString = configuration.GetConnectionString("Default");
@@ -43,7 +57,15 @@ builder.Services.AddScoped<ITourDepartureRepository, TourDepartureRepository>();
 builder.Services.AddScoped<ITourService, TourService.Services.TourService>();
 builder.Services.AddScoped<IDestinationService, DestinationService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 builder.Services.AddScoped<ICachingService, CachingService>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+builder.Services.AddScoped<IReviewService, ReviewService>();
+
+builder.Services.AddHttpClient<TourService.Services.External.IBookingsClient, TourService.Services.External.BookingsClient>(client =>
+{
+    client.BaseAddress = new Uri(configuration["BookingServiceUrl"] ?? "http://localhost:5078");
+});
 
 builder.Services.AddSingleton<IProducer<string, string>>(sp =>
 {
@@ -131,6 +153,8 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(
 
 var app = builder.Build();
 
+app.UseMiddleware<CorrelationIdMiddleware>();
+
 app.UseRouting();
 
 if (app.Environment.IsDevelopment())
@@ -147,7 +171,6 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = ""
 });
 
-// Cấu hình static riêng cho /uploads
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(

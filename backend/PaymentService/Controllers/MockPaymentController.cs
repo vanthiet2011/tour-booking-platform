@@ -25,8 +25,6 @@ namespace PaymentService.Controllers
             _logger = logger;
         }
 
-        // [GET] /mock-payment-page?intentId=...&amount=...&successUrl=...
-        // Đây là trang mà PaymentLink trỏ đến
         [HttpGet]
         public IActionResult GetMockPaymentPage(
             [FromQuery] string intentId, 

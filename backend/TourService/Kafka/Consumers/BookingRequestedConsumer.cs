@@ -10,7 +10,7 @@ namespace TourService.Kafka.Consumers
         private readonly ILogger<BookingRequestedConsumer> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _configuration;
-        private readonly string _topic = "booking.requested";
+        private readonly string _topic = "dev.vietnature.booking-service.booking.requested";
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
 
@@ -31,7 +31,7 @@ namespace TourService.Kafka.Consumers
             var config = new ConsumerConfig
             {
                 BootstrapServers = _configuration["Kafka:BootstrapServers"],
-                GroupId = "tour-service-booking-group", // Group ID riêng
+                GroupId = "tour-service-booking-group",
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 EnableAutoCommit = false
             };

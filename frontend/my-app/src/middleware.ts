@@ -8,7 +8,12 @@ interface DecodedToken {
 }
 
 export function middleware(request: NextRequest) {
-  if (request.nextUrl.pathname.startsWith("/admin")) {
+  const { pathname } = request.nextUrl;
+  if (pathname === "/admin/login") {
+    return NextResponse.next();
+  }
+
+  if (pathname.startsWith("/admin")) {
     const token = request.cookies.get("accessToken")?.value;
     if (!token) {
       return NextResponse.redirect(new URL("/login", request.url));

@@ -45,7 +45,7 @@ const scheduleSchema = z.object({
 const departureSchema = z.object({
   startDate: z.string().min(1, "Ngày bắt đầu là bắt buộc"),
   endDate: z.string().min(1, "Ngày kết thúc là bắt buộc"),
-  availableSlots: z.coerce.number().int().min(1, "Số chỗ phải lớn hơn 0"),
+  totalSlots: z.coerce.number().int().min(1, "Tổng số chỗ phải lớn hơn 0"),
 });
 
 const inclusionsSchema = z.object({
@@ -415,10 +415,10 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                   />
                   <FormField
                     control={form.control}
-                    name={`tourDepartures.${index}.availableSlots`}
+                    name={`tourDepartures.${index}.totalSlots`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Số chỗ</FormLabel>
+                        <FormLabel>Tổng số chỗ</FormLabel>
                         <FormControl>
                           <Input type="number" {...field} />
                         </FormControl>
@@ -446,7 +446,7 @@ export function TourForm({ isOpen, onClose, tour }: TourFormProps) {
                   appendDeparture({
                     startDate: "",
                     endDate: "",
-                    availableSlots: 10,
+                    totalSlots: 10,
                   })
                 }
               >

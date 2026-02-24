@@ -1,17 +1,9 @@
-using Confluent.Kafka; // <-- Thêm Using
+using Confluent.Kafka;
 using BookingService.Events;
 using BookingService.Repositories;
 using BookingService.Enums;
 using System.Text.Json;
-using BookingService.Kafka.Producers;
 using BookingService.Services;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using System.Threading;
-using System.Threading.Tasks;
-using System;
-using Microsoft.Extensions.Configuration; // Cần Configuration
 
 namespace BookingService.Kafka.Consumers
 {
@@ -20,7 +12,7 @@ namespace BookingService.Kafka.Consumers
         private readonly ILogger<PaymentResultConsumer> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
         private readonly IConfiguration _configuration;
-        private readonly string[] _topics = { "payment.succeeded", "payment.failed" };
+        private readonly string[] _topics = { "dev.vietnature.payment-service.payment.succeeded", "dev.vietnature.payment-service.payment.failed" };
         private readonly JsonSerializerOptions _jsonOptions = new() { PropertyNameCaseInsensitive = true };
 
         public PaymentResultConsumer(
@@ -40,7 +32,7 @@ namespace BookingService.Kafka.Consumers
             var config = new ConsumerConfig
             {
                 BootstrapServers = _configuration["Kafka:BootstrapServers"],
-                GroupId = "booking-payment-result-group", // Group ID riêng
+                GroupId = "booking-payment-result-group",
                 AutoOffsetReset = AutoOffsetReset.Earliest,
                 EnableAutoCommit = false
             };
@@ -60,13 +52,13 @@ namespace BookingService.Kafka.Consumers
                     var topic = consumeResult.Topic;
                     _logger.LogInformation("📩 (PaymentResultConsumer) Received message from topic {Topic}", topic);
 
-                    if (topic == "payment.succeeded")
+                    if (topic == "dev.vietnature.payment-service.payment.succeeded")
                     {
                         var eventData = JsonSerializer.Deserialize<PaymentSucceededEvent>(message, _jsonOptions);
                         if (eventData != null)
                             await ProcessPaymentSucceeded(eventData);
                     }
-                    else if (topic == "payment.failed")
+                    else if (topic == "dev.vietnature.payment-service.payment.failed")
                     {
                         var eventData = JsonSerializer.Deserialize<PaymentFailedEvent>(message, _jsonOptions);
                         if (eventData != null)
@@ -105,21 +97,8 @@ namespace BookingService.Kafka.Consumers
         private async Task ProcessPaymentSucceeded(PaymentSucceededEvent eventData)
         {
             using var scope = _scopeFactory.CreateScope();
-            var repository = scope.ServiceProvider.GetRequiredService<IBookingRepository>();
-            var booking = await repository.GetByIdAsync(eventData.BookingId);
-
-            if (booking != null && booking.Status == BookingStatus.Pending)
-            {
-                booking.Status = BookingStatus.Confirmed;
-                booking.UpdatedAt = DateTime.UtcNow;
-                await repository.UpdateAsync(booking);
-                _logger.LogInformation("✅ Booking {BookingId} status updated to Confirmed.", booking.Id);
-            }
-            else
-            {
-                _logger.LogWarning("Booking {BookingId} not found or status was not Pending (status: {Status}). 'payment.succeeded' message ignored.",
-                    eventData.BookingId, booking?.Status);
-            }
+            var bookingService = scope.ServiceProvider.GetRequiredService<IBookingService>();
+            await bookingService.UpdateBookingStatusAsync(eventData.BookingId, BookingStatus.Confirmed, null, eventData.PaymentMethod);
         }
 
         private async Task ProcessPaymentFailed(PaymentFailedEvent eventData)

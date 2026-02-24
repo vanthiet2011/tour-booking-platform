@@ -89,8 +89,9 @@ namespace BookingService.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("text");
 
-                    b.Property<string>("PaymentLink")
-                        .HasColumnType("text");
+                    b.Property<string>("PaymentMethod")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("timestamp with time zone");
@@ -102,11 +103,19 @@ namespace BookingService.Migrations
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<int>("TotalSlots")
+                        .HasColumnType("integer");
+
                     b.Property<Guid>("TourDepartureId")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("TourId")
                         .HasColumnType("uuid");
+
+                    b.Property<string>("TourName")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .ValueGeneratedOnUpdate()

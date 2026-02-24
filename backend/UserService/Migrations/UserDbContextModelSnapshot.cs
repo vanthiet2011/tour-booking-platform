@@ -22,6 +22,49 @@ namespace UserService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("UserService.Entities.DashboardStatsEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("PaymentMethodDistribution")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("RecentBookings")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RegionDistribution")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("TopBookedTours")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("TotalBookings")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalRevenue")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("TotalTours")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("TotalUsers")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DashboardStats");
+                });
+
             modelBuilder.Entity("UserService.Entities.UserProfileEntity", b =>
                 {
                     b.Property<Guid>("Id")

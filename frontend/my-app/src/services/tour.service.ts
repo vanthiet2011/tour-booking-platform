@@ -55,6 +55,11 @@ const tourService = {
   delete: async (id: string): Promise<void> => {
     await apiClient.delete(`/tours/${id}`);
   },
+
+  getRelatedTours: async (id: string): Promise<Tour[]> => {
+    const { data } = await apiClient.get<Tour[]>(`/tours/${id}/related`);
+    return data || [];
+  },
 };
 
 export default tourService;

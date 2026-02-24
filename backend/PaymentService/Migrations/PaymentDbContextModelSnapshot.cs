@@ -37,20 +37,12 @@ namespace PaymentService.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("ErrorCode")
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
                     b.Property<string>("ErrorMessage")
                         .HasColumnType("text");
 
                     b.Property<DateTime?>("ExpiresAt")
+                        .HasMaxLength(100)
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("PaymentGatewayName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("PaymentGatewayTransactionId")
                         .HasMaxLength(255)
@@ -62,6 +54,9 @@ namespace PaymentService.Migrations
 
                     b.Property<string>("PaymentLink")
                         .HasColumnType("text");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Status")
                         .IsRequired()

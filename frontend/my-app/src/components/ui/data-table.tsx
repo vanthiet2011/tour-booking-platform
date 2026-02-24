@@ -47,15 +47,15 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="rounded-md border overflow-x-auto">
         <Table>
-          <TableHeader className="bg-primary/10 text-primary font-semibold uppercase">
+          <TableHeader className="bg-primary/10 text-primary font-semibold uppercase dark:bg-slate-900/50 dark:text-emerald-400">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-transparent">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="px-4 py-3 text-left border-b border-gray-200"
+                    className="px-4 py-3 text-left border-b border-slate-200 dark:border-slate-800"
                   >
                     {header.isPlaceholder
                       ? null

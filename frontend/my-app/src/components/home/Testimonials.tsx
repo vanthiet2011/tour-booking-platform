@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import { Star } from "lucide-react";
+import { motion } from "framer-motion";
 
 const stories = [
   {
@@ -30,22 +33,33 @@ const stories = [
 
 export function Testimonials() {
   return (
-    <section className="py-8 bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
+    <section className="py-8 bg-background font-sans">
+      <div className="container mx-auto px-4 md:px-6 lg:px-8">
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <span className="inline-block text-primary text-sm font-semibold tracking-wider mb-3">
             CÂU CHUYỆN CỰC THỊ
           </span>
-          <h2 className="text-4xl lg:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Những Trải Nghiệm Thực Sự Từ Du Khách
           </h2>
-        </div>
+        </motion.div>
 
         <div className="grid md:grid-cols-3 gap-6">
           {stories.map((story, idx) => (
-            <div
+            <motion.div
               key={idx}
-              className="bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.5 }}
+              whileHover={{ y: -5 }}
+              className="bg-card rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <div className="relative h-40">
                 <Image
@@ -53,6 +67,7 @@ export function Testimonials() {
                   alt={story.name}
                   fill
                   className="object-cover opacity-50"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-accent/10"></div>
               </div>
@@ -81,7 +96,7 @@ export function Testimonials() {
                   </p>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       </div>

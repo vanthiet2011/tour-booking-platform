@@ -160,6 +160,40 @@ services:
     networks:
       - app-net
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.1
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    networks:
+      - app-net
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.1
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-net
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.11.1
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    networks:
+      - app-net
+
   #---------------------------------
   # APPLICATION SERVICES
   #---------------------------------
@@ -258,6 +292,24 @@ services:
       - Kafka__BootstrapServers=kafka:9092
     depends_on:
       - payment_db
+      - kafka
+    networks:
+      - app-net
+
+  search-service:
+    build:
+      context: ./backend/SearchService
+      dockerfile: Dockerfile
+    container_name: search-service
+    ports:
+      - "5006:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - Elasticsearch__Uri=http://elasticsearch:9200
+      - Kafka__BootstrapServers=kafka:9092
+      - Kafka__GroupId=search-service-group
+    depends_on:
+      - elasticsearch
       - kafka
     networks:
       - app-net

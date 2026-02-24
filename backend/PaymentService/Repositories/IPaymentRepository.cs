@@ -1,4 +1,5 @@
 using PaymentService.Entities;
+using PaymentService.Enums;
 
 namespace PaymentService.Repositories
 {
@@ -10,6 +11,7 @@ namespace PaymentService.Repositories
         Task<PaymentEntity?> GetByGatewayTransactionIdAsync(string transactionId);
         Task AddAsync(PaymentEntity payment);
         Task UpdateAsync(PaymentEntity payment);
+        Task UpdateStatusAsync(Guid bookingId, PaymentStatus status);
         Task DeleteAsync(Guid id);
     }
 }

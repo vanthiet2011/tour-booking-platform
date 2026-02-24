@@ -9,109 +9,109 @@
       "Key": "Auth"
     },
     {
+      "UpstreamPathTemplate": "/api/users/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/api/users/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "user-service", "Port": 8080 }],
-      "UpstreamPathTemplate": "/users/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
+      "DownstreamHostAndPorts": [{ "Host": "user-service", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/api/userprofiles/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/userprofiles/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "user-service", "Port": 8080 }],
-      "Key": "UserProfiles"
+      "DownstreamHostAndPorts": [{ "Host": "user-service", "Port": 8080 }]
     },
     {
-      "UpstreamPathTemplate": "/api/categories",
-      "UpstreamHttpMethod": ["GET", "POST"],
-      "DownstreamPathTemplate": "/categories",
+      "UpstreamPathTemplate": "/api/dashboard/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/Dashboard/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "user-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/categories/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/categories/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     },
     {
-      "UpstreamPathTemplate": "/api/categories/{id}",
-      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
-      "DownstreamPathTemplate": "/categories/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
-    },
-    {
-      "UpstreamPathTemplate": "/api/tours",
-      "UpstreamHttpMethod": ["GET", "POST"],
-      "DownstreamPathTemplate": "/tours",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
-    },
-    {
-      "UpstreamPathTemplate": "/api/tours/{id}",
-      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
-      "DownstreamPathTemplate": "/tours/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
-    },
-    {
-      "UpstreamPathTemplate": "/api/destinations",
-      "UpstreamHttpMethod": ["GET", "POST"],
-      "DownstreamPathTemplate": "/destinations",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
-    },
-    {
-      "UpstreamPathTemplate": "/api/destinations/{id}",
-      "UpstreamHttpMethod": ["GET", "PUT", "DELETE"],
-      "DownstreamPathTemplate": "/destinations/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
-    },
-    {
-      "UpstreamPathTemplate": "/api/destinations/{id}/tours",
+      "UpstreamPathTemplate": "/api/tours/{id}/related",
       "UpstreamHttpMethod": ["GET"],
-      "DownstreamPathTemplate": "/destinations/{id}/tours",
+      "DownstreamPathTemplate": "/api/tours/{id}/related",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "search-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/tours/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/tours/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/reviews/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/Reviews/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/destinations/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
+      "DownstreamPathTemplate": "/destinations/{everything}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/api/bookings/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
       "DownstreamPathTemplate": "/bookings/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "booking-service", "Port": 8080 }],
+      "DownstreamHostAndPorts": [{ "Host": "booking-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/payments/{everything}",
       "UpstreamHttpMethod": ["GET", "POST", "PUT", "DELETE"],
-      "SwaggerKey": "booking"
-    },
-    {
-      "UpstreamPathTemplate": "/api/files/upload",
-      "UpstreamHttpMethod": ["POST"],
-      "DownstreamPathTemplate": "/files/upload",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
-    },
-    {
       "DownstreamPathTemplate": "/api/payments/{everything}",
       "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "payment-service", "Port": 8080 }]
+    },
+    {
+      "UpstreamPathTemplate": "/api/vnpay/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST"],
+      "DownstreamPathTemplate": "/api/vnpay/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "payment-service", "Port": 8080 }]
+    },
+    {
+      "DownstreamPathTemplate": "/api/vnpay/ipn",
+      "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [{ "Host": "payment-service", "Port": 8080 }],
-      "UpstreamPathTemplate": "/payments/{everything}",
-      "UpstreamHttpMethod": ["Get", "Post", "Put", "Delete"]
+      "UpstreamPathTemplate": "/gateway/payment/api/vnpay/ipn",
+      "UpstreamHttpMethod": ["Get"]
+    },
+    {
+      "UpstreamPathTemplate": "/api/paypal/{everything}",
+      "UpstreamHttpMethod": ["GET", "POST"],
+      "DownstreamPathTemplate": "/api/paypal/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [{ "Host": "payment-service", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/api/files/{everything}",
-      "UpstreamHttpMethod": ["POST"],
+      "UpstreamHttpMethod": ["GET", "POST"],
+      "DownstreamPathTemplate": "/files/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }],
-      "DownstreamPathTemplate": "/files/{everything}"
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     },
     {
       "UpstreamPathTemplate": "/uploads/{everything}",
       "UpstreamHttpMethod": ["GET"],
       "DownstreamPathTemplate": "/uploads/{everything}",
       "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "tour-service",
-          "Port": 8080
-        }
-      ]
+      "DownstreamHostAndPorts": [{ "Host": "tour-service", "Port": 8080 }]
     }
   ],
   "GlobalConfiguration": {

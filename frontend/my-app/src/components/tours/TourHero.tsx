@@ -1,8 +1,9 @@
 import { Tour } from "@/types/tour";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Clock, MapPin, Tag, Star } from "lucide-react";
+import { Clock, MapPin, Tag, Star, ChevronRight, Home } from "lucide-react";
 import Link from "next/link";
+import { getFullImageUrl } from "@/lib/utils";
 
 // Hàm helper định dạng tiền tệ
 const formatCurrency = (amount: number) => {
@@ -21,11 +22,11 @@ export function TourHero({ tour }: { tour: Tour }) {
       .join(" – ") || "Nhiều điểm đến";
 
   return (
-    <section className="relative h-[85vh] min-h-[600px] overflow-hidden text-white">
+    <section className="relative h-[85vh] min-h-[380px] overflow-hidden text-white">
       {/* Ảnh nền */}
       <div className="absolute inset-0">
         <Image
-          src={tour.imageUrl || "/placeholder.svg"}
+          src={getFullImageUrl(tour.imageUrl)}
           alt={tour.name}
           fill
           priority
@@ -36,7 +37,6 @@ export function TourHero({ tour }: { tour: Tour }) {
 
       {/* Nội dung */}
       <div className="relative mx-auto flex h-full max-w-7xl flex-col justify-between px-4 py-8 sm:px-6 lg:px-8">
-        {/* Header (có thể giữ thương hiệu hoặc bỏ nếu dùng layout riêng) */}
         <header className="flex items-center justify-between"></header>
 
         {/* Hero content */}
@@ -76,19 +76,10 @@ export function TourHero({ tour }: { tour: Tour }) {
                 {formatCurrency(tour.pricePerAdult)}
               </span>
             </div>
-            {/* {tour.maxGroupSize && (
-              <div className="flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 backdrop-blur-sm">
-                <Users className="h-5 w-5" />
-                <span className="font-medium">
-                  Tối đa {tour.maxGroupSize} người
-                </span>
-              </div>
-            )} */}
           </div>
 
           {/* CTA buttons */}
           <div className="flex flex-wrap gap-4 pt-4">
-            {/* 2. Bọc Button trong Link và thêm href */}
             <Link href="#booking-section" passHref>
               <Button
                 size="lg"
@@ -109,6 +100,33 @@ export function TourHero({ tour }: { tour: Tour }) {
           </div>
         </div>
       </div>
+      <nav
+        className="absolute bottom-6 right-4 sm:right-6 lg:right-8
+                     inline-flex items-center gap-2
+                     rounded-full bg-white/10 backdrop-blur-md
+                     px-4 py-2 text-sm font-medium
+                     text-white shadow-lg"
+      >
+        <Link
+          href="/"
+          className="flex items-center gap-1 hover:text-primary transition-colors"
+        >
+          <Home className="h-4 w-4" />
+          Trang chủ
+        </Link>
+
+        <ChevronRight className="h-4 w-4 text-white/60" />
+
+        <Link href="/tours" className="hover:text-primary transition-colors">
+          Tour
+        </Link>
+
+        <ChevronRight className="h-4 w-4 text-white/60" />
+
+        <span className="max-w-[200px] truncate text-white/90">
+          {tour.name}
+        </span>
+      </nav>
     </section>
   );
 }

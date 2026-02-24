@@ -18,6 +18,8 @@ namespace TourService.Entities
 
         [Required]
         public DateTime EndDate { get; set; }
+        [Required]
+        public int TotalSlots { get; set; }
 
         [Required]
         public int AvailableSlots { get; set; }

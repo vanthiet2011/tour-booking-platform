@@ -3,7 +3,9 @@ using System.Text.Json;
 using AuthService.Dtos;
 using AuthService.Entities;
 using AuthService.Enums;
+using AuthService.Events;
 using AuthService.Repositories;
+using AuthService.Services.Interfaces;
 using BCrypt.Net;
 using Google.Apis.Auth;
 
@@ -13,7 +15,7 @@ public class AuthService : IAuthService
 {
     private readonly IAuthRepository _authRepository;
     private readonly JwtService _jwtService;
-    private readonly KafkaProducerService _kafkaProducer;
+    private readonly IAuthKafkaProducerService _kafkaProducer;
     private readonly HttpClient _httpClient;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
@@ -22,7 +24,7 @@ public class AuthService : IAuthService
         IAuthRepository authRepository,
         JwtService jwtService,
         IConfiguration configuration,
-        KafkaProducerService kafkaProducer,
+        IAuthKafkaProducerService kafkaProducer,
         IHttpClientFactory httpClientFactory)
     {
         _authRepository = authRepository;
@@ -39,6 +41,7 @@ public class AuthService : IAuthService
         {
             throw new BadHttpRequestException("Email already exists.");
         }
+        
         var user = new UserEntity
         {
             Id = Guid.NewGuid(),
@@ -48,9 +51,20 @@ public class AuthService : IAuthService
             CreatedAt = DateTime.UtcNow
         };
         await _authRepository.CreateAsync(user);
-        await _kafkaProducer.ProduceAsync(new { user.Id, user.CreatedAt });
-        var userDto = new UserDto { Id = user.Id, Email = user.Email, Role = user.Role };
-        return userDto;
+
+        var userCreatedEvent = new UserCreatedEvent
+        {
+            UserId = user.Id,
+            Email = user.Email,
+            CreatedAt = user.CreatedAt
+        };
+        await _kafkaProducer.ProduceUserCreatedAsync(userCreatedEvent);
+        return new UserDto 
+        { 
+            Id = user.Id, 
+            Email = user.Email, 
+            Role = user.Role 
+        };
     }
 
     public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
@@ -112,16 +126,19 @@ public class AuthService : IAuthService
 
         await _authRepository.CreateAsync(user);
 
-        var userDto = new UserDto
+        var userCreatedEvent = new UserCreatedEvent
         {
-            Id = user.Id,
+            UserId = user.Id,
             Email = user.Email,
-            Role = user.Role
+            CreatedAt = user.CreatedAt
         };
-
-        await _kafkaProducer.ProduceAsync(userDto);
-
-        return userDto;
+        await _kafkaProducer.ProduceUserCreatedAsync(userCreatedEvent);
+        return new UserDto 
+        { 
+            Id = user.Id, 
+            Email = user.Email, 
+            Role = user.Role 
+        };
     }
 
     public async Task<LoginResponseDto> LoginWithGoogleAsync(SocialLoginRequestDto request)

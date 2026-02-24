@@ -51,6 +51,13 @@ namespace TourService.Controllers
             return Ok(tour);
         }
 
+        [HttpGet("batch-names")]
+        public async Task<ActionResult<Dictionary<Guid, string>>> GetBatchNames([FromQuery] List<Guid> ids)
+        {
+            var tourNames = await _tourService.GetTourNamesByIdsAsync(ids);
+            return Ok(tourNames);
+        }
+
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateTour([FromBody] CreateTourDto createTourDto)
@@ -104,6 +111,13 @@ namespace TourService.Controllers
             var departureDtos = _mapper.Map<IEnumerable<TourDepartureDto>>(departures);
             
             return Ok(departureDtos);
+        }
+        [HttpGet("sync-es")]
+        // [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> SyncToursToElasticsearch()
+        {
+            await _tourService.SyncAllToursAsync();
+            return Ok("Đã bắt đầu quá trình đồng bộ dữ liệu sang Elasticsearch.");
         }
     }
 }

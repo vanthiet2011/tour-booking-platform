@@ -5,5 +5,6 @@ namespace BookingService.Events
         public Guid BookingId { get; set; }
         public Guid PaymentId { get; set; }
         public string TransactionId { get; set; } = string.Empty;
+        public string PaymentMethod { get; set; } = string.Empty;
     }
 }

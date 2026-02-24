@@ -17,6 +17,8 @@ export interface ApiUser {
   id: string;
   email: string;
   role: number;
+  fullName?: string | null;
+  avatarUrl?: string | null;
 }
 
 export interface LoginRequest {

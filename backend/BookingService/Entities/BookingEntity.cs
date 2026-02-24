@@ -27,7 +27,15 @@ public class BookingEntity
     public decimal TotalPrice { get; set; }
 
     [Required]
+    [MaxLength(256)]
+    public string TourName { get; set; } = string.Empty;
+
+    [Required]
+    public int TotalSlots { get; set; }
+
+    [Required]
     [MaxLength(100)]
+    
     public required string ContactFullName { get; set; }
 
     [Required]
@@ -46,13 +54,13 @@ public class BookingEntity
 
     public string? FailureReason { get; set; }
 
-    [Column(TypeName = "text")]
-    public string? PaymentLink { get; set; }
-
     [Required]
     public DateTime StartDate { get; set; }
 
     public DateTime? EndDate { get; set; }
+
+    [MaxLength(50)]
+    public string? PaymentMethod { get; set; }
 
     [Required]
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;

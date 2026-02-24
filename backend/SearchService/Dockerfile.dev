@@ -1,0 +1,5 @@
+# Stage 1: Build environment
+FROM mcr.microsoft.com/dotnet/sdk:9.0
+WORKDIR /app
+COPY . .
+ENTRYPOINT ["dotnet", "watch", "run", "--urls", "http://0.0.0.0:8080"]

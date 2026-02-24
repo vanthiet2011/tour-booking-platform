@@ -20,5 +20,6 @@ namespace TourService.Repositories
         Task<TourEntity> CreateAsync(TourEntity tour);
         Task<TourEntity> UpdateAsync(TourEntity tour);
         Task<bool> DeleteAsync(Guid id);
+        Task<Dictionary<Guid, string>> GetNamesByIdsAsync(List<Guid> ids);
     }
 }

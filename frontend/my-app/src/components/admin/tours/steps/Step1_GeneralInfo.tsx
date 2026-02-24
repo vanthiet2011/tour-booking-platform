@@ -23,13 +23,13 @@ import { MultiStepTourFormValues } from "../CreateTourForm";
 const departureSchema = z.object({
   startDate: z.string().min(1, "Ngày đi không được để trống"),
   endDate: z.string().min(1, "Ngày về không được để trống"),
-  availableSlots: z.coerce
+  totalSlots: z.coerce
     .number({
-      required_error: "Số chỗ không được để trống",
-      invalid_type_error: "Số chỗ phải là số",
+      required_error: "Tổng số chỗ không được để trống",
+      invalid_type_error: "Tổng số chỗ phải là số",
     })
-    .int("Số chỗ phải là số nguyên")
-    .min(1, "Số chỗ phải lớn hơn 0"),
+    .int("Tổng số chỗ phải là số nguyên")
+    .min(1, "Tổng số chỗ phải lớn hơn 0"),
 });
 
 export const generalInfoSchema = z.object({
@@ -219,10 +219,10 @@ export function Step1_GeneralInfo() {
             />
             <FormField
               control={control}
-              name={`tourDepartures.${index}.availableSlots`}
+              name={`tourDepartures.${index}.totalSlots`}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Số chỗ</FormLabel>
+                  <FormLabel>Tổng số chỗ</FormLabel>
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
@@ -246,9 +246,7 @@ export function Step1_GeneralInfo() {
           variant="outline"
           size="sm"
           className="mt-2"
-          onClick={() =>
-            append({ startDate: "", endDate: "", availableSlots: 10 })
-          }
+          onClick={() => append({ startDate: "", endDate: "", totalSlots: 10 })}
         >
           <PlusCircle className="mr-2 h-4 w-4" />
           Thêm ngày khởi hành

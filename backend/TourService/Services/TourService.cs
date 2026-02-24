@@ -133,7 +133,7 @@ namespace TourService.Services
             Duration = tourEntity.Duration ?? string.Empty,
             ImageUrl = tourEntity.ImageUrl ?? string.Empty,
             AvailableSlots = tourEntity.TourDepartures?.Sum(d => d.AvailableSlots) ?? 0,
-            Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList() ?? new List<string>(),
+            Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).Select(n => n!).ToList() ?? new List<string>(),
             Tags = tourEntity.Highlights ?? new List<string>(),
             CreatedAt = DateTime.UtcNow
         };
@@ -185,7 +185,7 @@ namespace TourService.Services
               Duration = tourEntity.Duration ?? string.Empty,
               ImageUrl = tourEntity.ImageUrl ?? string.Empty,
               AvailableSlots = tourEntity.TourDepartures?.Sum(d => d.AvailableSlots) ?? 0,
-              Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList() ?? new List<string>(),
+              Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).Select(n => n!).ToList() ?? new List<string>(),
               Tags = tourEntity.Highlights ?? new List<string>(),
               UpdatedAt = DateTime.UtcNow
           };
@@ -317,7 +317,7 @@ namespace TourService.Services
                    Duration = tourEntity.Duration ?? string.Empty,
                    ImageUrl = tourEntity.ImageUrl ?? string.Empty,
                    AvailableSlots = tourEntity.TourDepartures?.Sum(d => d.AvailableSlots) ?? 0,
-                   Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).ToList() ?? new List<string>(),
+                   Destinations = tourEntity.TourDestinations?.Select(td => td.Destination?.Name).Where(n => !string.IsNullOrEmpty(n)).Select(n => n!).ToList() ?? new List<string>(),
                    Tags = tourEntity.Highlights ?? new List<string>(),
                    CreatedAt = DateTime.UtcNow
                };
